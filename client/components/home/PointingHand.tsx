@@ -26,7 +26,7 @@ export default function PointingHand() {
     return (
         <motion.div
             ref={ref}
-            className="absolute right-0 top-[15rem] md:top-[12rem] lg:top-[10rem] w-32 md:w-64 lg:w-[32rem] pointer-events-none"
+            className="hidden md:block absolute right-0 top-[15rem] md:top-[12rem] lg:top-[10rem] w-32 md:w-64 lg:w-[32rem] pointer-events-none"
             style={{ 
                 x, 
                 rotateZ, 

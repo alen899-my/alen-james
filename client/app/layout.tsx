@@ -1,37 +1,17 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google"
+import type { Metadata } from 'next';
+import './globals.css';
 
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
-import Navbar from "@/components/layout/Navbar";
+export const metadata: Metadata = {
+  title: 'Alen James',
+  description: 'Designer · Developer · AI Specialist',
+};
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
-
-import Preloader from "@/components/ui/Preloader";
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
-    >
+    <html lang="en" suppressHydrationWarning>
       <body style={{ overflowX: 'hidden' }}>
-        <ThemeProvider>
-          <Preloader />
-          <Navbar />
-          {children}
-        </ThemeProvider>
+        {children}
       </body>
     </html>
-  )
+  );
 }
