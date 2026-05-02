@@ -314,7 +314,7 @@ export default function Navbar() {
             <button
                 ref={hambBtnRef}
                 onClick={openMenu}
-                className="fixed bottom-8 right-6 md:bottom-auto md:top-8 md:right-10 z-50 flex items-center justify-center rounded-full shadow-2xl transition-transform hover:scale-110 active:scale-95"
+                className="fixed top-5 right-6 md:top-8 md:right-10 z-50 flex items-center justify-center rounded-full shadow-2xl transition-transform hover:scale-110 active:scale-95"
                 style={{
                     background: "var(--foreground)",
                     opacity: 0,
