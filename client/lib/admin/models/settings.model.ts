@@ -21,6 +21,7 @@ export interface SiteSettings {
   social_twitter: string | null;
   maintenance_mode: boolean;
   maintenance_message: string | null;
+  diary_global_password: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -50,6 +51,7 @@ export async function createSiteSettingsTable(): Promise<void> {
       social_twitter      VARCHAR(500),
       maintenance_mode    BOOLEAN       DEFAULT FALSE,
       maintenance_message TEXT          DEFAULT 'We''ll be back soon!',
+      diary_global_password VARCHAR(255),
       created_at          TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
       updated_at          TIMESTAMPTZ   NOT NULL DEFAULT NOW()
     );

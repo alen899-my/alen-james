@@ -1,13 +1,16 @@
 import { getAllDiaries, Diary } from '@/lib/admin/models/diaries.model';
+import { getSettings } from '@/lib/admin/models/settings.model';
 import Link from 'next/link';
 import { Notebook, Plus, Pencil, Eye, Lock, Globe } from 'lucide-react';
 import DeleteDiaryButton from './delete-diary-button';
 import AdminTable from '@/components/admin/common/AdminTable';
+import GlobalPasswordForm from '@/components/admin/diaries/GlobalPasswordForm';
 
 export const metadata = { title: 'My Diary — Admin' };
 
 export default async function DiariesPage() {
   const diaries = await getAllDiaries();
+  const settings = await getSettings();
 
   const columns = [
     {
@@ -89,13 +92,17 @@ export default async function DiariesPage() {
           <h1 className="text-xl font-bold text-[#1a1a1a]">My Diary</h1>
           <p className="text-sm text-[#8b9aaa] mt-0.5">Manage your personal stories and incidents</p>
         </div>
-        <Link
-          href="/admin/diaries/new"
-          className="flex items-center gap-2 px-4 py-2 bg-[#1084a2] text-white rounded-xl text-sm font-medium hover:bg-[#1a9bbf] transition-colors shadow-sm"
-        >
-          <Plus size={16} />
-          Write Entry
-        </Link>
+        <div className="flex items-center gap-4">
+          <GlobalPasswordForm initialPassword={settings?.diary_global_password || null} />
+          <div className="w-px h-8 bg-[#e8e2d5]"></div>
+          <Link
+            href="/admin/diaries/new"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1084a2] text-white rounded-xl text-sm font-medium hover:bg-[#1a9bbf] transition-colors shadow-sm"
+          >
+            <Plus size={16} />
+            Write Entry
+          </Link>
+        </div>
       </div>
 
       <div className="p-8">

@@ -101,3 +101,19 @@ export async function deleteDiaryAction(id: number): Promise<ActionResult> {
     return { success: false, error: 'Failed to delete diary entry.' };
   }
 }
+
+import { updateSettings } from '@/lib/admin/models/settings.model';
+
+export async function updateGlobalDiaryPasswordAction(password: string): Promise<ActionResult> {
+  const session = await getAdminSession();
+  if (!session) return { success: false, error: 'Not authenticated.' };
+
+  try {
+    await updateSettings({ diary_global_password: password || null });
+    revalidatePath('/admin/diaries');
+    return { success: true, message: 'Global diary password updated.' };
+  } catch (err: any) {
+    console.error('Update Global Password Error:', err);
+    return { success: false, error: 'Failed to update global password.' };
+  }
+}
