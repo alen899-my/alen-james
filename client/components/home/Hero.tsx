@@ -74,6 +74,15 @@ export default function Hero() {
 
             const aboutSection = document.getElementById('about');
 
+            // ── THANOS WASHOUT EFFECT DATA ──
+            // Pre-calculate chaotic directions for each word so it doesn't jitter during scroll
+            const washoutData = words.map(() => ({
+                x: (Math.random() - 0.5) * 800, // Scatter widely left/right
+                y: -200 - Math.random() * 400,  // Fly upwards like ash
+                rot: (Math.random() - 0.5) * 180, // Chaotic spin
+                scale: 0.1 + Math.random() * 0.3, // Shrink down to dust
+            }));
+
             ScrollTrigger.create({
                 trigger: aboutSection || document.body,
                 start: aboutSection ? 'top bottom' : 'top top',
@@ -85,12 +94,22 @@ export default function Hero() {
                     gsap.set(bgRef.current, { scale: 1.15 - p * 0.15, opacity: p });
                     gsap.set(bgOverlayRef.current, { opacity: p * 0.75 });
 
-                    // 1. Text fades out fast as the "wave" comes in
-                    gsap.set(words, { 
-                        scale: 1 - p * 0.5, 
-                        opacity: Math.max(0, 1 - p * 2.5), // Fades out by 40% scroll
-                        z: -p * 100,
-                        y: -p * 150 // Float up slightly
+                    // 1. Thanos Washout Effect for Text
+                    words.forEach((word, i) => {
+                        if (!word) return;
+                        const data = washoutData[i];
+                        // The effect now stretches across the entire scroll duration
+                        const textP = p; 
+                        
+                        gsap.set(word, { 
+                            x: data.x * textP,
+                            y: data.y * textP,
+                            rotation: data.rot * textP,
+                            scale: 1 - textP * (1 - data.scale), 
+                            opacity: 1 - textP,
+                            filter: `blur(${textP * 15}px)`,
+                            transformOrigin: "center center"
+                        });
                     });
 
                     // 2. Bike goes out of screen (accelerates right)
@@ -330,7 +349,7 @@ export default function Hero() {
                     style={{
                         position: 'absolute',
                         inset: 0,
-                        background: 'linear-gradient(135deg, #0a2fff 0%, #001aaa 55%, #000c6e 100%)',
+                        background: 'var(--accent)',
                         mixBlendMode: 'multiply',
                         pointerEvents: 'none',
                     }}
@@ -393,7 +412,7 @@ export default function Hero() {
                         <div className="overflow-hidden py-1 px-4 -my-1">
                             <span className="inline-block overflow-hidden pb-2">
                                 <span
-                                    ref={(el) => { if (el) wordRefs.current[0] = el; }}
+                                    ref={(el) => { if (el) wordRefs.current[4] = el; }}
                                     className="inline-block text-[var(--foreground)] tracking-tight uppercase"
                                     style={{
                                         fontFamily: '"Calistoga", serif',
@@ -410,7 +429,7 @@ export default function Hero() {
                         <div className="flex justify-center overflow-hidden py-1 px-4 -my-1">
                             <span className="inline-block overflow-hidden mr-[0.5em] pb-2">
                                 <span
-                                    ref={(el) => { if (el) wordRefs.current[1] = el; }}
+                                    ref={(el) => { if (el) wordRefs.current[5] = el; }}
                                     className="inline-block text-[var(--foreground)] tracking-tight uppercase"
                                     style={{
                                         fontFamily: '"Calistoga", serif',
@@ -425,7 +444,7 @@ export default function Hero() {
                             </span>
                             <span className="inline-block overflow-hidden pb-2">
                                 <span
-                                    ref={(el) => { if (el) wordRefs.current[2] = el; }}
+                                    ref={(el) => { if (el) wordRefs.current[6] = el; }}
                                     className="inline-block text-[var(--accent)] tracking-tight uppercase"
                                     style={{
                                         fontFamily: '"Calistoga", serif',
@@ -442,7 +461,7 @@ export default function Hero() {
                         <div className="overflow-hidden py-1 px-4 -my-1">
                             <span className="inline-block overflow-hidden pb-2">
                                 <span
-                                    ref={(el) => { if (el) wordRefs.current[3] = el; }}
+                                    ref={(el) => { if (el) wordRefs.current[7] = el; }}
                                     className="inline-block text-[var(--accent)] tracking-tight uppercase"
                                     style={{
                                         fontFamily: '"Calistoga", serif',
