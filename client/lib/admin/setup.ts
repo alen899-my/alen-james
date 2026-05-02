@@ -10,6 +10,7 @@ import { createPeopleTable } from '@/lib/admin/models/people.model';
 import { createTravelsTable } from '@/lib/admin/models/travels.model';
 import { createRegretsTable } from '@/lib/admin/models/regrets.model';
 import { createExperiencesTable } from '@/lib/admin/models/experiences.model';
+import { createMediaGalleryTable } from '@/lib/admin/models/media.model';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -32,6 +33,7 @@ export async function setupAdminDatabase(): Promise<void> {
     await createTravelsTable();
     await createRegretsTable();
     await createExperiencesTable();
+    await createMediaGalleryTable();
     await seedDefaultAdmin();
     await seedDefaultSettings();
     console.log('✅ Admin database initialized');
