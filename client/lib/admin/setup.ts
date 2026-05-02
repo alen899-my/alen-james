@@ -6,6 +6,7 @@ import { createSkillsTable } from '@/lib/admin/models/skills.model';
 import { createDiariesTable } from '@/lib/admin/models/diaries.model';
 import { createBlogsTable } from '@/lib/admin/models/blogs.model';
 import { createSocialLinksTable } from '@/lib/admin/models/social_links.model';
+import { createPeopleTable } from '@/lib/admin/models/people.model';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -24,6 +25,7 @@ export async function setupAdminDatabase(): Promise<void> {
     await createDiariesTable();
     await createBlogsTable();
     await createSocialLinksTable();
+    await createPeopleTable();
     await seedDefaultAdmin();
     await seedDefaultSettings();
     console.log('✅ Admin database initialized');
