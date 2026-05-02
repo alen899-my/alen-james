@@ -107,23 +107,6 @@ export default function Hero() {
                     gsap.set(bgRef.current, { scale: 1.15 - p * 0.15, opacity: p });
                     gsap.set(bgOverlayRef.current, { opacity: p * 0.75 });
 
-                    // 1. Cinematic 3D Fallback Effect for Text
-                    words.forEach((word, i) => {
-                        if (!word) return;
-                        
-                        // Stagger the fade based on the word index (0-3 for desktop, 4-7 for mobile)
-                        const staggerP = Math.min(1, p * (1 + (i % 4) * 0.15)); 
-                        
-                        gsap.set(word, { 
-                            y: -staggerP * 250,        // Float upwards
-                            z: -staggerP * 800,        // Push deep into the background
-                            rotationX: staggerP * 80,  // Lean backwards dramatically
-                            opacity: 1 - staggerP,     // Fade out
-                            filter: `blur(${staggerP * 12}px)`, // Cinematic blur
-                            transformOrigin: "bottom center"    // Hinge from the bottom
-                        });
-                    });
-
                     // 2. Bike goes out of screen (accelerates right)
                     if (bikeRef.current) {
                         const endX = document.body.clientWidth - 24;
