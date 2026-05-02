@@ -96,6 +96,9 @@ export default function Hero() {
 
             const aboutSection = document.getElementById('about');
 
+            // Flag: once the bike exits the screen it should never reappear on scroll
+            let bikeExited = false;
+
             ScrollTrigger.create({
                 trigger: aboutSection || document.body,
                 start: aboutSection ? 'top bottom' : 'top top',
@@ -107,11 +110,13 @@ export default function Hero() {
                     gsap.set(bgRef.current, { scale: 1.15 - p * 0.15, opacity: p });
                     gsap.set(bgOverlayRef.current, { opacity: p * 0.75 });
 
-                    // 2. Bike goes out of screen (accelerates right)
-                    if (bikeRef.current) {
-                        const endX = document.body.clientWidth - 24;
+                    // Only reposition bike while it hasn't exited yet
+                    if (!bikeExited && bikeRef.current) {
+                        const vw = window.innerWidth;
+                        const bikeW = bikeRef.current.offsetWidth;
+                        const endX = vw - bikeW - 16;
                         gsap.set(bikeRef.current, { 
-                            x: endX + p * 1500, // aggressive blast off to the right
+                            x: endX + p * 1500,
                             opacity: Math.max(0, 1 - p * 1.5)
                         });
                     }
@@ -164,27 +169,24 @@ export default function Hero() {
 
             startRushingSmoke();
 
-            // ─── BIKE PHYSICS ────────────────────────────────────────────────
+            // ─── BIKE RIDE-THROUGH ────────────────────────────────────────────
             if (bikeRef.current && bikeImgRef.current) {
                 const bike = bikeRef.current;
                 const bikeImg = bikeImgRef.current;
-                const endX = document.body.clientWidth - 24;
+                const vw = window.innerWidth;
 
                 const bikeTl = gsap.timeline({ delay: 0.2 });
 
-                // ── Phase 1: LAUNCH — wheelie-like tilt on hard acceleration
-
-                // ── Phase 1: LAUNCH — wheelie-like tilt on hard acceleration
+                // ── Phase 1: LAUNCH — blasts in from left with wheelie tilt
                 bikeTl.fromTo(bike,
                     { x: -300 },
                     {
-                        x: endX * 0.15,
+                        x: vw * 0.15,
                         duration: 0.5,
                         ease: "expo.out",
                     }
                 );
 
-                // Simultaneous launch lean — nose up like hard throttle
                 bikeTl.fromTo(bikeImg,
                     { rotate: 0, transformOrigin: "80% 100%" },
                     {
@@ -195,124 +197,55 @@ export default function Hero() {
                     "<"
                 );
 
-                // ── Phase 2: CRUISE — main travel, nose comes down, body bobs
+                // ── Phase 2: CRUISE — rides across with bumps & wobble
                 bikeTl.to(bike, {
-                    x: endX * 0.88,
-                    duration: 2.6,
+                    x: vw * 0.7,
+                    duration: 2.2,
                     ease: "power1.inOut",
                 });
 
-                // Nose settles back + slight forward lean during cruise
                 bikeTl.to(bikeImg, {
                     rotate: 4,
                     duration: 0.5,
                     ease: "elastic.out(1, 0.5)",
                 }, "<");
 
-                // Road bump bounce — vertical oscillation during cruise
                 bikeTl.to(bikeImg, {
                     y: -6,
                     duration: 0.18,
                     ease: "power2.out",
                     yoyo: true,
-                    repeat: 7,
+                    repeat: 6,
                 }, "<0.2");
 
-                // Random micro-wobble on handlebar (rotate oscillation)
                 bikeTl.to(bikeImg, {
                     skewX: 1.5,
                     duration: 0.12,
                     ease: "none",
                     yoyo: true,
-                    repeat: 13,
+                    repeat: 10,
                 }, "<");
 
-                // ── Phase 3: POTHOLE — one big dramatic bump mid-journey
+                // ── Phase 3: BLAST OFF — accelerates and exits right edge
                 bikeTl.to(bikeImg, {
-                    y: -22,
                     rotate: -8,
-                    duration: 0.15,
-                    ease: "power4.out",
-                }, "<1.0");
-
-                bikeTl.to(bikeImg, {
-                    y: 4,
-                    rotate: 6,
-                    duration: 0.22,
-                    ease: "bounce.out",
-                }, ">");
-
-                bikeTl.to(bikeImg, {
-                    y: 0,
-                    rotate: 4,
-                    skewX: 0,
-                    duration: 0.3,
-                    ease: "elastic.out(1, 0.4)",
-                }, ">");
-
-                // ── Phase 4: BRAKING SKID — overshoot + snap back (funny)
-                bikeTl.to(bike, {
-                    x: endX + 55, // overshoot past stop point
-                    duration: 0.35,
-                    ease: "power2.in",
-                });
-
-                // Front dips hard on braking
-                bikeTl.to(bikeImg, {
-                    rotate: -12,
-                    y: -8,
-                    duration: 0.25,
+                    y: -4,
+                    duration: 0.2,
                     ease: "power3.out",
-                }, "<");
+                });
 
-                // Snap back to stop
                 bikeTl.to(bike, {
-                    x: endX,
-                    duration: 0.5,
-                    ease: "elastic.out(1.2, 0.5)",
-                });
-
-                // Bike rocks after stop like it's settling
-                bikeTl.to(bikeImg, {
-                    rotate: 3,
-                    y: 0,
-                    duration: 0.35,
-                    ease: "elastic.out(1, 0.4)",
-                }, "<");
-
-                // ── Phase 5: PARKED IDLE WOBBLE — tiny sway like engine rumble
-                bikeTl.to(bikeImg, {
-                    rotate: -2,
-                    duration: 0.4,
-                    ease: "sine.inOut",
-                    yoyo: true,
-                    repeat: 3,
-                }, ">");
-
-                bikeTl.to(bikeImg, {
-                    rotate: 0,
-                    skewX: 0,
-                    y: 0,
-                    duration: 0.3,
-                    ease: "power2.out",
-                }, ">");
-
-                // Switch to idle smoke after bike stops
-                bikeTl.call(() => {
-                    smokeTweens.forEach(t => t.kill());
-                    startIdlingSmoke();
-                });
-
-                // ── Continuous engine micro-vibration after parking (Aggressive Shaking)
-                bikeTl.to(bikeImg, {
-                    y: -2,
-                    x: 0.5,
-                    rotate: 0.5,
-                    duration: 0.05,
-                    ease: "none",
-                    yoyo: true,
-                    repeat: -1,
-                }, ">");
+                    x: vw + 400,
+                    duration: 0.6,
+                    ease: "power3.in",
+                    onComplete: () => {
+                        // Mark as exited — scroll up/down will never bring it back
+                        bikeExited = true;
+                        if (bikeRef.current) {
+                            gsap.set(bikeRef.current, { display: 'none' });
+                        }
+                    }
+                }, "<0.1");
             }
 
         }, containerRef);

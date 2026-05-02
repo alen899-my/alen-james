@@ -25,7 +25,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
     >
-      <body>
+      <body style={{ overflowX: 'hidden' }}>
         <ThemeProvider>
           <Preloader />
           <Navbar />

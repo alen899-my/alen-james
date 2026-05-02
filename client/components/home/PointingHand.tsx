@@ -14,8 +14,9 @@ export default function PointingHand() {
         // "end start" = 1 (when bottom of element hits top of screen)
     });
 
-    // 1. Move from the right (5rem) into place (0), hold, then slightly drift away
-    const x = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], ["5rem", "0rem", "0rem", "-2rem"]);
+    // 1. Move from the right edge into place (0), hold, then slightly drift away
+    // "0rem" as start keeps the element within the viewport on mobile (no overflow)
+    const x = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], ["0rem", "0rem", "0rem", "-2rem"]);
     
     // 2. Rotate from 30deg to 0deg pointing straight at the text
     const rotateZ = useTransform(scrollYProgress, [0, 0.2], [30, 0]);
