@@ -2,9 +2,9 @@
 
 import { useActionState } from 'react';
 import { createAdminAction } from '@/lib/admin/actions/admins.actions';
-import AdminCard from '@/components/admin/AdminCard';
-import AdminButton from '@/components/admin/AdminButton';
-import { AdminInput, AdminSelect } from '@/components/admin/AdminFields';
+import AdminCard from '@/components/admin/common/AdminCard';
+import AdminButton from '@/components/admin/common/AdminButton';
+import { AdminInput, AdminSelect } from '@/components/admin/common/AdminFields';
 import { UserPlus } from 'lucide-react';
 
 export default function CreateAdminForm() {

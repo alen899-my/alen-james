@@ -176,3 +176,21 @@
     font-weight: 400;
     font-style: normal;
 }
+
+/* ─────────────────────────────────────────────
+   Admin Panel Theme — Cream · Black · Ocean Blue
+   ───────────────────────────────────────────── */
+:root {
+    --admin-bg:            #faf7f0;        /* warm cream page background */
+    --admin-sidebar-bg:    #0d1117;        /* near-black sidebar */
+    --admin-sidebar-hover: #161b22;        /* slightly lighter on hover */
+    --admin-sidebar-border:#1f2937;        /* subtle border */
+    --admin-ocean:         #1084a2;        /* ocean blue accent */
+    --admin-ocean-light:   #1a9bbf;        /* lighter ocean for glow */
+    --admin-ocean-muted:   rgba(16,132,162,0.12); /* transparent tint */
+    --admin-text-primary:  #f0ede6;        /* cream white text */
+    --admin-text-muted:    #8b9aaa;        /* muted blue-grey */
+    --admin-text-dark:     #1a1a1a;        /* dark text for main area */
+    --admin-card-bg:       #ffffff;        /* card background */
+    --admin-card-border:   #e8e2d5;        /* cream border */
+}

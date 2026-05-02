@@ -2,9 +2,9 @@
 
 import { useActionState } from 'react';
 import { updateProfileAction, changePasswordAction } from '@/lib/admin/actions/auth.actions';
-import AdminCard from '@/components/admin/AdminCard';
-import AdminButton from '@/components/admin/AdminButton';
-import { AdminInput } from '@/components/admin/AdminFields';
+import AdminCard from '@/components/admin/common/AdminCard';
+import AdminButton from '@/components/admin/common/AdminButton';
+import { AdminInput } from '@/components/admin/common/AdminFields';
 import { Save, Lock } from 'lucide-react';
 import type { AdminSessionPayload } from '@/lib/auth';
 

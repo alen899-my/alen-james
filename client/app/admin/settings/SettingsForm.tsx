@@ -2,9 +2,9 @@
 
 import { useActionState } from 'react';
 import { updateSettingsAction } from '@/lib/admin/actions/settings.actions';
-import AdminCard from '@/components/admin/AdminCard';
-import AdminButton from '@/components/admin/AdminButton';
-import { AdminInput, AdminTextarea, AdminSelect, AdminColorField } from '@/components/admin/AdminFields';
+import AdminCard from '@/components/admin/common/AdminCard';
+import AdminButton from '@/components/admin/common/AdminButton';
+import { AdminInput, AdminTextarea, AdminSelect, AdminColorField } from '@/components/admin/common/AdminFields';
 import { Save } from 'lucide-react';
 import type { SiteSettings } from '@/lib/admin/models/settings.model';
 
