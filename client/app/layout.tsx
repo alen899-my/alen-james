@@ -12,6 +12,8 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
+import Preloader from "@/components/ui/Preloader";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,6 +27,7 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
+          <Preloader />
           <Navbar />
           {children}
         </ThemeProvider>
