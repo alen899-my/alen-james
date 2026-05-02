@@ -1,6 +1,8 @@
 import { createAdminTable, seedDefaultAdmin } from '@/lib/admin/models/admin.model';
 import { createSiteSettingsTable, seedDefaultSettings } from '@/lib/admin/models/settings.model';
 import { createWorksTable } from '@/lib/admin/models/works.model';
+import { createEducationTable } from '@/lib/admin/models/education.model';
+import { createSkillsTable } from '@/lib/admin/models/skills.model';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -14,6 +16,8 @@ export async function setupAdminDatabase(): Promise<void> {
     await createAdminTable();
     await createSiteSettingsTable();
     await createWorksTable();
+    await createEducationTable();
+    await createSkillsTable();
     await seedDefaultAdmin();
     await seedDefaultSettings();
     console.log('✅ Admin database initialized');
