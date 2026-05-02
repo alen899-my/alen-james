@@ -1,9 +1,11 @@
 import Hero from "@/components/home/Hero";
+import PointingHand from "@/components/home/PointingHand";
+import TornPaperEdge from "@/components/home/TornPaperEdge";
 
 export default function Page() {
     return (
-        <main className="flex flex-col relative" style={{ background: '#fdf8e1' }}>
-            <div className="sticky top-0 h-screen z-0">
+        <main className="flex flex-col relative w-full" style={{ background: '#fdf8e1' }}>
+            <div className="sticky top-0 w-full h-screen z-0">
                 <Hero />
             </div>
             {/* 
@@ -16,21 +18,17 @@ export default function Page() {
             */}
             <section 
                 id="about" 
-                className="relative z-10 min-h-screen pt-32 pb-24 px-6 md:px-14 flex flex-col items-center text-center"
+                className="relative z-10 w-full min-h-screen pt-32 pb-24 px-6 md:px-14 flex flex-col items-center text-center"
                 style={{ 
-                    background: '#fdf8e1', /* Warm cream paper color */
-                    color: '#1a1a1a',      /* Deep ink-like black */
+                    background: 'var(--background)', 
+                    color: 'var(--foreground)',
                 }}
             >
-                {/* ── OCEAN WAVE EDGE EFFECT ── */}
-                <div 
-                    className="absolute top-0 left-0 w-full h-16 md:h-24 -translate-y-[98%] pointer-events-none drop-shadow-[0_-10px_20px_rgba(0,0,0,0.15)]"
-                    style={{ zIndex: 11 }}
-                >
-                    <svg viewBox="0 0 1440 100" className="w-full h-full block" preserveAspectRatio="none">
-                        <path fill="var(--accent)" d="M0,50 C320,120 420,-20 740,50 C1060,120 1120,-20 1440,50 L1440,100 L0,100 Z" />
-                    </svg>
-                </div>
+                {/* ── TORN PAPER EDGE EFFECT ── */}
+                <TornPaperEdge />
+
+                {/* ── POINTING HAND ── */}
+                <PointingHand />
 
                 <div className="max-w-4xl mx-auto flex flex-col items-center gap-8">
                     {/* Centered Heading */}

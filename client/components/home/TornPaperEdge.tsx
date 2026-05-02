@@ -1,0 +1,22 @@
+import React from 'react';
+
+const TornPaperEdge = () => {
+    return (
+        <div className="absolute top-0 left-0 w-full h-12 md:h-16 -translate-y-[98%] pointer-events-none select-none" style={{ zIndex: 11 }}>
+            <svg 
+                viewBox="0 0 1440 60" 
+                className="w-full h-full block" 
+                preserveAspectRatio="none"
+                aria-hidden="true"
+            >
+                {/* Flat, subtle torn paper edge */}
+                <path 
+                    fill="var(--background)" 
+                    d="M0,60 L0,30 L15,31 L30,29 L45,32 L60,30 L75,28 L90,31 L105,29 L120,30 L135,32 L150,28 L165,30 L180,31 L195,29 L210,32 L225,30 L240,28 L255,31 L270,29 L285,30 L300,32 L315,28 L330,30 L345,31 L360,29 L375,32 L390,30 L405,28 L420,31 L435,29 L450,30 L465,32 L480,28 L495,30 L510,31 L525,29 L540,32 L555,30 L570,28 L585,31 L600,29 L615,30 L630,32 L645,28 L660,30 L675,31 L690,29 L705,32 L720,30 L735,28 L750,31 L765,29 L780,30 L795,32 L810,28 L825,30 L840,31 L855,29 L870,32 L885,30 L900,28 L915,31 L930,29 L945,30 L960,32 L975,28 L990,30 L1005,31 L1020,29 L1035,32 L1050,30 L1065,28 L1080,31 L1095,29 L1110,30 L1125,32 L1140,28 L1155,30 L1170,31 L1185,29 L1200,32 L1215,30 L1230,28 L1245,31 L1260,29 L1275,30 L1290,32 L1305,28 L1320,30 L1335,31 L1350,29 L1365,32 L1380,30 L1395,28 L1410,31 L1425,29 L1440,30 L1440,60 Z" 
+                />
+            </svg>
+        </div>
+    );
+};
+
+export default TornPaperEdge;

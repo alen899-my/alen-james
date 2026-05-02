@@ -325,7 +325,7 @@ export default function Hero() {
     return (
         <section
             ref={containerRef}
-            className="min-h-screen flex items-center justify-center md:justify-start px-6 md:px-14 relative overflow-x-hidden"
+            className="min-h-screen w-full flex items-center justify-center md:justify-start px-6 md:px-14 relative overflow-x-hidden"
             style={{ perspective: '800px' }}
         >
 
@@ -333,7 +333,7 @@ export default function Hero() {
             <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0 }}>
                 <div
                     ref={bgRef}
-                    className="absolute inset-0 bg-no-repeat bg-center bg-cover md:bg-[length:contain] md:bg-[size:60%_auto]"
+                    className="absolute inset-0 bg-no-repeat bg-center bg-cover lg:bg-[size:60%_auto]"
                     style={{
                         backgroundImage: 'url("/scrollimage3.png")',
                         willChange: 'transform, opacity',
