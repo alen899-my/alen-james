@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, LogOut, Globe,
-  ChevronRight, X, Briefcase, BookOpen, Wrench, Notebook
+  ChevronRight, X, Briefcase, BookOpen, Wrench, Notebook, FileText
 } from 'lucide-react';
 import { logoutAction } from '@/lib/admin/actions/auth.actions';
 import { useEffect } from 'react';
@@ -15,6 +15,7 @@ const NAV = [
   { href: '/admin/education', label: 'Education', icon: BookOpen, exact: false },
   { href: '/admin/skills', label: 'Skills', icon: Wrench, exact: false },
   { href: '/admin/diaries', label: 'My Diary', icon: Notebook, exact: false },
+  { href: '/admin/blogs', label: 'Blogs', icon: FileText, exact: false },
 ];
 
 interface AdminSidebarProps {
