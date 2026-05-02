@@ -114,7 +114,7 @@ export default function SocialsManager({ initialSocials }: SocialsManagerProps) 
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       
       {/* ── LEFT: FORM ── */}
-      <div className="lg:col-span-4 sticky top-6">
+      <div className="lg:col-span-4 lg:sticky lg:top-6">
         <div className="bg-white rounded-2xl border border-[#e8e2d5] shadow-sm overflow-hidden">
           <div className="flex items-center gap-3 px-6 py-4 border-b border-[#f0ebe0]" style={{ background: 'linear-gradient(to bottom, #fdf9f2, #f7f2e8)' }}>
             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #1084a2, #1a9bbf)' }}>

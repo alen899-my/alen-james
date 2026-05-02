@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, LogOut, Globe,
-  ChevronRight, X, Briefcase, BookOpen, Wrench, Notebook, FileText, Share2, Users
+  ChevronRight, X, Briefcase, BookOpen, Wrench, Notebook, FileText, Share2, Users, MapPin, Archive, Building
 } from 'lucide-react';
 import { logoutAction } from '@/lib/admin/actions/auth.actions';
 import { useEffect } from 'react';
@@ -12,12 +12,15 @@ import { useEffect } from 'react';
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/works', label: 'Works', icon: Briefcase, exact: false },
+  { href: '/admin/experiences', label: 'Experiences', icon: Building, exact: false },
   { href: '/admin/education', label: 'Education', icon: BookOpen, exact: false },
   { href: '/admin/skills', label: 'Skills', icon: Wrench, exact: false },
   { href: '/admin/diaries', label: 'My Diary', icon: Notebook, exact: false },
   { href: '/admin/blogs', label: 'Blogs', icon: FileText, exact: false },
   { href: '/admin/socials', label: 'Social Media', icon: Share2, exact: false },
   { href: '/admin/people', label: 'People', icon: Users, exact: false },
+  { href: '/admin/travels', label: 'Travel Log', icon: MapPin, exact: false },
+  { href: '/admin/regrets', label: 'Regrets', icon: Archive, exact: false },
 ];
 
 interface AdminSidebarProps {

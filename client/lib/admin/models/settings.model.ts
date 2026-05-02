@@ -23,6 +23,8 @@ export interface SiteSettings {
   maintenance_message: string | null;
   diary_global_password: string | null;
   people_global_password: string | null;
+  travel_global_password: string | null;
+  regret_global_password: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -54,6 +56,8 @@ export async function createSiteSettingsTable(): Promise<void> {
       maintenance_message TEXT          DEFAULT 'We''ll be back soon!',
       diary_global_password VARCHAR(255),
       people_global_password VARCHAR(255),
+      travel_global_password VARCHAR(255),
+      regret_global_password VARCHAR(255),
       created_at          TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
       updated_at          TIMESTAMPTZ   NOT NULL DEFAULT NOW()
     );

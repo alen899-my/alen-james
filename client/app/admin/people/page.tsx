@@ -94,17 +94,17 @@ export default async function PeoplePage() {
 
   return (
     <div>
-      <div className="px-8 pt-7 pb-5 border-b border-[#e8e2d5] flex items-center justify-between">
+      <div className="px-4 sm:px-8 py-5 sm:py-7 border-b border-[#e8e2d5] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
           <h1 className="text-xl font-bold text-[#1a1a1a]">People</h1>
           <p className="text-sm text-[#8b9aaa] mt-0.5">Manage profiles of friends, family, and colleagues</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
           <GlobalPeoplePasswordForm initialPassword={settings?.people_global_password || null} />
-          <div className="w-px h-8 bg-[#e8e2d5]"></div>
+          <div className="hidden sm:block w-px h-8 bg-[#e8e2d5]"></div>
           <Link
             href="/admin/people/new"
-            className="flex items-center gap-2 px-4 py-2 bg-[#1084a2] text-white rounded-xl text-sm font-medium hover:bg-[#1a9bbf] transition-colors shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-[#1084a2] text-white rounded-xl text-sm font-medium hover:bg-[#1a9bbf] transition-colors shadow-sm w-full sm:w-auto justify-center"
           >
             <Plus size={16} />
             Add Person

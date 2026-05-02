@@ -1,33 +1,35 @@
-import { getAllDiaries, Diary } from '@/lib/admin/models/diaries.model';
+import { getAllRegrets, Regret } from '@/lib/admin/models/regrets.model';
 import { getSettings } from '@/lib/admin/models/settings.model';
 import Link from 'next/link';
-import { Notebook, Plus, Pencil, Eye, Lock, Globe } from 'lucide-react';
-import DeleteDiaryButton from './delete-diary-button';
+import { Archive, Plus, Pencil, Eye, Lock, Globe, Image as ImageIcon } from 'lucide-react';
+import DeleteRegretButton from './delete-regret-button';
 import AdminTable from '@/components/admin/common/AdminTable';
-import GlobalPasswordForm from '@/components/admin/diaries/GlobalPasswordForm';
+import GlobalRegretPasswordForm from '@/components/admin/regrets/GlobalRegretPasswordForm';
 
-export const metadata = { title: 'My Diary — Admin' };
+export const metadata = { title: 'Regrets — Admin' };
 
-export default async function DiariesPage() {
-  const diaries = await getAllDiaries();
+export default async function RegretsPage() {
+  const regrets = await getAllRegrets();
   const settings = await getSettings();
 
   const columns = [
     {
-      header: 'Entry Title',
+      header: 'Entry',
       key: 'title',
-      render: (diary: Diary) => (
+      render: (regret: Regret) => (
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-[#faf7f0] border border-[#e8e2d5] flex items-center justify-center text-[#aab4be]">
-            <Notebook size={18} />
-          </div>
+          {regret.images && regret.images.length > 0 ? (
+            <img src={regret.images[0]} alt={regret.title} className="w-12 h-12 rounded-lg object-cover border border-[#e8e2d5]" />
+          ) : (
+            <div className="w-12 h-12 rounded-lg bg-[#faf7f0] border border-[#e8e2d5] flex items-center justify-center text-[#aab4be]">
+              <Archive size={20} />
+            </div>
+          )}
           <div>
-            <p className="font-medium text-[#1a1a1a]">{diary.title}</p>
-            <p className="text-xs text-[#8b9aaa] mt-0.5">
-              {diary.incident_date 
-                ? new Date(diary.incident_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) 
-                : 'No Date'}
-            </p>
+            <p className="font-medium text-[#1a1a1a] max-w-[300px] truncate">{regret.title}</p>
+            {regret.date && (
+              <p className="text-xs text-[#8b9aaa] mt-0.5">{regret.date}</p>
+            )}
           </div>
         </div>
       )
@@ -35,9 +37,9 @@ export default async function DiariesPage() {
     {
       header: 'Visibility',
       key: 'is_public',
-      render: (diary: Diary) => (
+      render: (regret: Regret) => (
         <div className="flex items-center gap-1.5">
-          {diary.is_public ? (
+          {regret.is_public ? (
             <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-green-50 text-green-600 text-xs font-semibold border border-green-100">
               <Globe size={12} /> Public
             </span>
@@ -46,7 +48,7 @@ export default async function DiariesPage() {
               <Lock size={12} /> Private
             </span>
           )}
-          {diary.password && (
+          {regret.password && (
             <span title="Password Protected" className="text-[#1084a2]">
               <Lock size={14} />
             </span>
@@ -55,31 +57,36 @@ export default async function DiariesPage() {
       )
     },
     {
-      header: 'Images',
-      key: 'images',
-      render: (diary: Diary) => <span className="text-sm text-[#3d4852]">{diary.images.length} Attached</span>
+      header: 'Media',
+      key: 'media',
+      render: (regret: Regret) => (
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm text-[#3d4852]">{regret.images.length} Images</span>
+          <span className="text-xs text-[#8b9aaa]">{regret.videos.length} Videos</span>
+        </div>
+      )
     },
     {
       header: 'Actions',
       key: 'actions',
       className: 'text-right',
-      render: (diary: Diary) => (
+      render: (regret: Regret) => (
         <div className="flex items-center justify-end gap-2">
           <Link
-            href={`/admin/diaries/${diary.id}/view`}
+            href={`/admin/regrets/${regret.id}/view`}
             className="p-2 text-[#8b9aaa] hover:text-[#1084a2] hover:bg-[#1084a2]/10 rounded-lg transition-colors"
             title="View"
           >
             <Eye size={16} />
           </Link>
           <Link
-            href={`/admin/diaries/${diary.id}`}
+            href={`/admin/regrets/${regret.id}`}
             className="p-2 text-[#8b9aaa] hover:text-[#1084a2] hover:bg-[#1084a2]/10 rounded-lg transition-colors"
             title="Edit"
           >
             <Pencil size={16} />
           </Link>
-          <DeleteDiaryButton id={diary.id} title={diary.title} />
+          <DeleteRegretButton id={regret.id} title={regret.title} />
         </div>
       )
     }
@@ -89,18 +96,18 @@ export default async function DiariesPage() {
     <div>
       <div className="px-4 sm:px-8 py-5 sm:py-7 border-b border-[#e8e2d5] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-          <h1 className="text-xl font-bold text-[#1a1a1a]">My Diary</h1>
-          <p className="text-sm text-[#8b9aaa] mt-0.5">Manage your personal stories and incidents</p>
+          <h1 className="text-xl font-bold text-[#1a1a1a]">Regrets</h1>
+          <p className="text-sm text-[#8b9aaa] mt-0.5">Document incidents, missed opportunities, and learnings</p>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-          <GlobalPasswordForm initialPassword={settings?.diary_global_password || null} />
+          <GlobalRegretPasswordForm initialPassword={settings?.regret_global_password || null} />
           <div className="hidden sm:block w-px h-8 bg-[#e8e2d5]"></div>
           <Link
-            href="/admin/diaries/new"
+            href="/admin/regrets/new"
             className="flex items-center gap-2 px-4 py-2 bg-[#1084a2] text-white rounded-xl text-sm font-medium hover:bg-[#1a9bbf] transition-colors shadow-sm w-full sm:w-auto justify-center"
           >
             <Plus size={16} />
-            Write Entry
+            Add Entry
           </Link>
         </div>
       </div>
@@ -108,10 +115,10 @@ export default async function DiariesPage() {
       <div className="p-8">
         <AdminTable 
           columns={columns} 
-          data={diaries} 
+          data={regrets} 
           keyField="id" 
-          emptyMessage="You haven't written any diary entries yet."
-          emptyIcon={<Notebook size={40} />}
+          emptyMessage="You haven't added any regrets yet."
+          emptyIcon={<Archive size={40} />}
         />
       </div>
     </div>
