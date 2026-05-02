@@ -55,11 +55,21 @@
    · soft seafoam muted · #1084a2 ocean accent
    ───────────────────────────────────────────── */
 :root {
-    --background: oklch(0.975 0.008 210);
-    --foreground: oklch(0.16 0.025 220);
+    /* ✦ ACTUAL PAGE COLORS — match the screenshot */
+    --page-bg: #fdf8e1;
+    --page-text: #2d2a21;
+    /* Warm deep brown */
+ 
+    /* Actual orange from screenshot */
+
+    /* ───────────────────────────────
+       Normal shadcn tokens (mapped)
+       ─────────────────────────────── */
+    --background: var(--page-bg);
+    --foreground: var(--page-text);
 
     --card: oklch(0.965 0.012 205);
-    --card-foreground: oklch(0.16 0.025 220);
+    --card-foreground: var(--page-text);
 
     --popover: oklch(0.965 0.012 205);
     --popover-foreground: oklch(0.16 0.025 220);

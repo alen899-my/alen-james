@@ -2,7 +2,7 @@ import Hero from "@/components/home/Hero";
 
 export default function Page() {
     return (
-        <main className="flex flex-col bg-[var(--background)] relative">
+        <main className="flex flex-col relative" style={{ background: '#fdf8e1' }}>
             <div className="sticky top-0 h-screen z-0">
                 <Hero />
             </div>
@@ -16,7 +16,11 @@ export default function Page() {
             */}
             <section 
                 id="about" 
-                className="relative z-10 min-h-screen pt-32 pb-24 px-6 md:px-14 flex flex-col items-center text-center bg-[var(--accent)] text-[var(--accent-foreground)]"
+                className="relative z-10 min-h-screen pt-32 pb-24 px-6 md:px-14 flex flex-col items-center text-center"
+                style={{ 
+                    background: '#fdf8e1', /* Warm cream paper color */
+                    color: '#1a1a1a',      /* Deep ink-like black */
+                }}
             >
                 {/* ── OCEAN WAVE EDGE EFFECT ── */}
                 <div 
@@ -39,7 +43,7 @@ export default function Page() {
 
                     {/* Centered Intro Paragraph */}
                     <p className="text-2xl md:text-3xl font-bold max-w-3xl leading-tight">
-                        Hi, I'm Alen – a friendly chap, designer, developer, and analyst who loves solving real problems.
+                        Hi, I'm Alen – a friendly chap, designer, AI Specialist,Developer and analyst who loves solving real problems.
                     </p>
 
                     {/* Centered Body Text */}
@@ -56,7 +60,7 @@ export default function Page() {
                     </div>
 
                     {/* Simple minimalist divider */}
-                    <div className="w-12 h-1 bg-[var(--accent-foreground)] opacity-50 mt-4 rounded-full" />
+                    <div className="w-12 h-1 bg-[var(--accent)] mt-4 rounded-full" />
                 </div>
             </section>
 

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,6 +11,27 @@ const WORD_DELAY = 1.2;
 
 export default function Hero() {
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // ── Framer Motion Scroll Hooks ──
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end start"]
+    });
+    
+    // Controlled, smooth fade out tied exactly to the scroll progress as the 'About' section comes up.
+    // Staggering the fade out so they disappear smoothly.
+    const w1Opacity = useTransform(scrollYProgress, [0, 0.3, 0.6], [1, 1, 0]);
+    const w1Y = useTransform(scrollYProgress, [0, 0.6], [0, -80]);
+    
+    const w2Opacity = useTransform(scrollYProgress, [0, 0.4, 0.7], [1, 1, 0]);
+    const w2Y = useTransform(scrollYProgress, [0, 0.7], [0, -80]);
+    
+    const w3Opacity = useTransform(scrollYProgress, [0, 0.5, 0.8], [1, 1, 0]);
+    const w3Y = useTransform(scrollYProgress, [0, 0.8], [0, -80]);
+    
+    const w4Opacity = useTransform(scrollYProgress, [0, 0.6, 0.9], [1, 1, 0]);
+    const w4Y = useTransform(scrollYProgress, [0, 0.9], [0, -80]);
+
     const bgRef = useRef<HTMLDivElement>(null);
     const bgOverlayRef = useRef<HTMLDivElement>(null);
     const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -74,15 +96,6 @@ export default function Hero() {
 
             const aboutSection = document.getElementById('about');
 
-            // ── THANOS WASHOUT EFFECT DATA ──
-            // Pre-calculate chaotic directions for each word so it doesn't jitter during scroll
-            const washoutData = words.map(() => ({
-                x: (Math.random() - 0.5) * 800, // Scatter widely left/right
-                y: -200 - Math.random() * 400,  // Fly upwards like ash
-                rot: (Math.random() - 0.5) * 180, // Chaotic spin
-                scale: 0.1 + Math.random() * 0.3, // Shrink down to dust
-            }));
-
             ScrollTrigger.create({
                 trigger: aboutSection || document.body,
                 start: aboutSection ? 'top bottom' : 'top top',
@@ -94,21 +107,20 @@ export default function Hero() {
                     gsap.set(bgRef.current, { scale: 1.15 - p * 0.15, opacity: p });
                     gsap.set(bgOverlayRef.current, { opacity: p * 0.75 });
 
-                    // 1. Thanos Washout Effect for Text
+                    // 1. Cinematic 3D Fallback Effect for Text
                     words.forEach((word, i) => {
                         if (!word) return;
-                        const data = washoutData[i];
-                        // The effect now stretches across the entire scroll duration
-                        const textP = p; 
+                        
+                        // Stagger the fade based on the word index (0-3 for desktop, 4-7 for mobile)
+                        const staggerP = Math.min(1, p * (1 + (i % 4) * 0.15)); 
                         
                         gsap.set(word, { 
-                            x: data.x * textP,
-                            y: data.y * textP,
-                            rotation: data.rot * textP,
-                            scale: 1 - textP * (1 - data.scale), 
-                            opacity: 1 - textP,
-                            filter: `blur(${textP * 15}px)`,
-                            transformOrigin: "center center"
+                            y: -staggerP * 250,        // Float upwards
+                            z: -staggerP * 800,        // Push deep into the background
+                            rotationX: staggerP * 80,  // Lean backwards dramatically
+                            opacity: 1 - staggerP,     // Fade out
+                            filter: `blur(${staggerP * 12}px)`, // Cinematic blur
+                            transformOrigin: "bottom center"    // Hinge from the bottom
                         });
                     });
 
@@ -369,7 +381,11 @@ export default function Hero() {
                     <div className="hidden md:flex flex-col items-center gap-0">
                         <div className="flex flex-wrap justify-center overflow-hidden py-2 px-4 -my-2">
                             {["SomeBody", "who"].map((word, i) => (
-                                <span key={i} className="inline-block overflow-hidden mr-[0.6em] last:mr-0 pb-2">
+                                <motion.span 
+                                    key={i} 
+                                    className="inline-block overflow-hidden mr-[0.6em] last:mr-0 pb-2"
+                                    style={{ opacity: i === 0 ? w1Opacity : w2Opacity, y: i === 0 ? w1Y : w2Y }}
+                                >
                                     <span
                                         ref={(el) => { wordRefs.current[i] = el; }}
                                         className="inline-block text-[var(--foreground)] tracking-tight uppercase"
@@ -383,12 +399,16 @@ export default function Hero() {
                                     >
                                         {word}
                                     </span>
-                                </span>
+                                </motion.span>
                             ))}
                         </div>
                         <div className="flex flex-wrap justify-center overflow-hidden py-2 px-4 -my-2">
                             {["can", "Build"].map((word, i) => (
-                                <span key={i} className="inline-block overflow-hidden mr-[0.6em] last:mr-0 pb-2">
+                                <motion.span 
+                                    key={i} 
+                                    className="inline-block overflow-hidden mr-[0.6em] last:mr-0 pb-2"
+                                    style={{ opacity: i === 0 ? w3Opacity : w4Opacity, y: i === 0 ? w3Y : w4Y }}
+                                >
                                     <span
                                         ref={(el) => { wordRefs.current[i + 2] = el; }}
                                         className="inline-block text-[var(--accent)] tracking-tight uppercase"
@@ -402,7 +422,7 @@ export default function Hero() {
                                     >
                                         {word}
                                     </span>
-                                </span>
+                                </motion.span>
                             ))}
                         </div>
                     </div>
@@ -410,7 +430,10 @@ export default function Hero() {
                     {/* Mobile Layout */}
                     <div className="flex md:hidden flex-col items-center gap-0">
                         <div className="overflow-hidden py-1 px-4 -my-1">
-                            <span className="inline-block overflow-hidden pb-2">
+                            <motion.span 
+                                className="inline-block overflow-hidden pb-2"
+                                style={{ opacity: w1Opacity, y: w1Y }}
+                            >
                                 <span
                                     ref={(el) => { if (el) wordRefs.current[4] = el; }}
                                     className="inline-block text-[var(--foreground)] tracking-tight uppercase"
@@ -424,10 +447,13 @@ export default function Hero() {
                                 >
                                     SomeBody
                                 </span>
-                            </span>
+                            </motion.span>
                         </div>
                         <div className="flex justify-center overflow-hidden py-1 px-4 -my-1">
-                            <span className="inline-block overflow-hidden mr-[0.5em] pb-2">
+                            <motion.span 
+                                className="inline-block overflow-hidden mr-[0.5em] pb-2"
+                                style={{ opacity: w2Opacity, y: w2Y }}
+                            >
                                 <span
                                     ref={(el) => { if (el) wordRefs.current[5] = el; }}
                                     className="inline-block text-[var(--foreground)] tracking-tight uppercase"
@@ -441,8 +467,11 @@ export default function Hero() {
                                 >
                                     who
                                 </span>
-                            </span>
-                            <span className="inline-block overflow-hidden pb-2">
+                            </motion.span>
+                            <motion.span 
+                                className="inline-block overflow-hidden pb-2"
+                                style={{ opacity: w3Opacity, y: w3Y }}
+                            >
                                 <span
                                     ref={(el) => { if (el) wordRefs.current[6] = el; }}
                                     className="inline-block text-[var(--accent)] tracking-tight uppercase"
@@ -456,10 +485,13 @@ export default function Hero() {
                                 >
                                     can
                                 </span>
-                            </span>
+                            </motion.span>
                         </div>
                         <div className="overflow-hidden py-1 px-4 -my-1">
-                            <span className="inline-block overflow-hidden pb-2">
+                            <motion.span 
+                                className="inline-block overflow-hidden pb-2"
+                                style={{ opacity: w4Opacity, y: w4Y }}
+                            >
                                 <span
                                     ref={(el) => { if (el) wordRefs.current[7] = el; }}
                                     className="inline-block text-[var(--accent)] tracking-tight uppercase"
@@ -473,7 +505,7 @@ export default function Hero() {
                                 >
                                     Build
                                 </span>
-                            </span>
+                            </motion.span>
                         </div>
                     </div>
                 </h1>
