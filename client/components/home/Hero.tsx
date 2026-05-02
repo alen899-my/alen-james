@@ -72,15 +72,35 @@ export default function Hero() {
                 }, "-=0.8");
             }
 
+            const aboutSection = document.getElementById('about');
+
             ScrollTrigger.create({
-                trigger: containerRef.current,
-                start: 'top top',
-                end: 'bottom top',
+                trigger: aboutSection || document.body,
+                start: aboutSection ? 'top bottom' : 'top top',
+                end: aboutSection ? 'top top' : '+=1000',
                 scrub: 1.4,
                 onUpdate(self) {
                     const p = self.progress;
+                    // Background scale/fade
                     gsap.set(bgRef.current, { scale: 1.15 - p * 0.15, opacity: p });
                     gsap.set(bgOverlayRef.current, { opacity: p * 0.75 });
+
+                    // 1. Text fades out fast as the "wave" comes in
+                    gsap.set(words, { 
+                        scale: 1 - p * 0.5, 
+                        opacity: Math.max(0, 1 - p * 2.5), // Fades out by 40% scroll
+                        z: -p * 100,
+                        y: -p * 150 // Float up slightly
+                    });
+
+                    // 2. Bike goes out of screen (accelerates right)
+                    if (bikeRef.current) {
+                        const endX = document.body.clientWidth - 24;
+                        gsap.set(bikeRef.current, { 
+                            x: endX + p * 1500, // aggressive blast off to the right
+                            opacity: Math.max(0, 1 - p * 1.5)
+                        });
+                    }
                 },
             });
 

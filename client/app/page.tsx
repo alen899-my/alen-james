@@ -3,14 +3,9 @@ import Hero from "@/components/home/Hero";
 export default function Page() {
     return (
         <main className="flex flex-col bg-[var(--background)] relative">
-            {/* 
-                Pinned Hero: stays in place while other sections slide over it.
-                This creates the "slowly put top" / overlay effect you described.
-            */}
             <div className="sticky top-0 h-screen z-0">
                 <Hero />
             </div>
-            
             {/* 
                 About Section: Slides UP over the Hero.
                 The shadow-[-20px] adds depth to the "sliding over" feel.
@@ -27,15 +22,15 @@ export default function Page() {
                     color: '#1a1a1a',      /* Deep ink-like black */
                 }}
             >
-                {/* ── TORN PAPER EDGE EFFECT ── */}
+                {/* ── OCEAN WAVE EDGE EFFECT ── */}
                 <div 
-                    className="absolute top-0 left-0 w-full h-16 -translate-y-[95%] pointer-events-none"
-                    style={{
-                        background: '#fdf8e1',
-                        clipPath: 'polygon(0% 100%, 5% 85%, 10% 95%, 15% 80%, 20% 90%, 25% 75%, 30% 88%, 35% 72%, 40% 92%, 45% 78%, 50% 95%, 55% 82%, 60% 90%, 65% 75%, 70% 88%, 75% 70%, 80% 92%, 85% 80%, 90% 95%, 95% 82%, 100% 100%)',
-                        zIndex: 11,
-                    }}
-                />
+                    className="absolute top-0 left-0 w-full h-16 md:h-24 -translate-y-[98%] pointer-events-none drop-shadow-[0_-10px_20px_rgba(0,0,0,0.15)]"
+                    style={{ zIndex: 11 }}
+                >
+                    <svg viewBox="0 0 1440 100" className="w-full h-full block" preserveAspectRatio="none">
+                        <path fill="#fdf8e1" d="M0,50 C320,120 420,-20 740,50 C1060,120 1120,-20 1440,50 L1440,100 L0,100 Z" />
+                    </svg>
+                </div>
 
                 <div className="max-w-4xl mx-auto flex flex-col items-center gap-8">
                     {/* Centered Heading */}
