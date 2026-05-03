@@ -66,7 +66,7 @@ export default function Hero() {
                 transformOrigin: "left top"
             });
 
-            gsap.set(bgRef.current, { scale: 1.15, opacity: 0 });
+            gsap.set(bgRef.current, { scale: 1, opacity: 0, y: 0 });
             gsap.set(bgOverlayRef.current, { opacity: 0 });
 
             if (bikeRef.current) {
@@ -74,6 +74,13 @@ export default function Hero() {
             }
 
             const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+
+            // Fade in background beautifully on load
+            tl.to(bgRef.current, {
+                opacity: 1,
+                duration: 2.5,
+                ease: "power2.out"
+            }, 0);
 
             tl.to(words, {
                 yPercent: 0,
@@ -106,9 +113,13 @@ export default function Hero() {
                 scrub: 1.4,
                 onUpdate(self) {
                     const p = self.progress;
-                    // Background scale/fade
-                    gsap.set(bgRef.current, { scale: 1.15 - p * 0.15, opacity: p });
-                    gsap.set(bgOverlayRef.current, { opacity: p * 0.75 });
+                    // Premium Parallax: slight scale up and translate down
+                    gsap.set(bgRef.current, { 
+                        scale: 1 + (p * 0.1),
+                        y: p * 150
+                    });
+                    // Fade in the bottom gradient overlay to blend into next section
+                    gsap.set(bgOverlayRef.current, { opacity: p });
 
                     // Only reposition bike while it hasn't exited yet
                     if (!bikeExited && bikeRef.current) {
@@ -263,22 +274,41 @@ export default function Hero() {
         >
 
             {/* BG layers */}
-            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0 }}>
+            <div className="absolute inset-0 overflow-hidden z-0 bg-[var(--background)]">
                 <div
                     ref={bgRef}
-                    className="absolute inset-0 bg-no-repeat bg-center bg-cover lg:bg-[size:60%_auto]"
+                    className="absolute inset-0 bg-no-repeat bg-center bg-cover"
                     style={{
                         backgroundImage: 'url("/scrollimage3.png")',
                         willChange: 'transform, opacity',
                     }}
                 />
+                
+                {/* Scroll-based fade overlay to blend into next section */}
                 <div
                     ref={bgOverlayRef}
+                    className="absolute inset-0"
                     style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'var(--accent)',
-                        mixBlendMode: 'multiply',
+                        background: 'linear-gradient(to bottom, transparent 0%, var(--background) 100%)',
+                        pointerEvents: 'none',
+                    }}
+                />
+                
+                {/* Premium Vignette ALWAYS visible */}
+                <div 
+                    className="absolute inset-0"
+                    style={{
+                        background: 'radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.2) 100%)',
+                        pointerEvents: 'none',
+                    }}
+                />
+                
+                {/* Grid Texture overlay ALWAYS visible */}
+                <div 
+                    className="absolute inset-0 opacity-[0.04]"
+                    style={{
+                        backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',
+                        backgroundSize: '32px 32px',
                         pointerEvents: 'none',
                     }}
                 />
