@@ -12,12 +12,16 @@ export interface Work {
   video_url: string | null;
   introduction: string | null;
   what_i_did: string | null;
+  key_features: string | null;
   tech_stacks: string[]; // JSONB array of strings
+
   year: string | null;
   category_id: number | null;
+  category_name?: string;
   created_at: string;
   updated_at: string;
 }
+
 
 export type WorkInput = Omit<Work, 'id' | 'created_at' | 'updated_at'>;
 
@@ -35,8 +39,10 @@ export async function createWorksTable(): Promise<void> {
       video_url TEXT,
       introduction TEXT,
       what_i_did TEXT,
+      key_features TEXT,
       tech_stacks JSONB DEFAULT '[]'::jsonb,
       year VARCHAR(20),
+
       category_id INTEGER REFERENCES work_categories(id) ON DELETE SET NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -73,8 +79,8 @@ export async function getWorkById(id: number): Promise<Work | null> {
 export async function createWork(data: WorkInput): Promise<Work> {
   const { rows } = await pool.query(
     `INSERT INTO works (
-      title, subtitle, description, main_image, screenshots, additional_videos, live_link, video_url, introduction, what_i_did, tech_stacks, year, category_id
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      title, subtitle, description, main_image, screenshots, additional_videos, live_link, video_url, introduction, what_i_did, key_features, tech_stacks, year, category_id
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
     RETURNING *`,
     [
       data.title,
@@ -87,11 +93,13 @@ export async function createWork(data: WorkInput): Promise<Work> {
       data.video_url,
       data.introduction,
       data.what_i_did,
+      data.key_features,
       JSON.stringify(data.tech_stacks || []),
       data.year,
       data.category_id
     ]
   );
+
   return rows[0] as Work;
 }
 

@@ -4,14 +4,18 @@ import TornPaperEdge from "@/components/home/TornPaperEdge";
 import AboutMe from "@/components/home/AboutMe";
 import CallMeBaby from "@/components/home/CallMeBaby";
 import Works from "@/components/home/Works";
+import Footer from "@/components/layout/Footer";
 import { getAllWorks } from "@/lib/admin/models/works.model";
 import { getAllWorkCategories } from "@/lib/admin/models/work_categories.model";
+import { getAllSocialLinks } from "@/lib/admin/models/social_links.model";
 
 export default async function Page() {
-    const [works, categories] = await Promise.all([
+    const [works, categories, socialLinks] = await Promise.all([
         getAllWorks(),
         getAllWorkCategories(),
+        getAllSocialLinks(),
     ]);
+
 
     return (
         <main className="flex flex-col relative w-full" style={{ background: '#fdf8e1' }}>
@@ -45,8 +49,13 @@ export default async function Page() {
             <section id="work" className="relative z-10 min-h-screen bg-[var(--background)]">
                  <Works works={works} categories={categories} />
             </section>
+
+            {/* Footer */}
+            <Footer socialLinks={socialLinks} />
         </main>
+
     );
 }
+
 
 

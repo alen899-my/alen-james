@@ -3,7 +3,9 @@
 import React, { useState, useLayoutEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 import { Work } from '@/lib/admin/models/works.model';
+
 import { WorkCategory } from '@/lib/admin/models/work_categories.model';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -110,7 +112,7 @@ export default function Works({ works, categories }: WorksProps) {
                                 <img 
                                     src={work.main_image} 
                                     alt={work.title}
-                                    className="w-full h-full object-cover transition-transform duration-700"
+                                    className="w-full h-full object-contain transition-transform duration-700 bg-white"
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fdfbf7] to-[#f0ede6]">
@@ -137,11 +139,12 @@ export default function Works({ works, categories }: WorksProps) {
                             </div>
 
                             {/* Hover link */}
-                            <a 
-                                href={work.live_link || `#work-${work.id}`} 
+                            <Link 
+                                href={`/work/${work.id}`} 
                                 className="absolute inset-0 z-10"
                                 aria-label={`View ${work.title}`}
                             />
+
                         </motion.div>
                     ))}
                 </AnimatePresence>

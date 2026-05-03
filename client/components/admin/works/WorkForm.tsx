@@ -311,7 +311,17 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
               className={`${inputCls} resize-y`}
             />
           </Field>
+          <Field label="Key Features">
+            <textarea
+              name="key_features"
+              defaultValue={work?.key_features || ''}
+              rows={5}
+              placeholder="List the standout features of the project"
+              className={`${inputCls} resize-y`}
+            />
+          </Field>
         </div>
+
       </SectionCard>
 
       {/* ── 3. Media ─────────────────────────────────────────── */}
