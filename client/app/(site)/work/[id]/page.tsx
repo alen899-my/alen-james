@@ -166,9 +166,11 @@ export default async function WorkDetailPage({ params }: PageProps) {
                                 More where that<br />came from...
                             </h2>
                         </div>
-                        <Link href="/#work" className="px-8 py-3 rounded-full border-2 border-[#1084a2] text-[#1084a2] font-black uppercase tracking-widest text-xs hover:bg-[#1084a2] hover:text-white transition-all">
-                            View All Projects
+                        <Link href="/all-works" className="px-8 py-4 rounded-full bg-[#1084a2] text-white font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-xl">
+                            View All Works
                         </Link>
+
+
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
