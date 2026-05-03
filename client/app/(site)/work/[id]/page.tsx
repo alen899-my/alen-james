@@ -32,11 +32,11 @@ export default async function WorkDetailPage({ params }: PageProps) {
     if (!work) notFound();
 
     return (
-        <main className="min-h-screen bg-[#fdf8e1] text-[#1a1a1a] pt-20">
+        <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-20">
             <section className="px-6 md:px-14 pb-12 max-w-7xl mx-auto">
                 <RollingEntrance>
                     <div className="mb-4">
-                        <span className="text-sm font-black uppercase tracking-[0.5em] text-[#8b9aaa]">
+                        <span className="text-sm font-black uppercase tracking-[0.5em] text-[var(--muted-foreground)]">
                             {work.title}
                         </span>
                     </div>
@@ -49,21 +49,21 @@ export default async function WorkDetailPage({ params }: PageProps) {
                     </h1>
 
                     {/* Meta Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 py-10 border-y border-[#e8e2d5]">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 py-10 border-y border-[var(--border)]">
                         <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#8b9aaa]">Category</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Category</p>
                             <p className="font-bold">{work.category_name || 'Creative'}</p>
                         </div>
                         <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#8b9aaa]">Platform / Tech</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Platform / Tech</p>
                             <p className="font-bold">{work.tech_stacks?.join(', ') || 'Various'}</p>
                         </div>
                         <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#8b9aaa]">Year</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Year</p>
                             <p className="font-bold">{work.year || '2025'}</p>
                         </div>
                         <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#8b9aaa]">Live Site</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Live Site</p>
                             {work.live_link ? (
                                 <div className="pt-2">
                                     <a 
@@ -83,12 +83,12 @@ export default async function WorkDetailPage({ params }: PageProps) {
                     </div>
 
                     {/* Main Hero Image */}
-                    <div className="max-w-5xl mx-auto overflow-hidden bg-white border border-[#1084a2]/20 shadow-xl rounded-2xl">
+                    <div className="max-w-5xl mx-auto overflow-hidden bg-[var(--card)] border border-[var(--accent)]/20 shadow-xl rounded-2xl">
                         {work.main_image ? (
                             <img src={work.main_image} alt={work.title} className="w-full h-auto" />
                         ) : (
-                            <div className="aspect-video bg-[#f0ede6] flex items-center justify-center">
-                                <span className="text-[#8b9aaa] font-bold uppercase tracking-widest">No Preview Image</span>
+                            <div className="aspect-video bg-[var(--muted)] flex items-center justify-center">
+                                <span className="text-[var(--muted-foreground)] font-bold uppercase tracking-widest">No Preview Image</span>
                             </div>
                         )}
                     </div>
@@ -99,7 +99,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
             <RollingEntrance>
                 <section className="px-6 md:px-14 py-16 max-w-4xl mx-auto text-center">
                     <h2 className="text-sm font-black uppercase tracking-[0.5em] text-[#1084a2] mb-8">Introduction</h2>
-                    <div className="text-2xl md:text-4xl font-bold leading-tight text-[#1a1a1a]/80 italic">
+                    <div className="text-2xl md:text-4xl font-bold leading-tight text-[var(--foreground)]/80 italic">
                         {work.introduction || work.subtitle || 'Creating a unique digital experience that pushes boundaries.'}
                     </div>
                 </section>
@@ -117,7 +117,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
                         <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
                             What did I do?
                         </h2>
-                        <p className="text-lg leading-relaxed text-[#1a1a1a]/70 font-medium whitespace-pre-wrap">
+                        <p className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium whitespace-pre-wrap">
                             {work.what_i_did || work.description || 'Worked on the design and development to ensure a seamless user experience and high-fidelity visuals.'}
                         </p>
                     </div>
@@ -125,7 +125,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
                         <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
                             One feature not to miss..
                         </h2>
-                        <p className="text-lg leading-relaxed text-[#1a1a1a]/70 font-medium whitespace-pre-wrap">
+                        <p className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium whitespace-pre-wrap">
                             {work.key_features || 'This project features a unique set of tools designed to provide maximum efficiency and a flawless user experience.'}
                         </p>
                     </div>
@@ -137,7 +137,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
                 <RollingEntrance>
                     <section className="px-6 md:px-14 py-12">
                         <div className="max-w-5xl mx-auto">
-                            <div className="overflow-hidden bg-white border border-[#1084a2]/20 shadow-xl rounded-2xl aspect-video">
+                            <div className="overflow-hidden bg-[var(--card)] border border-[var(--accent)]/20 shadow-xl rounded-2xl aspect-video">
                                 <video 
                                     src={work.video_url} 
                                     autoPlay 
@@ -178,7 +178,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
                             <Link 
                                 href={`/work/${rw.id}`} 
                                 key={rw.id}
-                                className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-white border border-[#e8e2d5] transition-all hover:shadow-2xl"
+                                className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] transition-all hover:shadow-2xl"
                             >
                                 <img src={rw.main_image || ''} alt={rw.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

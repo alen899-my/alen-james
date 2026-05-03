@@ -66,19 +66,19 @@ export default function AboutMe() {
             <h2 
                 ref={headingRef}
                 className="text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter backface-hidden"
-                style={{ fontFamily: '"Patrick Hand SC", cursive', lineHeight: 0.9, color: '#1a1a1a' }}
+                style={{ fontFamily: '"Patrick Hand SC", cursive', lineHeight: 0.9, color: 'var(--foreground)' }}
             >
                 About Me
             </h2>
 
 
             {/* Centered Intro Paragraph */}
-            <p ref={introRef} className="text-2xl md:text-3xl lg:text-4xl font-extrabold max-w-3xl leading-tight text-[#1a1a1a]" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+            <p ref={introRef} className="text-2xl md:text-3xl lg:text-4xl font-extrabold max-w-3xl leading-tight text-[var(--foreground)]" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
                 Hi, I'm Alen – a friendly chap, designer, AI Specialist, Developer and analyst who loves solving real problems.
             </p>
 
             {/* Centered Body Text */}
-            <div ref={bodyRef} className="space-y-6 max-w-3xl opacity-80 leading-relaxed text-lg md:text-xl font-medium mt-4 text-[#333]" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+            <div ref={bodyRef} className="space-y-6 max-w-3xl opacity-80 leading-relaxed text-lg md:text-xl font-medium mt-4 text-[var(--muted-foreground)]" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
                 <p>
                     My mission is to spice up design, stray away from the same hardcoded AI sites and trends, and inject personality into the work I create for brands and individuals.
                 </p>

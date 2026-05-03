@@ -19,7 +19,7 @@ export default function WorkCard({ work, index }: WorkCardProps) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.4, ease: "circOut", delay: index ? index * 0.05 : 0 }}
-            className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-[#f0ede6] border border-[#e8e2d5] shadow-sm hover:shadow-xl transition-all duration-500"
+            className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] shadow-sm hover:shadow-xl transition-all duration-500"
         >
             {/* Image */}
             {work.main_image ? (
@@ -29,8 +29,8 @@ export default function WorkCard({ work, index }: WorkCardProps) {
                     className="w-full h-full object-contain transition-transform duration-700 bg-white"
                 />
             ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fdfbf7] to-[#f0ede6]">
-                    <span className="text-[#c4bdb0] font-bold uppercase tracking-widest text-xs">No Preview</span>
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--muted)]/50 to-[var(--card)]">
+                    <span className="text-[var(--muted-foreground)]/50 font-bold uppercase tracking-widest text-xs">No Preview</span>
                 </div>
             )}
 

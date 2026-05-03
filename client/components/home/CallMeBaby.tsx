@@ -102,27 +102,27 @@ const CallMeBaby = () => {
                 <div className="pt-8 flex flex-wrap justify-center gap-4">
                     <a 
                         href="tel:+918921837945"
-                        className="flex items-center gap-2 px-8 py-4 bg-[#1a1a1a] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#1a1a1a] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
-                        <Phone size={20} /> CALL
+                        <Phone size={20} /> <span className="hidden md:inline">CALL</span>
                     </a>
                     
                     <a 
                         href="https://wa.me/918921837945"
                         target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-8 py-4 bg-[#25D366] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#25D366] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
-                        <MessageCircle size={20} /> WHATSAPP
+                        <MessageCircle size={20} /> <span className="hidden md:inline">WHATSAPP</span>
                     </a>
 
                     <a 
                         href="mailto:alenjames899@gmail.com"
-                        className="flex items-center gap-2 px-8 py-4 bg-[#f0ede6] text-[#1a1a1a] rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#f0ede6] text-[#1a1a1a] rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
-                        <Mail size={20} /> EMAIL
+                        <Mail size={20} /> <span className="hidden md:inline">EMAIL</span>
                     </a>
                 </div>
             </div>

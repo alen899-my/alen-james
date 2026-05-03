@@ -57,11 +57,11 @@ export default function Works({ works, categories }: WorksProps) {
                 <h2 
                     ref={headingRef}
                     className="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-6"
-                    style={{ fontFamily: '"Patrick Hand SC", cursive', color: '#1a1a1a' }}
+                    style={{ fontFamily: '"Patrick Hand SC", cursive', color: 'var(--foreground)' }}
                 >
                     My Work
                 </h2>
-                <p className="text-xl md:text-2xl font-medium text-[#1a1a1a]/70 max-w-2xl leading-tight">
+                <p className="text-xl md:text-2xl font-medium text-[var(--muted-foreground)] max-w-2xl leading-tight">
                     Here's a sample of my work – take a look! I'll let you in on a secret... I have a lot more cool stuff in the works! If you want to see, just pop me a message.
                 </p>
             </div>
@@ -111,7 +111,7 @@ export default function Works({ works, categories }: WorksProps) {
           
                 <Link 
                     href="/all-works"
-                    className="group flex items-center gap-3 px-8 py-4 rounded-full bg-[#1a1a1a] text-white text-lg font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl"
+                    className="group flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--foreground)] text-[var(--background)] text-lg font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl"
                     style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                 >
                     <span>View All Works</span>
@@ -124,7 +124,7 @@ export default function Works({ works, categories }: WorksProps) {
 
             {filteredWorks.length === 0 && (
                 <div className="py-24 text-center">
-                    <p className="text-[#1a1a1a]/40 font-bold uppercase tracking-widest">No Works in this category yet.</p>
+                    <p className="text-[var(--muted-foreground)]/40 font-bold uppercase tracking-widest">No Works in this category yet.</p>
                 </div>
             )}
         </div>

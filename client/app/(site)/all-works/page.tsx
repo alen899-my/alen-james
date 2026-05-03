@@ -18,7 +18,7 @@ export default async function WorksPage() {
     ]);
 
     return (
-        <main className="min-h-screen bg-[#fdf8e1] pt-24">
+        <main className="min-h-screen bg-[var(--background)] pt-24">
             <WorksList initialWorks={works} categories={categories} />
             
             <div className="mt-32">

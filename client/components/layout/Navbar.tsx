@@ -15,12 +15,37 @@ const navLinks = [
 
 
 
-import { Globe } from "lucide-react";
+import { Globe, Sun, Moon } from "lucide-react";
 import { SocialLink } from "@/lib/admin/models/social_links.model";
+import { useTheme } from "next-themes";
 
 /* ─── Ocean blue accent token ──────────────────────────────────── */
 const OCEAN = "#1084a2";
 const OCEAN_DARK = "rgba(16, 132, 162, 0.18)"; /* subtle tint for dark overlay */
+
+const ThemeToggle = () => {
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => setMounted(true), []);
+    if (!mounted) return <div className="w-10 h-10" />;
+
+    const isDark = theme === "dark";
+
+    return (
+        <button
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[var(--accent)] hover:text-white transition-all duration-300 group text-[var(--foreground)]"
+            aria-label="Toggle theme"
+        >
+            {isDark ? (
+                <Sun size={20} className="group-hover:rotate-45 transition-transform" />
+            ) : (
+                <Moon size={20} className="group-hover:-rotate-12 transition-transform" />
+            )}
+        </button>
+    );
+};
 
 /* ─── Component ────────────────────────────────────────────────── */
 interface NavbarProps {
@@ -281,6 +306,9 @@ export default function Navbar({ socialLinks = [] }: NavbarProps) {
                             ))}
                         </Link>
                     ))}
+                    
+                    {/* Dark Mode Toggle (Desktop) */}
+                    <ThemeToggle />
                 </div>
 
                 {/* Mobile hamburger (before scroll) */}
@@ -438,6 +466,14 @@ export default function Navbar({ socialLinks = [] }: NavbarProps) {
                                 </Link>
                             );
                         })}
+                        
+                        {/* Dark Mode Toggle (Mobile Menu) */}
+                        <div className="md:hidden pt-4 opacity-0 transition-opacity duration-300" style={{ opacity: menuOpen ? 1 : 0 }}>
+                            <div className="flex items-center gap-4 text-[var(--foreground)] font-bold text-xl" style={{ fontFamily: '"Calistoga", serif' }}>
+                                <span>Theme</span>
+                                <ThemeToggle />
+                            </div>
+                        </div>
                     </nav>
 
                     {/* Social icons row — ocean blue background */}

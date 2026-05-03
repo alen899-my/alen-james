@@ -69,7 +69,7 @@ export default function WhyWorkWithMe() {
             <div className="max-w-7xl mx-auto relative">
                 <h2
                     className="text-6xl md:text-9xl font-black uppercase tracking-tighter mb-24 md:mb-32"
-                    style={{ fontFamily: '"Patrick Hand SC", cursive', color: 'var(--page-text)' }}
+                    style={{ fontFamily: '"Patrick Hand SC", cursive', color: 'var(--foreground)' }}
                 >
                     Why Work With Me?
                 </h2>
@@ -81,7 +81,7 @@ export default function WhyWorkWithMe() {
 
                         {/* Dashed rail — Horizontal from left, curved corner, straight down */}
                         <div
-                            className="absolute bottom-0 border-t-2 border-r-2 border-dashed border-black/25 rounded-tr-[100px] z-0"
+                            className="absolute bottom-0 border-t-2 border-r-2 border-dashed border-[var(--foreground)]/20 rounded-tr-[100px] z-0"
                             style={{ top: 0, right: '50%', width: '100vw' }}
                         />
 
@@ -116,7 +116,7 @@ export default function WhyWorkWithMe() {
                                 <div className="flex items-start gap-4 md:gap-8">
                                     <span
                                         className="text-xl md:text-3xl font-bold mt-2"
-                                        style={{ fontFamily: '"Patrick Hand SC", cursive', color: 'var(--page-text)' }}
+                                        style={{ fontFamily: '"Patrick Hand SC", cursive', color: 'var(--foreground)' }}
                                     >
                                         {item.id}
                                     </span>
@@ -127,7 +127,7 @@ export default function WhyWorkWithMe() {
                                         >
                                             {item.title}
                                         </h3>
-                                        <p className="text-lg md:text-xl font-medium leading-tight max-w-2xl text-[#2d2a21]/80">
+                                        <p className="text-lg md:text-xl font-medium leading-tight max-w-2xl text-[var(--muted-foreground)]">
                                             {item.description}
                                         </p>
                                     </div>

@@ -42,11 +42,11 @@ export default function WorksList({ initialWorks, categories }: WorksListProps) 
                 <h1 
                     ref={headingRef}
                     className="text-6xl md:text-9xl font-black uppercase tracking-tighter mb-6"
-                    style={{ fontFamily: '"Patrick Hand SC", cursive', color: '#1a1a1a' }}
+                    style={{ fontFamily: '"Patrick Hand SC", cursive', color: 'var(--foreground)' }}
                 >
                     Full Works
                 </h1>
-                <p className="text-xl md:text-2xl font-medium text-[#1a1a1a]/70 max-w-2xl leading-tight">
+                <p className="text-xl md:text-2xl font-medium text-[var(--muted-foreground)] max-w-2xl leading-tight">
                     Explore my complete collection of Works across various disciplines. Each project represents a unique challenge solved with creativity and technical expertise.
                 </p>
             </div>
@@ -92,7 +92,7 @@ export default function WorksList({ initialWorks, categories }: WorksListProps) 
 
             {filteredWorks.length === 0 && (
                 <div className="py-32 text-center">
-                    <p className="text-2xl md:text-4xl font-black uppercase tracking-tight text-[#1a1a1a]/20" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+                    <p className="text-2xl md:text-4xl font-black uppercase tracking-tight text-[var(--muted-foreground)]/30" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
                         No projects found in this category... yet!
                     </p>
                 </div>

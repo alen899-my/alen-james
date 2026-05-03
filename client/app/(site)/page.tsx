@@ -19,7 +19,7 @@ export default async function Page() {
 
 
     return (
-        <main className="flex flex-col relative w-full" style={{ background: '#fdf8e1' }}>
+        <main className="flex flex-col relative w-full" style={{ background: 'var(--background)' }}>
             <div className="sticky top-0 w-full h-screen z-0">
                 <Hero />
             </div>
