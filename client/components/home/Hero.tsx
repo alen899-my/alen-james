@@ -75,11 +75,7 @@ export default function Hero() {
 
             const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
-            tl.to(bgRef.current, {
-                opacity: 0.2,
-                duration: 2.5,
-                ease: "power2.out"
-            }, 0);
+
 
             tl.to(bgOverlayRef.current, {
                 opacity: 1,
@@ -122,7 +118,7 @@ export default function Hero() {
                     gsap.set(bgRef.current, { 
                         scale: 1.15 - p * 0.15,
                         y: p * 100,
-                        opacity: 0.2 + (p * 0.3), // Becomes more visible (up to 0.5)
+                        opacity: p * 0.5, // Start from 0 and reveal up to 0.5 on scroll
                         filter: 'blur(4px) brightness(1.1) contrast(1.1)' // Sharper focus
                     });
 
