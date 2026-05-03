@@ -1,4 +1,4 @@
-import { getWorkById, getAllWorks } from '@/lib/admin/models/works.model';
+import { getWorkById, getRelatedWorks, getAllWorks } from '@/lib/admin/models/works.model';
 import { getAllSocialLinks } from '@/lib/admin/models/social_links.model';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -12,19 +12,24 @@ interface PageProps {
     params: { id: string };
 }
 
+export async function generateStaticParams() {
+    const works = await getAllWorks();
+    return works.map((work) => ({
+        id: work.id.toString(),
+    }));
+}
+
 export default async function WorkDetailPage({ params }: PageProps) {
     const { id } = await params;
-    const [work, allWorks, socialLinks] = await Promise.all([
-        getWorkById(parseInt(id)),
-        getAllWorks(),
+    const workId = parseInt(id);
+
+    const [work, relatedWorks, socialLinks] = await Promise.all([
+        getWorkById(workId),
+        getRelatedWorks(workId, 2),
         getAllSocialLinks()
     ]);
 
     if (!work) notFound();
-
-    const relatedWorks = allWorks
-        .filter(w => w.id !== work.id)
-        .slice(0, 2);
 
     return (
         <main className="min-h-screen bg-[#fdf8e1] text-[#1a1a1a] pt-32">

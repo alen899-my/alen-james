@@ -30,7 +30,7 @@ export function RollingEntrance({ children }: RollingEntranceProps) {
                 y: 100,
                 rotateX: -60,
                 opacity: 0,
-                duration: 1.5,
+                duration: 1.0,
                 stagger: 0.15,
                 ease: "expo.out",
                 transformOrigin: "top center",

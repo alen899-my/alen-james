@@ -130,6 +130,19 @@ export async function updateWork(id: number, data: Partial<WorkInput>): Promise<
   return (rows[0] as Work) ?? null;
 }
 
+export async function getRelatedWorks(excludeId: number, limit: number = 2): Promise<Work[]> {
+  const { rows } = await pool.query(
+    `SELECT w.*, c.name as category_name 
+     FROM works w
+     LEFT JOIN work_categories c ON w.category_id = c.id
+     WHERE w.id != $1
+     ORDER BY w.created_at DESC
+     LIMIT $2`,
+    [excludeId, limit]
+  );
+  return rows as Work[];
+}
+
 export async function deleteWork(id: number): Promise<void> {
   await pool.query(`DELETE FROM works WHERE id = $1`, [id]);
 }
