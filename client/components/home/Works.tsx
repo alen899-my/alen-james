@@ -70,10 +70,10 @@ export default function Works({ works, categories }: WorksProps) {
             <div className="flex flex-wrap gap-3 mb-12">
                 <button
                     onClick={() => { setSelectedCategory('all'); }}
-                    className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+                    className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 bg-[#1084a2] text-white ${
                         selectedCategory === 'all' 
-                        ? 'bg-[#1084a2] text-white shadow-lg scale-105' 
-                        : 'bg-[#1084a2]/10 text-[#1084a2] hover:bg-[#1084a2]/20'
+                        ? 'shadow-lg scale-105' 
+                        : 'hover:scale-105'
                     }`}
                 >
                     All
@@ -82,10 +82,10 @@ export default function Works({ works, categories }: WorksProps) {
                     <button
                         key={cat.id}
                         onClick={() => { setSelectedCategory(cat.id); }}
-                        className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+                        className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 bg-[#1084a2] text-white ${
                             selectedCategory === cat.id 
-                            ? 'bg-[#1084a2] text-white shadow-lg scale-105' 
-                            : 'bg-[#1084a2]/10 text-[#1084a2] hover:bg-[#1084a2]/20'
+                            ? 'shadow-lg scale-105' 
+                            : 'hover:scale-105'
                         }`}
                     >
                         {cat.name}
