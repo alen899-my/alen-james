@@ -10,7 +10,7 @@ interface MediaCarouselProps {
 
 const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
     return (
-        <section className="py-24 overflow-hidden bg-[#fdf8e1]">
+        <section className="py-12 overflow-hidden bg-[#fdf8e1]">
             <div className="relative w-full">
                 {/* Horizontal Scrolling Container */}
                 <div className="flex overflow-x-auto snap-x snap-mandatory gap-8 md:gap-12 px-6 md:px-[15%] no-scrollbar pb-12">
@@ -20,7 +20,7 @@ const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
                         return (
                             <div
                                 key={i}
-                                className="flex-shrink-0 w-[85vw] md:w-[700px] aspect-video snap-center bg-white border border-[#e8e2d5] overflow-hidden shadow-sm"
+                                className="flex-shrink-0 w-[85vw] md:w-[700px] aspect-video snap-center bg-white border border-[#1084a2]/20 rounded-2xl overflow-hidden shadow-lg"
                             >
                                 {isVideo ? (
                                     <video 

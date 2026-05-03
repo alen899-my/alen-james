@@ -32,8 +32,8 @@ export default async function WorkDetailPage({ params }: PageProps) {
     if (!work) notFound();
 
     return (
-        <main className="min-h-screen bg-[#fdf8e1] text-[#1a1a1a] pt-32">
-            <section className="px-6 md:px-14 pb-24 max-w-7xl mx-auto">
+        <main className="min-h-screen bg-[#fdf8e1] text-[#1a1a1a] pt-20">
+            <section className="px-6 md:px-14 pb-12 max-w-7xl mx-auto">
                 <RollingEntrance>
                     <div className="mb-4">
                         <span className="text-sm font-black uppercase tracking-[0.5em] text-[#8b9aaa]">
@@ -42,14 +42,14 @@ export default async function WorkDetailPage({ params }: PageProps) {
                     </div>
                     
                     <h1 
-                        className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-16 max-w-5xl"
+                        className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-8 max-w-5xl"
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
                         {work.subtitle || work.description || 'A stunning project with impressive functionality'}
                     </h1>
 
                     {/* Meta Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20 py-10 border-y border-[#e8e2d5]">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 py-10 border-y border-[#e8e2d5]">
                         <div className="space-y-1">
                             <p className="text-[10px] font-black uppercase tracking-widest text-[#8b9aaa]">Category</p>
                             <p className="font-bold">{work.category_name || 'Creative'}</p>
@@ -83,7 +83,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
                     </div>
 
                     {/* Main Hero Image */}
-                    <div className="max-w-5xl mx-auto overflow-hidden bg-white border border-[#e8e2d5]">
+                    <div className="max-w-5xl mx-auto overflow-hidden bg-white border border-[#1084a2]/20 shadow-xl rounded-2xl">
                         {work.main_image ? (
                             <img src={work.main_image} alt={work.title} className="w-full h-auto" />
                         ) : (
@@ -97,7 +97,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
 
             {/* ── INTRODUCTION ── */}
             <RollingEntrance>
-                <section className="px-6 md:px-14 py-32 max-w-4xl mx-auto text-center">
+                <section className="px-6 md:px-14 py-16 max-w-4xl mx-auto text-center">
                     <h2 className="text-sm font-black uppercase tracking-[0.5em] text-[#1084a2] mb-8">Introduction</h2>
                     <div className="text-2xl md:text-4xl font-bold leading-tight text-[#1a1a1a]/80 italic">
                         {work.introduction || work.subtitle || 'Creating a unique digital experience that pushes boundaries.'}
@@ -112,7 +112,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
 
             {/* ── WHAT DID I DO? ── */}
             <RollingEntrance>
-                <section className="px-6 md:px-14 py-32 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
+                <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
                     <div className="space-y-6">
                         <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
                             What did I do?
@@ -135,9 +135,9 @@ export default async function WorkDetailPage({ params }: PageProps) {
             {/* ── MAIN PROJECT VIDEO ── */}
             {work.video_url && (
                 <RollingEntrance>
-                    <section className="px-6 md:px-14 py-24">
+                    <section className="px-6 md:px-14 py-12">
                         <div className="max-w-5xl mx-auto">
-                            <div className="overflow-hidden bg-white border border-[#e8e2d5] aspect-video">
+                            <div className="overflow-hidden bg-white border border-[#1084a2]/20 shadow-xl rounded-2xl aspect-video">
                                 <video 
                                     src={work.video_url} 
                                     autoPlay 
@@ -159,7 +159,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
 
             {/* ── MORE WHERE THAT CAME FROM ── */}
             {relatedWorks.length > 0 && (
-                <section className="px-6 md:px-14 py-32 max-w-7xl mx-auto">
+                <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto">
                     <div className="flex justify-between items-end mb-16">
                         <div>
                             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
