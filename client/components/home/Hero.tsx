@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowDown } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -321,7 +322,7 @@ export default function Hero() {
                     {/* Desktop Layout */}
                     <div className="hidden md:flex flex-col items-center gap-0">
                         <div className="flex flex-wrap justify-center overflow-hidden py-2 px-4 -my-2">
-                            {["SomeBody", "who"].map((word, i) => (
+                            {["Jack", "of"].map((word, i) => (
                                 <motion.span 
                                     key={i} 
                                     className="inline-block overflow-hidden mr-[0.6em] last:mr-0 pb-2"
@@ -344,7 +345,7 @@ export default function Hero() {
                             ))}
                         </div>
                         <div className="flex flex-wrap justify-center overflow-hidden py-2 px-4 -my-2">
-                            {["can", "Build"].map((word, i) => (
+                            {["all", "trade"].map((word, i) => (
                                 <motion.span 
                                     key={i} 
                                     className="inline-block overflow-hidden mr-[0.6em] last:mr-0 pb-2"
@@ -386,7 +387,7 @@ export default function Hero() {
                                         paddingRight: '0.1em'
                                     }}
                                 >
-                                    SomeBody
+                                    Jack
                                 </span>
                             </motion.span>
                         </div>
@@ -406,7 +407,7 @@ export default function Hero() {
                                         paddingRight: '0.1em'
                                     }}
                                 >
-                                    who
+                                    of
                                 </span>
                             </motion.span>
                             <motion.span 
@@ -424,7 +425,7 @@ export default function Hero() {
                                         paddingRight: '0.1em'
                                     }}
                                 >
-                                    can
+                                    all
                                 </span>
                             </motion.span>
                         </div>
@@ -444,7 +445,7 @@ export default function Hero() {
                                         paddingRight: '0.1em'
                                     }}
                                 >
-                                    Build
+                                    trade
                                 </span>
                             </motion.span>
                         </div>
@@ -489,6 +490,27 @@ export default function Hero() {
                     style={{ zIndex: 10, transformOrigin: '50% 100%' }}
                 />
             </div>
+
+            {/* Scroll Indicator */}
+            <motion.div 
+                className="absolute bottom-20 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.5, duration: 1 }}
+                style={{ opacity: w4Opacity }} // Fades out as you scroll
+            >
+                <motion.div 
+                    className="w-14 h-14 rounded-full bg-[var(--accent)] text-white flex items-center justify-center group cursor-pointer hover:scale-110 transition-all shadow-[0_4px_14px_rgba(16,132,162,0.4)]"
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                    onClick={() => {
+                        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                >
+                    <ArrowDown size={24} className="group-hover:scale-110 transition-transform" />
+                </motion.div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Scroll</span>
+            </motion.div>
         </section>
     );
 }
