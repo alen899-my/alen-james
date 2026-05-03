@@ -50,7 +50,7 @@ const CallMeBaby = () => {
     return (
         <section 
             ref={containerRef}
-            className="relative w-full py-32 px-6 md:px-14 flex flex-col items-center text-center overflow-hidden"
+            className="relative z-20 w-full py-32 px-6 md:px-14 flex flex-col items-center text-center"
             style={{ 
                 background: '#1084a2', // Crystal Blue
                 color: '#ffffff' 
