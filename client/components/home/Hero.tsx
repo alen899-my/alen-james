@@ -66,7 +66,7 @@ export default function Hero() {
                 transformOrigin: "left top"
             });
 
-            gsap.set(bgRef.current, { scale: 1, opacity: 0, y: 0 });
+            gsap.set(bgRef.current, { scale: 1.15, opacity: 0 });
             gsap.set(bgOverlayRef.current, { opacity: 0 });
 
             if (bikeRef.current) {
@@ -75,8 +75,13 @@ export default function Hero() {
 
             const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
-            // Fade in background beautifully on load
             tl.to(bgRef.current, {
+                opacity: 0.2,
+                duration: 2.5,
+                ease: "power2.out"
+            }, 0);
+
+            tl.to(bgOverlayRef.current, {
                 opacity: 1,
                 duration: 2.5,
                 ease: "power2.out"
@@ -113,13 +118,13 @@ export default function Hero() {
                 scrub: 1.4,
                 onUpdate(self) {
                     const p = self.progress;
-                    // Premium Parallax: slight scale up and translate down
+                    // Background parallax, scale, and increased visibility
                     gsap.set(bgRef.current, { 
-                        scale: 1 + (p * 0.1),
-                        y: p * 150
+                        scale: 1.15 - p * 0.15,
+                        y: p * 100,
+                        opacity: 0.2 + (p * 0.3), // Becomes more visible (up to 0.5)
+                        filter: 'blur(4px) brightness(1.1) contrast(1.1)' // Sharper focus
                     });
-                    // Fade in the bottom gradient overlay to blend into next section
-                    gsap.set(bgOverlayRef.current, { opacity: p });
 
                     // Only reposition bike while it hasn't exited yet
                     if (!bikeExited && bikeRef.current) {
@@ -275,41 +280,35 @@ export default function Hero() {
 
             {/* BG layers */}
             <div className="absolute inset-0 overflow-hidden z-0 bg-[var(--background)]">
+                {/* Subtle blurred background image for depth without distraction */}
                 <div
                     ref={bgRef}
                     className="absolute inset-0 bg-no-repeat bg-center bg-cover"
                     style={{
                         backgroundImage: 'url("/scrollimage3.png")',
-                        willChange: 'transform, opacity',
+                        willChange: 'transform, opacity, filter',
+                        filter: 'blur(4px) brightness(1.1) contrast(1.1)',
                     }}
                 />
                 
-                {/* Scroll-based fade overlay to blend into next section */}
+                {/* Sophisticated Gradient Mesh / Overlay */}
                 <div
                     ref={bgOverlayRef}
-                    className="absolute inset-0"
+                    className="absolute inset-0 pointer-events-none"
                     style={{
-                        background: 'linear-gradient(to bottom, transparent 0%, var(--background) 100%)',
-                        pointerEvents: 'none',
+                        background: `
+                            radial-gradient(circle at 15% 25%, color-mix(in srgb, var(--accent) 12%, transparent) 0%, transparent 45%),
+                            radial-gradient(circle at 85% 75%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 45%),
+                            linear-gradient(to bottom, transparent 20%, var(--background) 100%)
+                        `,
                     }}
                 />
                 
-                {/* Premium Vignette ALWAYS visible */}
+                {/* Global vignette for focus */}
                 <div 
-                    className="absolute inset-0"
+                    className="absolute inset-0 pointer-events-none"
                     style={{
-                        background: 'radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.2) 100%)',
-                        pointerEvents: 'none',
-                    }}
-                />
-                
-                {/* Grid Texture overlay ALWAYS visible */}
-                <div 
-                    className="absolute inset-0 opacity-[0.04]"
-                    style={{
-                        backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',
-                        backgroundSize: '32px 32px',
-                        pointerEvents: 'none',
+                        background: 'radial-gradient(circle at center, transparent 0%, color-mix(in srgb, var(--background) 20%, transparent) 100%)',
                     }}
                 />
             </div>
