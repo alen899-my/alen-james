@@ -6,6 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+import { Phone, MessageCircle, Mail } from 'lucide-react';
+
 const CallMeBaby = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
@@ -86,7 +88,7 @@ const CallMeBaby = () => {
                     className="text-6xl md:text-8xl font-black uppercase tracking-tighter"
                     style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                 >
-                    CALL ME, BABY
+                    CALL ME NOW
                 </h2>
                 
                 <p className="text-xl md:text-3xl font-bold leading-tight">
@@ -94,16 +96,34 @@ const CallMeBaby = () => {
                 </p>
 
                 <p className="text-lg md:text-xl font-medium opacity-90 max-w-2xl mx-auto leading-relaxed">
-                    If you like to sound of a web designer, developer and graphic designer rolled into one whacky human, then I'm your man. Don't hesitate to contact me - I'm eager to hear from you!
+                    If you like the sound of a web designer, developer and graphic designer rolled into one whacky human, then I'm your man. Don't hesitate to contact me - I'm eager to hear from you!
                 </p>
 
-                <div className="pt-8">
-                    <button 
-                        className="px-10 py-4 bg-[#1a1a1a] text-white rounded-full text-xl font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                <div className="pt-8 flex flex-wrap justify-center gap-4">
+                    <a 
+                        href="tel:+918921837945"
+                        className="flex items-center gap-2 px-8 py-4 bg-[#1a1a1a] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
-                        GO TO MY CALENDAR
-                    </button>
+                        <Phone size={20} /> CALL
+                    </a>
+                    
+                    <a 
+                        href="https://wa.me/918921837945"
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-8 py-4 bg-[#25D366] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                        style={{ fontFamily: '"Patrick Hand SC", cursive' }}
+                    >
+                        <MessageCircle size={20} /> WHATSAPP
+                    </a>
+
+                    <a 
+                        href="mailto:alenjames899@gmail.com"
+                        className="flex items-center gap-2 px-8 py-4 bg-[#f0ede6] text-[#1a1a1a] rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                        style={{ fontFamily: '"Patrick Hand SC", cursive' }}
+                    >
+                        <Mail size={20} /> EMAIL
+                    </a>
                 </div>
             </div>
 
