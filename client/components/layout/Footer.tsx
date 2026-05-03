@@ -22,10 +22,10 @@ const Footer = ({ socialLinks = [] }: FooterProps) => {
                 <div className="space-y-4 mb-16">
                     <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#8b9aaa]">Connect with me</p>
                     <a 
-                        href="mailto:hello@shanesayers.com" 
+                        href="mailto:alenjames899@gmail.com" 
                         className="text-2xl md:text-4xl font-bold hover:text-[#1084a2] transition-colors"
                     >
-                        hello@shanesayers.com
+                        alenjames899@gmail.com
                     </a>
                 </div>
 
