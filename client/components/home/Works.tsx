@@ -133,7 +133,7 @@ export default function Works({ works, categories }: WorksProps) {
                                         <p className="text-white/70 text-sm font-medium mt-1 uppercase tracking-wider">{work.subtitle}</p>
                                     )}
                                 </div>
-                                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-black -rotate-45 group-hover:rotate-0 transition-transform duration-500 shadow-lg">
+                                <div className="w-12 h-12 shrink-0 rounded-full bg-white flex items-center justify-center text-black -rotate-45 group-hover:rotate-0 transition-transform duration-500 shadow-lg">
                                     <ChevronRight size={24} />
                                 </div>
                             </div>
@@ -159,7 +159,7 @@ export default function Works({ works, categories }: WorksProps) {
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
                         <span>View All Projects</span>
-                        <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/40 transition-colors">
+                        <div className="w-6 h-6 shrink-0 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/40 transition-colors">
                             <ChevronRight size={14} />
                         </div>
                     </button>
