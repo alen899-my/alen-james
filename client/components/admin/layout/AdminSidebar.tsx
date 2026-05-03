@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, LogOut, Globe,
-  ChevronRight, X, Briefcase, BookOpen, Wrench, Notebook, FileText, Share2, Users, MapPin, Archive, Building, Image as ImageIcon, ScrollText
+  ChevronRight, X, Briefcase, BookOpen, Wrench, Notebook, FileText, Share2, Users, MapPin, Archive, Building, Image as ImageIcon, ScrollText, Tag
 } from 'lucide-react';
 import { logoutAction } from '@/lib/admin/actions/auth.actions';
 import { useEffect } from 'react';
@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/works', label: 'Works', icon: Briefcase, exact: false },
+  { href: '/admin/work-categories', label: 'Work Categories', icon: Tag, exact: false },
   { href: '/admin/experiences', label: 'Experiences', icon: Building, exact: false },
   { href: '/admin/education', label: 'Education', icon: BookOpen, exact: false },
   { href: '/admin/skills', label: 'Skills', icon: Wrench, exact: false },
@@ -81,7 +82,7 @@ export default function AdminSidebar({
           style={{
             background: 'linear-gradient(135deg,#1084a2,#1a9bbf)',
             color: '#fff',
-            fontFamily: 'Calistoga,serif',
+            fontFamily: '"Patrick Hand SC", cursive',
             boxShadow: '0 4px 14px rgba(16,132,162,.28)',
           }}
         >

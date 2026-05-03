@@ -44,6 +44,7 @@ export async function createWorkAction(
     what_i_did: (formData.get('what_i_did') as string)?.trim() || null,
     tech_stacks: techStacksData ? JSON.parse(techStacksData) : [],
     year: (formData.get('year') as string)?.trim() || null,
+    category_id: formData.get('category_id') ? Number(formData.get('category_id')) : null,
   };
 
   try {
@@ -85,6 +86,7 @@ export async function updateWorkAction(
     what_i_did: (formData.get('what_i_did') as string)?.trim() || null,
     tech_stacks: techStacksData ? JSON.parse(techStacksData) : [],
     year: (formData.get('year') as string)?.trim() || null,
+    category_id: formData.get('category_id') ? Number(formData.get('category_id')) : null,
   };
 
   try {

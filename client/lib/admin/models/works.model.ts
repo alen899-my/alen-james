@@ -14,6 +14,7 @@ export interface Work {
   what_i_did: string | null;
   tech_stacks: string[]; // JSONB array of strings
   year: string | null;
+  category_id: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -36,6 +37,7 @@ export async function createWorksTable(): Promise<void> {
       what_i_did TEXT,
       tech_stacks JSONB DEFAULT '[]'::jsonb,
       year VARCHAR(20),
+      category_id INTEGER REFERENCES work_categories(id) ON DELETE SET NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
@@ -49,14 +51,20 @@ export async function createWorksTable(): Promise<void> {
 
 export async function getAllWorks(): Promise<Work[]> {
   const { rows } = await pool.query(
-    `SELECT * FROM works ORDER BY created_at DESC`
+    `SELECT w.*, c.name as category_name 
+     FROM works w
+     LEFT JOIN work_categories c ON w.category_id = c.id
+     ORDER BY w.created_at DESC`
   );
   return rows as Work[];
 }
 
 export async function getWorkById(id: number): Promise<Work | null> {
   const { rows } = await pool.query(
-    `SELECT * FROM works WHERE id = $1 LIMIT 1`,
+    `SELECT w.*, c.name as category_name 
+     FROM works w
+     LEFT JOIN work_categories c ON w.category_id = c.id
+     WHERE w.id = $1 LIMIT 1`,
     [id]
   );
   return (rows[0] as Work) ?? null;
@@ -65,8 +73,8 @@ export async function getWorkById(id: number): Promise<Work | null> {
 export async function createWork(data: WorkInput): Promise<Work> {
   const { rows } = await pool.query(
     `INSERT INTO works (
-      title, subtitle, description, main_image, screenshots, additional_videos, live_link, video_url, introduction, what_i_did, tech_stacks, year
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      title, subtitle, description, main_image, screenshots, additional_videos, live_link, video_url, introduction, what_i_did, tech_stacks, year, category_id
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     RETURNING *`,
     [
       data.title,
@@ -80,11 +88,13 @@ export async function createWork(data: WorkInput): Promise<Work> {
       data.introduction,
       data.what_i_did,
       JSON.stringify(data.tech_stacks || []),
-      data.year
+      data.year,
+      data.category_id
     ]
   );
   return rows[0] as Work;
 }
+
 
 export async function updateWork(id: number, data: Partial<WorkInput>): Promise<Work | null> {
   const setClauses: string[] = [];

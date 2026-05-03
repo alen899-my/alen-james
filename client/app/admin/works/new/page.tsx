@@ -1,10 +1,12 @@
 import WorkForm from '@/components/admin/works/WorkForm';
+import { getAllWorkCategories } from '@/lib/admin/models/work_categories.model';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 export const metadata = { title: 'Add Work — Admin' };
 
-export default function NewWorkPage() {
+export default async function NewWorkPage() {
+  const categories = await getAllWorkCategories();
   return (
     <div>
       <div className="px-8 pt-7 pb-5 border-b border-[#e8e2d5]">
@@ -21,7 +23,7 @@ export default function NewWorkPage() {
       </div>
 
       <div className="p-8">
-        <WorkForm />
+        <WorkForm categories={categories} />
       </div>
     </div>
   );

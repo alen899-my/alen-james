@@ -2,8 +2,17 @@ import Hero from "@/components/home/Hero";
 import PointingHand from "@/components/home/PointingHand";
 import TornPaperEdge from "@/components/home/TornPaperEdge";
 import AboutMe from "@/components/home/AboutMe";
+import CallMeBaby from "@/components/home/CallMeBaby";
+import Works from "@/components/home/Works";
+import { getAllWorks } from "@/lib/admin/models/works.model";
+import { getAllWorkCategories } from "@/lib/admin/models/work_categories.model";
 
-export default function Page() {
+export default async function Page() {
+    const [works, categories] = await Promise.all([
+        getAllWorks(),
+        getAllWorkCategories(),
+    ]);
+
     return (
         <main className="flex flex-col relative w-full" style={{ background: '#fdf8e1' }}>
             <div className="sticky top-0 w-full h-screen z-0">
@@ -11,11 +20,6 @@ export default function Page() {
             </div>
             {/* 
                 About Section: Slides UP over the Hero.
-                The shadow-[-20px] adds depth to the "sliding over" feel.
-            */}
-            {/* 
-                About Section: Redesigned with a "Paper-like UI"
-                Features a jagged/torn top edge and centered typography.
             */}
             <section 
                 id="about" 
@@ -34,10 +38,15 @@ export default function Page() {
                 <AboutMe />
             </section>
 
-            {/* Additional sections follow the same flow */}
-            <section id="work" className="relative z-10 min-h-screen bg-[var(--background)] border-t border-[var(--border)] flex items-center justify-center">
-                 <h2 className="text-4xl md:text-6xl opacity-10 uppercase font-bold tracking-widest" style={{ fontFamily: '"Calistoga", serif' }}>Selected Work</h2>
+            {/* CTA Section */}
+            <CallMeBaby />
+
+            {/* Works Section */}
+            <section id="work" className="relative z-10 min-h-screen bg-[var(--background)]">
+                 <Works works={works} categories={categories} />
             </section>
         </main>
     );
 }
+
+

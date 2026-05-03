@@ -4,14 +4,17 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createWorkAction, updateWorkAction } from '@/lib/admin/actions/works.actions';
 import { Work } from '@/lib/admin/models/works.model';
+import { WorkCategory } from '@/lib/admin/models/work_categories.model';
 import {
   Upload, X, Plus, Image as ImageIcon, Film,
-  Loader2, Layers, FileText, Paperclip, ChevronRight,
+  Loader2, Layers, FileText, Paperclip, ChevronRight, Tag
 } from 'lucide-react';
 
 interface WorkFormProps {
   work?: Work;
+  categories: WorkCategory[];
 }
+
 
 /* ── tiny reusable primitives ─────────────────────────────────── */
 
@@ -75,7 +78,7 @@ const inputCls =
 
 /* ── main component ───────────────────────────────────────────── */
 
-export default function WorkForm({ work }: WorkFormProps) {
+export default function WorkForm({ work, categories }: WorkFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -207,7 +210,23 @@ export default function WorkForm({ work }: WorkFormProps) {
             />
           </Field>
 
+          <Field label="Project Category">
+            <select
+              name="category_id"
+              defaultValue={work?.category_id || ''}
+              className={`${inputCls} appearance-none cursor-pointer`}
+            >
+              <option value="">Uncategorized</option>
+              {categories?.map((cat: WorkCategory) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+
           <Field label="Live Site Link">
+
             <input
               type="url"
               name="live_link"
