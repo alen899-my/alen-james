@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Calistoga&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -6,8 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: "Calistoga", serif;
-    --font-sans: "Calistoga", serif;
+    --font-heading: "Patrick Hand SC", cursive;
+    --font-sans: "Patrick Hand SC", cursive;
 
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -165,10 +165,16 @@
         overflow-x: hidden;
     }
     html {
-        font-family: "Calistoga", serif;
+        font-family: "Patrick Hand SC", cursive;
         font-weight: 400;
         font-style: normal;
     }
+}
+
+.patrick-hand-sc-regular {
+  font-family: "Patrick Hand SC", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .calistoga-regular {
@@ -193,4 +199,19 @@
     --admin-text-dark:     #1a1a1a;        /* dark text for main area */
     --admin-card-bg:       #ffffff;        /* card background */
     --admin-card-border:   #e8e2d5;        /* cream border */
+}
+
+@layer utilities {
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+    .perspective-2000 {
+        perspective: 2000px;
+    }
+    .transform-style-3d {
+        transform-style: preserve-3d;
+    }
+    .backface-hidden {
+        backface-visibility: hidden;
+    }
 }

@@ -306,7 +306,7 @@ export default function Hero() {
                                         ref={(el) => { wordRefs.current[i] = el; }}
                                         className="inline-block text-[var(--foreground)] tracking-tight uppercase"
                                         style={{
-                                            fontFamily: '"Calistoga", serif',
+                                            fontFamily: '"Patrick Hand SC", cursive',
                                             fontSize: 'clamp(3.5rem, 10vw, 8rem)',
                                             willChange: 'transform, opacity',
                                             lineHeight: 1.1,
@@ -329,7 +329,7 @@ export default function Hero() {
                                         ref={(el) => { wordRefs.current[i + 2] = el; }}
                                         className="inline-block text-[var(--accent)] tracking-tight uppercase"
                                         style={{
-                                            fontFamily: '"Calistoga", serif',
+                                            fontFamily: '"Patrick Hand SC", cursive',
                                             fontSize: 'clamp(3.5rem, 10vw, 8rem)',
                                             willChange: 'transform, opacity',
                                             lineHeight: 1.1,
@@ -354,7 +354,7 @@ export default function Hero() {
                                     ref={(el) => { if (el) wordRefs.current[4] = el; }}
                                     className="inline-block text-[var(--foreground)] tracking-tight uppercase"
                                     style={{
-                                        fontFamily: '"Calistoga", serif',
+                                        fontFamily: '"Patrick Hand SC", cursive',
                                         fontSize: 'clamp(3.2rem, 18vw, 5.5rem)',
                                         willChange: 'transform, opacity',
                                         lineHeight: 1.2,
@@ -374,7 +374,7 @@ export default function Hero() {
                                     ref={(el) => { if (el) wordRefs.current[5] = el; }}
                                     className="inline-block text-[var(--foreground)] tracking-tight uppercase"
                                     style={{
-                                        fontFamily: '"Calistoga", serif',
+                                        fontFamily: '"Patrick Hand SC", cursive',
                                         fontSize: 'clamp(3.2rem, 18vw, 5.5rem)',
                                         willChange: 'transform, opacity',
                                         lineHeight: 1.2,
@@ -392,7 +392,7 @@ export default function Hero() {
                                     ref={(el) => { if (el) wordRefs.current[6] = el; }}
                                     className="inline-block text-[var(--accent)] tracking-tight uppercase"
                                     style={{
-                                        fontFamily: '"Calistoga", serif',
+                                        fontFamily: '"Patrick Hand SC", cursive',
                                         fontSize: 'clamp(3.2rem, 18vw, 5.5rem)',
                                         willChange: 'transform, opacity',
                                         lineHeight: 1.2,
@@ -412,7 +412,7 @@ export default function Hero() {
                                     ref={(el) => { if (el) wordRefs.current[7] = el; }}
                                     className="inline-block text-[var(--accent)] tracking-tight uppercase"
                                     style={{
-                                        fontFamily: '"Calistoga", serif',
+                                        fontFamily: '"Patrick Hand SC", cursive',
                                         fontSize: 'clamp(3.2rem, 18vw, 5.5rem)',
                                         willChange: 'transform, opacity',
                                         lineHeight: 1.2,
