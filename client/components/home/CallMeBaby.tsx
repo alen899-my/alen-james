@@ -9,9 +9,11 @@ gsap.registerPlugin(ScrollTrigger);
 const CallMeBaby = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
+    const handRef = useRef<HTMLImageElement>(null);
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
+            // Text entrance
             gsap.from(textRef.current?.children || [], {
                 scrollTrigger: {
                     trigger: containerRef.current,
@@ -23,6 +25,24 @@ const CallMeBaby = () => {
                 stagger: 0.2,
                 ease: "power3.out"
             });
+
+            // Phone Hand animation
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: containerRef.current,
+                    start: "top 60%",
+                    toggleActions: "play none none none", // Triggers on enter
+                }
+            });
+
+            tl.fromTo(handRef.current, 
+                { x: '-110%', opacity: 0 },
+                { x: '0%', opacity: 1, duration: 1, ease: "power3.out" }
+            )
+            .to(handRef.current, 
+                { x: '-110%', opacity: 0, duration: 1, delay: 2, ease: "power3.in" }
+            );
+
         }, containerRef);
         return () => ctx.revert();
     }, []);
@@ -30,13 +50,23 @@ const CallMeBaby = () => {
     return (
         <section 
             ref={containerRef}
-            className="relative w-full py-32 px-6 md:px-14 flex flex-col items-center text-center overflow-visible"
+            className="relative w-full py-32 px-6 md:px-14 flex flex-col items-center text-center overflow-hidden"
             style={{ 
                 background: '#1084a2', // Crystal Blue
                 color: '#ffffff' 
             }}
         >
+            {/* ── PHONE HAND IMAGE ── */}
+            <img 
+                ref={handRef}
+                src="/phonehand.png" 
+                alt="Call me hand"
+                className="absolute left-0 bottom-0 w-32 md:w-64 h-auto pointer-events-none z-20"
+                style={{ transform: 'translateX(-110%)' }}
+            />
+
             {/* ── TOP TORN EDGE ── */}
+
             <div className="absolute top-0 left-0 w-full h-12 md:h-16 -translate-y-[98%] pointer-events-none select-none overflow-hidden" style={{ zIndex: 11 }}>
                 <svg 
                     viewBox="0 0 1440 60" 
