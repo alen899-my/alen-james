@@ -9,7 +9,7 @@ interface FooterProps {
 
 const Footer = ({ socialLinks = [] }: FooterProps) => {
     return (
-        <footer className="w-full bg-[#0d1117] text-[#f0ede6] pt-32 pb-12 px-6 md:px-14 overflow-hidden">
+        <footer className="relative z-20 w-full bg-[#0d1117] text-[#f0ede6] pt-32 pb-12 px-6 md:px-14 overflow-hidden">
             <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
                 {/* ── LET'S WORK TOGETHER ── */}
                 <h2 
@@ -23,7 +23,7 @@ const Footer = ({ socialLinks = [] }: FooterProps) => {
                     <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#8b9aaa]">Connect with me</p>
                     <a 
                         href="mailto:alenjames899@gmail.com" 
-                        className="text-2xl md:text-4xl font-bold hover:text-[#1084a2] transition-colors"
+                        className="text-2xl md:text-4xl font-bold hover:text-[#1084a2] transition-colors lowercase"
                     >
                         alenjames899@gmail.com
                     </a>
