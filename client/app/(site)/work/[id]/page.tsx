@@ -180,10 +180,13 @@ export default async function WorkDetailPage({ params }: PageProps) {
                                 key={rw.id}
                                 className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] transition-all hover:shadow-2xl"
                             >
-                                <img src={rw.main_image || ''} alt={rw.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className="absolute bottom-8 left-8 text-white translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
-                                    <h3 className="text-2xl font-black uppercase">{rw.title}</h3>
+                                <img src={rw.main_image || ''} alt={rw.title} className="w-full h-full object-cover grayscale-0 md:grayscale md:group-hover:grayscale-0 transition-all duration-700" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute bottom-8 left-8 right-8 text-white flex items-end justify-between translate-y-0 opacity-100 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 transition-all">
+                                    <h3 className="text-2xl font-black uppercase" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>{rw.title}</h3>
+                                    <div className="w-10 h-10 shrink-0 rounded-full bg-white flex items-center justify-center text-black rotate-0 md:-rotate-45 md:group-hover:rotate-0 transition-transform duration-500 shadow-lg">
+                                        <ChevronRight size={20} />
+                                    </div>
                                 </div>
                             </Link>
                         ))}
