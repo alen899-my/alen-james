@@ -19,14 +19,16 @@ export default function WhyWorkWithMe() {
         const contentCol = contentColRef.current;
         if (!container || !bikeWrap || !contentCol) return;
 
-        // ── Standard Parallax Tracing Effect ──
-        // The bike stays roughly centered in the viewport while translating down the exact height of the content.
+        // ── Curved Path Tracking ──
+        // The bike enters from the left, curves 90 degrees, and rides down.
+        // We offset x and y so the wheels perfectly touch the dashed line.
         gsap.set(bikeWrap, {
             xPercent: -50,
-            x: 45,
-            y: 0,
-            rotation: 0,
-            opacity: 0,
+            yPercent: -50,
+            x: -400,       // Start just off the left edge
+            y: -65,        // Shifted up so massive wheels touch the horizontal line
+            rotation: 0,   // Facing right
+            opacity: 1,    // Always visible
             transformOrigin: '50% 50%',
         });
 
@@ -34,22 +36,25 @@ export default function WhyWorkWithMe() {
             scrollTrigger: {
                 trigger: contentCol,
                 start: 'top center',
-                end: 'bottom center', // Maps the animation exactly as the column passes the center of the screen
+                end: 'bottom center', // Stays centered in viewport during animation
                 scrub: true,
-                invalidateOnRefresh: true, // Recalculate values on resize
+                invalidateOnRefresh: true,
             },
         });
 
         tl
-            .to(bikeWrap, { opacity: 1, duration: 0.05, ease: 'none' })
-            .to(bikeWrap, {
-                y: () => contentCol.clientHeight, // Move down exactly the height of the column
-                x: 45,
-                rotation: 0,
-                ease: 'none',
-                duration: 0.9,
-            })
-            .to(bikeWrap, { opacity: 0, duration: 0.05 });
+            // 1. Move horizontally into view VERY quickly (First 5% of scroll)
+            .to(bikeWrap, { x: -100, ease: 'power2.out', duration: 0.05 })
+
+            // 2. The Curve! (Next 5% of scroll)
+            .addLabel("curve")
+            .to(bikeWrap, { x: 65, ease: 'sine.out', duration: 0.05 }, "curve")
+            .to(bikeWrap, { y: 100, ease: 'sine.in', duration: 0.05 }, "curve")
+            .to(bikeWrap, { rotation: 90, ease: 'sine.inOut', duration: 0.05 }, "curve")
+
+            // 3. Straight down the vertical rail (Spends 90% of scroll here!)
+            .addLabel("down")
+            .to(bikeWrap, { y: () => contentCol.clientHeight + 200, ease: 'none', duration: 0.90 }, "down");
 
         return () => {
             ScrollTrigger.getAll().forEach(t => t.kill());
@@ -74,8 +79,11 @@ export default function WhyWorkWithMe() {
                     {/* ── Bike Column ── */}
                     <div className="hidden lg:block lg:col-span-4 relative order-1">
 
-                        {/* Dashed rail — full column height */}
-                        <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px border-l-2 border-dashed border-black/25 z-0" />
+                        {/* Dashed rail — Horizontal from left, curved corner, straight down */}
+                        <div
+                            className="absolute bottom-0 border-t-2 border-r-2 border-dashed border-black/25 rounded-tr-[100px] z-0"
+                            style={{ top: 0, right: '50%', width: '100vw' }}
+                        />
 
                         <div
                             ref={bikeWrapRef}
@@ -83,9 +91,9 @@ export default function WhyWorkWithMe() {
                             style={{ top: 0, left: '50%' }}
                         >
                             <img
-                                src="/scrollimage -rotated.png"
+                                src="/scrollimage.png"
                                 alt="Bike rider"
-                                className="w-44 h-auto object-contain relative z-10"
+                                className="w-[336px] h-auto object-contain relative z-10"
                                 loading="lazy"
                             />
                         </div>
@@ -93,7 +101,7 @@ export default function WhyWorkWithMe() {
 
                     {/* ── Content Column ── */}
                     <div
-                        ref={contentColRef} 
+                        ref={contentColRef}
                         className="lg:col-span-8 space-y-24 md:space-y-32 order-2"
                     >
                         {WHY_WORK_WITH_ME.map((item, index) => (
@@ -131,16 +139,6 @@ export default function WhyWorkWithMe() {
                 </div>
             </div>
 
-            {/* ── Mobile float ── */}
-            <div className="lg:hidden mt-16 flex justify-center">
-                <motion.img
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                    src="/scrollimage.png"
-                    alt="Bike rider"
-                    className="w-40 h-auto object-contain opacity-50"
-                />
-            </div>
         </section>
     );
 }
