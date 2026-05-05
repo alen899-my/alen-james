@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Work } from '@/lib/admin/models/works.model';
 
 interface WorkCardProps {
@@ -23,10 +24,13 @@ export default function WorkCard({ work, index }: WorkCardProps) {
         >
             {/* Image */}
             {work.main_image ? (
-                <img
+                <Image
                     src={work.main_image}
                     alt={work.title}
-                    className="w-full h-full object-contain transition-transform duration-700 bg-white"
+                    fill
+                    priority={index !== undefined && index < 4}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-contain transition-transform duration-700 bg-white group-hover:scale-105"
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--muted)]/50 to-[var(--card)]">

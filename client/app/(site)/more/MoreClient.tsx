@@ -2,6 +2,7 @@
 
 import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
     Briefcase, GraduationCap, Code2, Users, Notebook,
     PenTool, MapPin, Archive, LucideIcon
@@ -32,14 +33,14 @@ const container: Variants = {
     show: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1
+            staggerChildren: 0.06
         }
     }
 };
 
 const item: Variants = {
     hidden: { y: 30, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } }
+    show: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } }
 };
 
 export default function MoreClient() {
@@ -50,7 +51,7 @@ export default function MoreClient() {
             animate="show"
             className="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
-            {MORE_LINKS.map((link) => (
+            {MORE_LINKS.map((link, index) => (
                 <motion.div 
                     key={link.href} 
                     variants={item}
@@ -61,10 +62,13 @@ export default function MoreClient() {
                         >
                             {/* Background Image */}
                             <div className="absolute inset-0 z-0">
-                                <img 
+                                <Image 
                                     src={link.image} 
                                     alt={link.label}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    fill
+                                    priority={index < 2}
+                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 {/* Dark Overlay (Matching WorkCard) */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 md:opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
