@@ -64,7 +64,7 @@ export default function MoreAboutMeBanner() {
                         my process, and the stories behind the pixels.
                     </motion.p>
 
-                    <Link href="/about">
+                    <Link href="/more">
                         <motion.div
                             whileHover="hover"
                             className="inline-flex items-center group relative"
