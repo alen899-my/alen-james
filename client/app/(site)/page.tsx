@@ -5,6 +5,7 @@ import AboutMe from "@/components/home/AboutMe";
 import CallMeBaby from "@/components/home/CallMeBaby";
 import Works from "@/components/home/Works";
 import WhyWorkWithMe from "@/components/home/WhyWorkWithMe";
+import MoreAboutMeBanner from "@/components/home/MoreAboutMeBanner";
 import Footer from "@/components/layout/Footer";
 import { getAllWorks } from "@/lib/admin/models/works.model";
 import { getAllWorkCategories } from "@/lib/admin/models/work_categories.model";
@@ -52,6 +53,9 @@ export default async function Page() {
             </section>
 
             <WhyWorkWithMe />
+
+            {/* More About Me Banner */}
+            <MoreAboutMeBanner />
 
             {/* Footer */}
             <Footer socialLinks={socialLinks} />
