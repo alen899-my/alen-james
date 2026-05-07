@@ -30,7 +30,7 @@ export default function WorkCard({ work, index }: WorkCardProps) {
                     fill
                     priority={index !== undefined && index < 4}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-contain transition-transform duration-700 bg-white group-hover:scale-105"
+                    className="object-contain transition-transform duration-700 bg-white "
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--muted)]/50 to-[var(--card)]">

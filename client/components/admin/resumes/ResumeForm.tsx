@@ -9,6 +9,11 @@ import {
   FileText, ExternalLink
 } from 'lucide-react';
 
+interface MediaFile {
+  url: string;
+  file: File | null;
+}
+
 interface ResumeFormProps {
   resume?: Resume;
 }
@@ -53,55 +58,64 @@ export default function ResumeForm({ resume }: ResumeFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [fileUrl, setFileUrl] = useState<string>(resume?.file_url || '');
-  const [isUploading, setIsUploading] = useState(false);
+  const [resumeFile, setResumeFile] = useState<MediaFile>({ 
+    url: resume?.file_url || '', 
+    file: null 
+  });
   const [isActive, setIsActive] = useState(resume?.is_active || false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadToApi = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    setIsUploading(true);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        setFileUrl(data.url);
-      } else alert(data.error || 'Upload failed');
-    } catch {
-      alert('Upload failed');
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    const previewUrl = URL.createObjectURL(file);
+    setResumeFile({ url: previewUrl, file });
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!fileUrl) return setError('Please upload a resume file.');
+    if (!resumeFile.url) return setError('Please upload a resume file.');
     
     setIsSubmitting(true);
     setError(null);
     
-    const formData = new FormData(e.currentTarget);
-    formData.set('file_url', fileUrl);
-    formData.set('is_active', String(isActive));
+    const form = e.currentTarget;
     
-    const res = resume
-      ? await updateResumeAction(resume.id, formData)
-      : await createResumeAction(null, formData);
+    try {
+      const finalFileUrl = resumeFile.file ? await uploadToApi(resumeFile.file) : resumeFile.url;
+
+      const formData = new FormData(form);
+      formData.set('file_url', finalFileUrl);
+      formData.set('is_active', String(isActive));
       
-    setIsSubmitting(false);
-    
-    if (res.success) { 
-      router.push('/admin/resumes'); 
-      router.refresh(); 
+      const res = resume
+        ? await updateResumeAction(resume.id, formData)
+        : await createResumeAction(null, formData);
+        
+      if (res.success) { 
+        router.push('/admin/resumes'); 
+        router.refresh(); 
+      }
+      else {
+        setError(res.error || 'Something went wrong.');
+        setIsSubmitting(false);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed during submission.');
+      setIsSubmitting(false);
     }
-    else setError(res.error || 'Something went wrong.');
   };
 
   return (
@@ -141,7 +155,7 @@ export default function ResumeForm({ resume }: ResumeFormProps) {
           </Field>
 
           <Field label="Upload PDF / Document" required>
-            {fileUrl ? (
+            {resumeFile.url ? (
               <div className="flex items-center gap-4 p-4 rounded-xl bg-[#faf7f0] border border-[#e8e2d5]">
                 <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white border border-[#e8e2d5] text-red-500">
                   <FileText size={20} />
@@ -149,7 +163,7 @@ export default function ResumeForm({ resume }: ResumeFormProps) {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[#1a1a1a] truncate">Resume File Attached</p>
                   <a 
-                    href={fileUrl} 
+                    href={resumeFile.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-xs text-[#1084a2] hover:underline flex items-center gap-1 mt-0.5"
@@ -159,7 +173,7 @@ export default function ResumeForm({ resume }: ResumeFormProps) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setFileUrl('')}
+                  onClick={() => setResumeFile({ url: '', file: null })}
                   className="p-2 text-[#8b9aaa] hover:text-red-500 transition-colors"
                 >
                   <X size={16} />
@@ -169,10 +183,10 @@ export default function ResumeForm({ resume }: ResumeFormProps) {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
+                disabled={isSubmitting}
                 className="w-full py-10 flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#e0d8cc] text-[#aab4be] hover:text-[#1084a2] hover:border-[#1084a2]/50 hover:bg-[#1084a2]/5 transition-all disabled:opacity-50"
               >
-                {isUploading ? <Loader2 size={24} className="animate-spin text-[#1084a2]" /> : <Upload size={24} />}
+                <Upload size={24} />
                 <div className="text-center">
                   <p className="text-sm font-semibold text-[#3d4852]">Click to upload resume</p>
                   <p className="text-xs mt-1">PDF preferred (Max 10MB)</p>
@@ -208,7 +222,7 @@ export default function ResumeForm({ resume }: ResumeFormProps) {
         </button>
         <button
           type="submit"
-          disabled={isSubmitting || isUploading}
+          disabled={isSubmitting}
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:shadow-md active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
           style={{ background: 'linear-gradient(135deg, #1084a2, #1a9bbf)' }}
         >

@@ -9,6 +9,11 @@ import {
   Shield, Calendar
 } from 'lucide-react';
 
+interface MediaFile {
+  url: string;
+  file: File | null;
+}
+
 interface DiaryFormProps {
   diary?: Diary;
 }
@@ -53,39 +58,49 @@ export default function DiaryForm({ diary }: DiaryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [images, setImages] = useState<string[]>(diary?.images || []);
+  const [images, setImages] = useState<MediaFile[]>(
+    (diary?.images || []).map(url => ({ url, file: null }))
+  );
   const [uploadingMedia, setUploadingMedia] = useState<boolean>(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [isPublic, setIsPublic] = useState<boolean>(diary?.is_public ?? false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* handlers */
-  const triggerUpload = () => {
+  const triggerUpload = (index?: number) => {
+    setEditingIndex(index !== undefined ? index : null);
     if (fileInputRef.current) {
       fileInputRef.current.accept = 'image/*';
       fileInputRef.current.click();
     }
   };
 
+  const uploadToApi = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    setUploadingMedia(true);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        setImages(p => [...p, data.url]);
-      } else alert(data.error || 'Upload failed');
-    } catch {
-      alert('Upload failed');
-    } finally {
-      setUploadingMedia(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+    const previewUrl = URL.createObjectURL(file);
+    const item = { url: previewUrl, file };
+
+    if (editingIndex !== null) {
+      const newImages = [...images];
+      newImages[editingIndex] = item;
+      setImages(newImages);
+    } else {
+      setImages(p => [...p, item]);
     }
+    setEditingIndex(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -93,25 +108,33 @@ export default function DiaryForm({ diary }: DiaryFormProps) {
     setIsSubmitting(true);
     setError(null);
     
-    const formData = new FormData(e.currentTarget);
-    formData.set('images', JSON.stringify(images));
-    formData.set('is_public', isPublic.toString());
+    const form = e.currentTarget;
     
-    // Convert local date/time string to ISO before sending to DB if needed, 
-    // or let the action handle the string. It's safe to just send the datetime-local string directly 
-    // to Postgres TIMESTAMPTZ, it handles ISO8601 nicely.
-    
-    const res = diary
-      ? await updateDiaryAction(diary.id, formData)
-      : await createDiaryAction(null, formData);
+    try {
+      const finalImages = await Promise.all(
+        images.map(img => img.file ? uploadToApi(img.file) : Promise.resolve(img.url))
+      );
+
+      const formData = new FormData(form);
+      formData.set('images', JSON.stringify(finalImages));
+      formData.set('is_public', isPublic.toString());
       
-    setIsSubmitting(false);
-    
-    if (res.success) { 
-      router.push('/admin/diaries'); 
-      router.refresh(); 
+      const res = diary
+        ? await updateDiaryAction(diary.id, formData)
+        : await createDiaryAction(null, formData);
+        
+      if (res.success) { 
+        router.push('/admin/diaries'); 
+        router.refresh(); 
+      }
+      else {
+        setError(res.error || 'Something went wrong.');
+        setIsSubmitting(false);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed during submission.');
+      setIsSubmitting(false);
     }
-    else setError(res.error || 'Something went wrong.');
   };
 
   // formatting existing date to fit datetime-local input
@@ -220,22 +243,31 @@ export default function DiaryForm({ diary }: DiaryFormProps) {
         subtitle="Attach photos related to this incident"
       >
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {images.map((url, i) => (
+          {images.map((item, i) => (
             <div key={i} className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-square">
-              <img src={url} alt={`Diary image ${i + 1}`} className="w-full h-full object-cover" />
-              <button
-                type="button"
-                onClick={() => setImages(p => p.filter((_, j) => j !== i))}
-                className="absolute top-1.5 right-1.5 p-1 bg-white/90 backdrop-blur rounded-lg text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
-              >
-                <X size={13} />
-              </button>
+              <img src={item.url} alt={`Diary image ${i + 1}`} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => triggerUpload(i)}
+                  className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow"
+                >
+                  <Upload size={13} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImages(p => p.filter((_, j) => j !== i))}
+                  className="p-2 bg-white rounded-lg text-red-500 shadow"
+                >
+                  <X size={13} />
+                </button>
+              </div>
             </div>
           ))}
           
           <button
             type="button"
-            onClick={triggerUpload}
+            onClick={() => triggerUpload()}
             disabled={uploadingMedia}
             className="aspect-square flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-[#e0d8cc] text-[#aab4be] hover:text-[#1084a2] hover:border-[#1084a2]/50 hover:bg-[#1084a2]/5 transition-all disabled:opacity-50"
           >

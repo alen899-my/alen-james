@@ -9,8 +9,18 @@ export const metadata = { title: 'Edit Work — Admin' };
 
 export default async function EditWorkPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
+  const idStr = resolvedParams.id;
+  const id = Number(idStr);
+
+  console.log('[EditWorkPage] idStr:', idStr, 'parsed id:', id);
+
+  if (isNaN(id)) {
+    console.error('[EditWorkPage] Invalid ID:', idStr);
+    notFound();
+  }
+
   const [work, categories] = await Promise.all([
-    getWorkById(Number(resolvedParams.id)),
+    getWorkById(id),
     getAllWorkCategories(),
   ]);
 

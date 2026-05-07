@@ -23,9 +23,10 @@ export default function CategoryFormModal({ category }: CategoryFormModalProps) 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     setIsSubmitting(true);
     setError(null);
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(form);
     const res = category 
       ? await updateWorkCategoryAction(category.id, formData)
       : await createWorkCategoryAction(null, formData);

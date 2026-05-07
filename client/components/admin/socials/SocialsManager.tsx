@@ -20,7 +20,7 @@ export default function SocialsManager({ initialSocials }: SocialsManagerProps) 
   // Form State
   const [platform, setPlatform] = useState('');
   const [url, setUrl] = useState('');
-  const [iconUrl, setIconUrl] = useState('');
+  const [iconUrl, setIconUrl] = useState<{ url: string; file: File | null }>({ url: '', file: null });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -31,7 +31,7 @@ export default function SocialsManager({ initialSocials }: SocialsManagerProps) 
     setEditingSocial(social);
     setPlatform(social.platform);
     setUrl(social.url);
-    setIconUrl(social.icon_url || '');
+    setIconUrl({ url: social.icon_url || '', file: null });
     setError(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -40,31 +40,26 @@ export default function SocialsManager({ initialSocials }: SocialsManagerProps) 
     setEditingSocial(null);
     setPlatform('');
     setUrl('');
-    setIconUrl('');
+    setIconUrl({ url: '', file: null });
     setError(null);
+  };
+
+  const uploadToApi = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        setIconUrl(data.url);
-      } else {
-        alert(data.error || 'Upload failed');
-      }
-    } catch {
-      alert('Upload failed');
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    const previewUrl = URL.createObjectURL(file);
+    setIconUrl({ url: previewUrl, file });
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,25 +69,31 @@ export default function SocialsManager({ initialSocials }: SocialsManagerProps) 
     setIsSubmitting(true);
     setError(null);
 
-    const fd = new FormData();
-    fd.append('platform', platform);
-    fd.append('url', url);
-    fd.append('icon_url', iconUrl);
+    try {
+      const finalIconUrl = iconUrl.file ? await uploadToApi(iconUrl.file) : iconUrl.url;
 
-    let res;
-    if (editingSocial) {
-      res = await updateSocialLinkAction(editingSocial.id, fd);
-    } else {
-      res = await createSocialLinkAction(null, fd);
-    }
+      const fd = new FormData();
+      fd.append('platform', platform);
+      fd.append('url', url);
+      fd.append('icon_url', finalIconUrl);
 
-    setIsSubmitting(false);
+      let res;
+      if (editingSocial) {
+        res = await updateSocialLinkAction(editingSocial.id, fd);
+      } else {
+        res = await createSocialLinkAction(null, fd);
+      }
 
-    if (res.success) {
-      cancelEdit();
-      router.refresh();
-    } else {
-      setError(res.error || 'Something went wrong');
+      if (res.success) {
+        cancelEdit();
+        router.refresh();
+      } else {
+        setError(res.error || 'Something went wrong');
+        setIsSubmitting(false);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed during submission.');
+      setIsSubmitting(false);
     }
   };
 
@@ -166,14 +167,14 @@ export default function SocialsManager({ initialSocials }: SocialsManagerProps) 
               <label className="block text-xs font-semibold uppercase tracking-wider text-[#8b9aaa]">Social Icon</label>
               <input type="file" ref={fileInputRef} onChange={handleUpload} className="hidden" accept="image/*" />
               
-              {iconUrl ? (
+              {iconUrl.url ? (
                 <div className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] h-28 bg-[#faf7f0] flex items-center justify-center">
-                  <img src={iconUrl} alt="Icon" className="h-16 w-16 object-contain" />
+                  <img src={iconUrl.url} alt="Icon" className="h-16 w-16 object-contain" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2]">
                       <Upload size={14} />
                     </button>
-                    <button type="button" onClick={() => setIconUrl('')} className="p-2 bg-white rounded-lg text-red-500">
+                    <button type="button" onClick={() => setIconUrl({ url: '', file: null })} className="p-2 bg-white rounded-lg text-red-500">
                       <X size={14} />
                     </button>
                   </div>

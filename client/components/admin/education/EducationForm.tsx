@@ -10,6 +10,11 @@ import {
   MapPin, GraduationCap
 } from 'lucide-react';
 
+interface MediaFile {
+  url: string;
+  file: File | null;
+}
+
 interface EducationFormProps {
   education?: Education;
 }
@@ -81,19 +86,28 @@ export default function EducationForm({ education }: EducationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [gallery, setGallery] = useState<string[]>(education?.gallery || []);
-  const [videos, setVideos] = useState<string[]>(education?.videos || []);
-  const [schoolPhoto, setSchoolPhoto] = useState<string>(education?.school_photo || '');
+  const [gallery, setGallery] = useState<MediaFile[]>(
+    (education?.gallery || []).map(url => ({ url, file: null }))
+  );
+  const [videos, setVideos] = useState<MediaFile[]>(
+    (education?.videos || []).map(url => ({ url, file: null }))
+  );
+  const [schoolPhoto, setSchoolPhoto] = useState<MediaFile>({ 
+    url: education?.school_photo || '', 
+    file: null 
+  });
   const [uploadingMedia, setUploadingMedia] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadTarget, setUploadTarget] = useState<
     'school_photo' | 'gallery' | 'video' | null
   >(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   /* handlers */
-  const triggerUpload = (target: 'school_photo' | 'gallery' | 'video') => {
+  const triggerUpload = (target: 'school_photo' | 'gallery' | 'video', index?: number) => {
     setUploadTarget(target);
+    setEditingIndex(index !== undefined ? index : null);
     if (fileInputRef.current) {
       fileInputRef.current.accept =
         target === 'video' ? 'video/*' : 'image/*';
@@ -101,43 +115,84 @@ export default function EducationForm({ education }: EducationFormProps) {
     }
   };
 
+  const uploadToApi = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !uploadTarget) return;
-    setUploadingMedia(uploadTarget);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        if (uploadTarget === 'school_photo') setSchoolPhoto(data.url);
-        else if (uploadTarget === 'gallery') setGallery(p => [...p, data.url]);
-        else if (uploadTarget === 'video') setVideos(p => [...p, data.url]);
-      } else alert(data.error || 'Upload failed');
-    } catch {
-      alert('Upload failed');
-    } finally {
-      setUploadingMedia(null);
-      setUploadTarget(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+    
+    const previewUrl = URL.createObjectURL(file);
+    const item = { url: previewUrl, file };
+
+    if (uploadTarget === 'school_photo') setSchoolPhoto(item);
+    else if (uploadTarget === 'gallery') {
+      if (editingIndex !== null) {
+        const newGallery = [...gallery];
+        newGallery[editingIndex] = item;
+        setGallery(newGallery);
+      } else {
+        setGallery(p => [...p, item]);
+      }
+    } else if (uploadTarget === 'video') {
+      if (editingIndex !== null) {
+        const newVideos = [...videos];
+        newVideos[editingIndex] = item;
+        setVideos(newVideos);
+      } else {
+        setVideos(p => [...p, item]);
+      }
     }
+    setUploadTarget(null);
+    setEditingIndex(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-    const formData = new FormData(e.currentTarget);
-    formData.set('gallery', JSON.stringify(gallery));
-    formData.set('videos', JSON.stringify(videos));
-    formData.set('school_photo', schoolPhoto);
-    const res = education
-      ? await updateEducationAction(education.id, formData)
-      : await createEducationAction(null, formData);
-    setIsSubmitting(false);
-    if (res.success) { router.push('/admin/education'); router.refresh(); }
-    else setError(res.error || 'Something went wrong.');
+    
+    const form = e.currentTarget;
+    
+    try {
+      const [finalSchoolPhoto] = await Promise.all([
+        schoolPhoto.file ? uploadToApi(schoolPhoto.file) : Promise.resolve(schoolPhoto.url)
+      ]);
+      const finalGallery = await Promise.all(
+        gallery.map(img => img.file ? uploadToApi(img.file) : Promise.resolve(img.url))
+      );
+      const finalVideos = await Promise.all(
+        videos.map(vid => vid.file ? uploadToApi(vid.file) : Promise.resolve(vid.url))
+      );
+
+      const formData = new FormData(form);
+      formData.set('gallery', JSON.stringify(finalGallery));
+      formData.set('videos', JSON.stringify(finalVideos));
+      formData.set('school_photo', finalSchoolPhoto);
+      
+      const res = education
+        ? await updateEducationAction(education.id, formData)
+        : await createEducationAction(null, formData);
+        
+      if (res.success) { 
+        router.push('/admin/education'); 
+        router.refresh(); 
+      }
+      else {
+        setError(res.error || 'Something went wrong.');
+        setIsSubmitting(false);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed during submission.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -269,9 +324,9 @@ export default function EducationForm({ education }: EducationFormProps) {
             <p className="text-xs font-semibold uppercase tracking-wider text-[#8b9aaa]">
               Institution Logo / Main Photo
             </p>
-            {schoolPhoto ? (
+            {schoolPhoto.url ? (
               <div className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-video">
-                <img src={schoolPhoto} alt="School" className="w-full h-full object-cover" />
+                <img src={schoolPhoto.url} alt="School" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button
                     type="button"
@@ -282,7 +337,7 @@ export default function EducationForm({ education }: EducationFormProps) {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setSchoolPhoto('')}
+                    onClick={() => setSchoolPhoto({ url: '', file: null })}
                     className="p-2 bg-white rounded-lg text-red-500 shadow"
                   >
                     <X size={15} />
@@ -305,19 +360,28 @@ export default function EducationForm({ education }: EducationFormProps) {
               Education Gallery (up to 20 images)
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {gallery.map((url, i) => (
+              {gallery.map((item, i) => (
                 <div
                   key={i}
                   className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-square"
                 >
-                  <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => setGallery(p => p.filter((_, j) => j !== i))}
-                    className="absolute top-1.5 right-1.5 p-1 bg-white/90 backdrop-blur rounded-lg text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
-                  >
-                    <X size={13} />
-                  </button>
+                  <img src={item.url} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => triggerUpload('gallery', i)}
+                      className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow"
+                    >
+                      <Upload size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGallery(p => p.filter((_, j) => j !== i))}
+                      className="p-2 bg-white rounded-lg text-red-500 shadow"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
                 </div>
               ))}
               {gallery.length < 20 && (
@@ -343,19 +407,28 @@ export default function EducationForm({ education }: EducationFormProps) {
               Videos
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {videos.map((url, i) => (
+              {videos.map((item, i) => (
                 <div
                   key={i}
                   className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-video bg-black"
                 >
-                  <video src={url} className="w-full h-full object-contain" />
-                  <button
-                    type="button"
-                    onClick={() => setVideos(p => p.filter((_, j) => j !== i))}
-                    className="absolute top-1.5 right-1.5 p-1 bg-white/90 backdrop-blur rounded-lg text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm z-10"
-                  >
-                    <X size={13} />
-                  </button>
+                  <video src={item.url} className="w-full h-full object-contain" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-10">
+                    <button
+                      type="button"
+                      onClick={() => triggerUpload('video', i)}
+                      className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow"
+                    >
+                      <Upload size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVideos(p => p.filter((_, j) => j !== i))}
+                      className="p-2 bg-white rounded-lg text-red-500 shadow"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
                 </div>
               ))}
               <button

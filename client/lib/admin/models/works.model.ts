@@ -66,6 +66,8 @@ export async function getAllWorks(): Promise<Work[]> {
 }
 
 export async function getWorkById(id: number): Promise<Work | null> {
+  if (isNaN(id)) return null;
+
   const { rows } = await pool.query(
     `SELECT w.*, c.name as category_name 
      FROM works w

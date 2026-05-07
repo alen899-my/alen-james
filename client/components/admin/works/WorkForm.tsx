@@ -78,6 +78,11 @@ const inputCls =
 
 /* ── main component ───────────────────────────────────────────── */
 
+interface MediaFile {
+  url: string;
+  file: File | null;
+}
+
 export default function WorkForm({ work, categories }: WorkFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -85,16 +90,27 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
 
   const [techStacks, setTechStacks] = useState<string[]>(work?.tech_stacks || []);
   const [newTech, setNewTech] = useState('');
-  const [screenshots, setScreenshots] = useState<string[]>(work?.screenshots || []);
-  const [additionalVideos, setAdditionalVideos] = useState<string[]>(work?.additional_videos || []);
-  const [mainImage, setMainImage] = useState<string>(work?.main_image || '');
-  const [videoUrl, setVideoUrl] = useState<string>(work?.video_url || '');
+  const [screenshots, setScreenshots] = useState<MediaFile[]>(
+    (work?.screenshots || []).map(url => ({ url, file: null }))
+  );
+  const [additionalVideos, setAdditionalVideos] = useState<MediaFile[]>(
+    (work?.additional_videos || []).map(url => ({ url, file: null }))
+  );
+  const [mainImage, setMainImage] = useState<MediaFile>({ 
+    url: work?.main_image || '', 
+    file: null 
+  });
+  const [videoUrl, setVideoUrl] = useState<MediaFile>({ 
+    url: work?.video_url || '', 
+    file: null 
+  });
   const [uploadingMedia, setUploadingMedia] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadTarget, setUploadTarget] = useState<
     'main' | 'screenshot' | 'video' | 'additional_video' | null
   >(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   /* handlers */
   const handleTechAdd = (e: React.KeyboardEvent) => {
@@ -106,8 +122,9 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
     }
   };
 
-  const triggerUpload = (target: 'main' | 'screenshot' | 'video' | 'additional_video') => {
+  const triggerUpload = (target: 'main' | 'screenshot' | 'video' | 'additional_video', index?: number) => {
     setUploadTarget(target);
+    setEditingIndex(index !== undefined ? index : null);
     if (fileInputRef.current) {
       fileInputRef.current.accept =
         target === 'video' || target === 'additional_video' ? 'video/*' : 'image/*';
@@ -115,47 +132,91 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
     }
   };
 
+  const uploadToApi = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !uploadTarget) return;
-    setUploadingMedia(uploadTarget);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        if (uploadTarget === 'main') setMainImage(data.url);
-        else if (uploadTarget === 'screenshot') setScreenshots(p => [...p, data.url]);
-        else if (uploadTarget === 'video') setVideoUrl(data.url);
-        else if (uploadTarget === 'additional_video')
-          setAdditionalVideos(p => [...p, data.url]);
-      } else alert(data.error || 'Upload failed');
-    } catch {
-      alert('Upload failed');
-    } finally {
-      setUploadingMedia(null);
-      setUploadTarget(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+    
+    const previewUrl = URL.createObjectURL(file);
+    const item = { url: previewUrl, file };
+
+    if (uploadTarget === 'main') setMainImage(item);
+    else if (uploadTarget === 'video') setVideoUrl(item);
+    else if (uploadTarget === 'screenshot') {
+      if (editingIndex !== null) {
+        const newS = [...screenshots];
+        newS[editingIndex] = item;
+        setScreenshots(newS);
+      } else {
+        setScreenshots(p => [...p, item]);
+      }
+    } else if (uploadTarget === 'additional_video') {
+      if (editingIndex !== null) {
+        const newV = [...additionalVideos];
+        newV[editingIndex] = item;
+        setAdditionalVideos(newV);
+      } else {
+        setAdditionalVideos(p => [...p, item]);
+      }
     }
+
+    setUploadTarget(null);
+    setEditingIndex(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-    const formData = new FormData(e.currentTarget);
-    formData.set('tech_stacks', JSON.stringify(techStacks));
-    formData.set('screenshots', JSON.stringify(screenshots));
-    formData.set('additional_videos', JSON.stringify(additionalVideos));
-    formData.set('main_image', mainImage);
-    formData.set('video_url', videoUrl);
-    const res = work
-      ? await updateWorkAction(work.id, formData)
-      : await createWorkAction(null, formData);
-    setIsSubmitting(false);
-    if (res.success) { router.push('/admin/works'); router.refresh(); }
-    else setError(res.error || 'Something went wrong.');
+
+    const form = e.currentTarget;
+
+    try {
+      // 1. Upload new files if any
+      const [finalMainImage, finalVideoUrl] = await Promise.all([
+        mainImage.file ? uploadToApi(mainImage.file) : Promise.resolve(mainImage.url),
+        videoUrl.file ? uploadToApi(videoUrl.file) : Promise.resolve(videoUrl.url)
+      ]);
+
+      const finalScreenshots = await Promise.all(
+        screenshots.map(s => s.file ? uploadToApi(s.file) : Promise.resolve(s.url))
+      );
+
+      const finalAdditionalVideos = await Promise.all(
+        additionalVideos.map(v => v.file ? uploadToApi(v.file) : Promise.resolve(v.url))
+      );
+
+      const formData = new FormData(form);
+      formData.set('tech_stacks', JSON.stringify(techStacks));
+      formData.set('screenshots', JSON.stringify(finalScreenshots));
+      formData.set('additional_videos', JSON.stringify(finalAdditionalVideos));
+      formData.set('main_image', finalMainImage);
+      formData.set('video_url', finalVideoUrl);
+
+      const res = work
+        ? await updateWorkAction(work.id, formData)
+        : await createWorkAction(null, formData);
+
+      if (res.success) {
+        router.push('/admin/works');
+        router.refresh();
+      } else {
+        setError(res.error || 'Something went wrong.');
+        setIsSubmitting(false);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed during submission.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -339,9 +400,9 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
               <p className="text-xs font-semibold uppercase tracking-wider text-[#8b9aaa]">
                 Main Image <span className="text-[#c4bdb0] normal-case font-normal">(card thumbnail)</span>
               </p>
-              {mainImage ? (
+              {mainImage.url ? (
                 <div className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-video">
-                  <img src={mainImage} alt="Main" className="w-full h-full object-cover" />
+                  <img src={mainImage.url} alt="Main" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button
                       type="button"
@@ -352,7 +413,7 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setMainImage('')}
+                      onClick={() => setMainImage({ url: '', file: null })}
                       className="p-2 bg-white rounded-lg text-red-500 shadow"
                     >
                       <X size={15} />
@@ -374,9 +435,9 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
               <p className="text-xs font-semibold uppercase tracking-wider text-[#8b9aaa]">
                 Project Video <span className="text-[#c4bdb0] normal-case font-normal">(optional)</span>
               </p>
-              {videoUrl ? (
+              {videoUrl.url ? (
                 <div className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-video bg-black">
-                  <video src={videoUrl} controls className="w-full h-full object-contain" />
+                  <video src={videoUrl.url} controls className="w-full h-full object-contain" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button
                       type="button"
@@ -387,7 +448,7 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setVideoUrl('')}
+                      onClick={() => setVideoUrl({ url: '', file: null })}
                       className="p-2 bg-white rounded-lg text-red-500 shadow"
                     >
                       <X size={15} />
@@ -411,19 +472,28 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
               Screenshots
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {screenshots.map((url, i) => (
+              {screenshots.map((item, i) => (
                 <div
                   key={i}
                   className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-video"
                 >
-                  <img src={url} alt={`Shot ${i + 1}`} className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => setScreenshots(p => p.filter((_, j) => j !== i))}
-                    className="absolute top-1.5 right-1.5 p-1 bg-white/90 backdrop-blur rounded-lg text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
-                  >
-                    <X size={13} />
-                  </button>
+                  <img src={item.url} alt={`Shot ${i + 1}`} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => triggerUpload('screenshot', i)}
+                      className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow"
+                    >
+                      <Upload size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setScreenshots(p => p.filter((_, j) => j !== i))}
+                      className="p-2 bg-white rounded-lg text-red-500 shadow"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
                 </div>
               ))}
               <button
@@ -447,19 +517,28 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
               Additional Videos
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {additionalVideos.map((url, i) => (
+              {additionalVideos.map((item, i) => (
                 <div
                   key={i}
                   className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-video bg-black"
                 >
-                  <video src={url} className="w-full h-full object-contain" />
-                  <button
-                    type="button"
-                    onClick={() => setAdditionalVideos(p => p.filter((_, j) => j !== i))}
-                    className="absolute top-1.5 right-1.5 p-1 bg-white/90 backdrop-blur rounded-lg text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm z-10"
-                  >
-                    <X size={13} />
-                  </button>
+                  <video src={item.url} className="w-full h-full object-contain" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-10">
+                    <button
+                      type="button"
+                      onClick={() => triggerUpload('additional_video', i)}
+                      className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow"
+                    >
+                      <Upload size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAdditionalVideos(p => p.filter((_, j) => j !== i))}
+                      className="p-2 bg-white rounded-lg text-red-500 shadow"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
                 </div>
               ))}
               <button

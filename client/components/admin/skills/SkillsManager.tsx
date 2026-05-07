@@ -22,7 +22,7 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
   const [name, setName] = useState('');
   const [level, setLevel] = useState('');
   const [experience, setExperience] = useState('');
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState<{ url: string; file: File | null }>({ url: '', file: null });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -34,7 +34,7 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
     setName(skill.name);
     setLevel(skill.level || '');
     setExperience(skill.experience || '');
-    setImage(skill.image || '');
+    setImage({ url: skill.image || '', file: null });
     setError(null);
     // scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -45,31 +45,26 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
     setName('');
     setLevel('');
     setExperience('');
-    setImage('');
+    setImage({ url: '', file: null });
     setError(null);
+  };
+
+  const uploadToApi = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        setImage(data.url);
-      } else {
-        alert(data.error || 'Upload failed');
-      }
-    } catch {
-      alert('Upload failed');
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    const previewUrl = URL.createObjectURL(file);
+    setImage({ url: previewUrl, file });
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,26 +74,32 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
     setIsSubmitting(true);
     setError(null);
 
-    const fd = new FormData();
-    fd.append('name', name);
-    fd.append('level', level);
-    fd.append('experience', experience);
-    fd.append('image', image);
+    try {
+      const finalImageUrl = image.file ? await uploadToApi(image.file) : image.url;
 
-    let res;
-    if (editingSkill) {
-      res = await updateSkillAction(editingSkill.id, fd);
-    } else {
-      res = await createSkillAction(null, fd);
-    }
+      const fd = new FormData();
+      fd.append('name', name);
+      fd.append('level', level);
+      fd.append('experience', experience);
+      fd.append('image', finalImageUrl);
 
-    setIsSubmitting(false);
+      let res;
+      if (editingSkill) {
+        res = await updateSkillAction(editingSkill.id, fd);
+      } else {
+        res = await createSkillAction(null, fd);
+      }
 
-    if (res.success) {
-      cancelEdit();
-      router.refresh(); // Fetch new list from server
-    } else {
-      setError(res.error || 'Something went wrong');
+      if (res.success) {
+        cancelEdit();
+        router.refresh(); 
+      } else {
+        setError(res.error || 'Something went wrong');
+        setIsSubmitting(false);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed during submission.');
+      setIsSubmitting(false);
     }
   };
 
@@ -183,14 +184,14 @@ export default function SkillsManager({ initialSkills }: SkillsManagerProps) {
               <label className="block text-xs font-semibold uppercase tracking-wider text-[#8b9aaa]">Skill Icon / Image</label>
               <input type="file" ref={fileInputRef} onChange={handleUpload} className="hidden" accept="image/*" />
               
-              {image ? (
+              {image.url ? (
                 <div className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] h-28 bg-[#faf7f0] flex items-center justify-center">
-                  <img src={image} alt="Skill" className="h-16 w-16 object-contain" />
+                  <img src={image.url} alt="Skill" className="h-16 w-16 object-contain" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2]">
                       <Upload size={14} />
                     </button>
-                    <button type="button" onClick={() => setImage('')} className="p-2 bg-white rounded-lg text-red-500">
+                    <button type="button" onClick={() => setImage({ url: '', file: null })} className="p-2 bg-white rounded-lg text-red-500">
                       <X size={14} />
                     </button>
                   </div>

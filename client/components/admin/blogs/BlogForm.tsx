@@ -9,6 +9,11 @@ import {
   Image as ImageIcon, Film, Settings, Calendar
 } from 'lucide-react';
 
+interface MediaFile {
+  url: string;
+  file: File | null;
+}
+
 interface BlogFormProps {
   blog?: Blog;
 }
@@ -53,8 +58,14 @@ export default function BlogForm({ blog }: BlogFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [mainImage, setMainImage] = useState<string>(blog?.main_image || '');
-  const [videoUrl, setVideoUrl] = useState<string>(blog?.video_url || '');
+  const [mainImage, setMainImage] = useState<MediaFile>({ 
+    url: blog?.main_image || '', 
+    file: null 
+  });
+  const [videoUrl, setVideoUrl] = useState<MediaFile>({ 
+    url: blog?.video_url || '', 
+    file: null 
+  });
   const [status, setStatus] = useState<'active' | 'inactive'>(blog?.status || 'active');
   const [uploadingMedia, setUploadingMedia] = useState<string | null>(null);
 
@@ -70,27 +81,27 @@ export default function BlogForm({ blog }: BlogFormProps) {
     }
   };
 
+  const uploadToApi = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !uploadTarget) return;
     
-    setUploadingMedia(uploadTarget);
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        if (uploadTarget === 'main') setMainImage(data.url);
-        else if (uploadTarget === 'video') setVideoUrl(data.url);
-      } else alert(data.error || 'Upload failed');
-    } catch {
-      alert('Upload failed');
-    } finally {
-      setUploadingMedia(null);
-      setUploadTarget(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    const previewUrl = URL.createObjectURL(file);
+    const item = { url: previewUrl, file };
+
+    if (uploadTarget === 'main') setMainImage(item);
+    else if (uploadTarget === 'video') setVideoUrl(item);
+    
+    setUploadTarget(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -98,22 +109,35 @@ export default function BlogForm({ blog }: BlogFormProps) {
     setIsSubmitting(true);
     setError(null);
     
-    const formData = new FormData(e.currentTarget);
-    formData.set('main_image', mainImage);
-    formData.set('video_url', videoUrl);
-    formData.set('status', status);
+    const form = e.currentTarget;
     
-    const res = blog
-      ? await updateBlogAction(blog.id, formData)
-      : await createBlogAction(null, formData);
+    try {
+      const [finalMainImage, finalVideoUrl] = await Promise.all([
+        mainImage.file ? uploadToApi(mainImage.file) : Promise.resolve(mainImage.url),
+        videoUrl.file ? uploadToApi(videoUrl.file) : Promise.resolve(videoUrl.url)
+      ]);
+
+      const formData = new FormData(form);
+      formData.set('main_image', finalMainImage);
+      formData.set('video_url', finalVideoUrl);
+      formData.set('status', status);
       
-    setIsSubmitting(false);
-    
-    if (res.success) { 
-      router.push('/admin/blogs'); 
-      router.refresh(); 
+      const res = blog
+        ? await updateBlogAction(blog.id, formData)
+        : await createBlogAction(null, formData);
+        
+      if (res.success) { 
+        router.push('/admin/blogs'); 
+        router.refresh(); 
+      }
+      else {
+        setError(res.error || 'Something went wrong.');
+        setIsSubmitting(false);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed during submission.');
+      setIsSubmitting(false);
     }
-    else setError(res.error || 'Something went wrong.');
   };
 
   const defaultDate = blog?.publish_date 
@@ -185,14 +209,14 @@ export default function BlogForm({ blog }: BlogFormProps) {
             <p className="text-xs font-semibold uppercase tracking-wider text-[#8b9aaa]">
               Cover Image
             </p>
-            {mainImage ? (
+            {mainImage.url ? (
               <div className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-video">
-                <img src={mainImage} alt="Main" className="w-full h-full object-cover" />
+                <img src={mainImage.url} alt="Main" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button type="button" onClick={() => triggerUpload('main')} className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow">
                     <Upload size={15} />
                   </button>
-                  <button type="button" onClick={() => setMainImage('')} className="p-2 bg-white rounded-lg text-red-500 shadow">
+                  <button type="button" onClick={() => setMainImage({ url: '', file: null })} className="p-2 bg-white rounded-lg text-red-500 shadow">
                     <X size={15} />
                   </button>
                 </div>
@@ -211,14 +235,14 @@ export default function BlogForm({ blog }: BlogFormProps) {
             <p className="text-xs font-semibold uppercase tracking-wider text-[#8b9aaa]">
               Featured Video <span className="text-[#c4bdb0] normal-case font-normal">(optional)</span>
             </p>
-            {videoUrl ? (
+            {videoUrl.url ? (
               <div className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-video bg-black">
-                <video src={videoUrl} controls className="w-full h-full object-contain" />
+                <video src={videoUrl.url} controls className="w-full h-full object-contain" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-10">
                   <button type="button" onClick={() => triggerUpload('video')} className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow">
                     <Upload size={15} />
                   </button>
-                  <button type="button" onClick={() => setVideoUrl('')} className="p-2 bg-white rounded-lg text-red-500 shadow">
+                  <button type="button" onClick={() => setVideoUrl({ url: '', file: null })} className="p-2 bg-white rounded-lg text-red-500 shadow">
                     <X size={15} />
                   </button>
                 </div>

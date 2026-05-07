@@ -9,6 +9,11 @@ import {
   Film
 } from 'lucide-react';
 
+interface MediaFile {
+  url: string;
+  file: File | null;
+}
+
 interface MediaFormProps {
   media?: MediaGallery;
 }
@@ -53,40 +58,63 @@ export default function MediaForm({ media }: MediaFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [images, setImages] = useState<string[]>(media?.images || []);
-  const [videos, setVideos] = useState<string[]>(media?.videos || []);
+  const [images, setImages] = useState<MediaFile[]>(
+    (media?.images || []).map(url => ({ url, file: null }))
+  );
+  const [videos, setVideos] = useState<MediaFile[]>(
+    (media?.videos || []).map(url => ({ url, file: null }))
+  );
   const [uploadTarget, setUploadTarget] = useState<'image' | 'video' | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* handlers */
-  const triggerUpload = (type: 'image' | 'video') => {
+  const triggerUpload = (type: 'image' | 'video', index?: number) => {
     setUploadTarget(type);
+    setEditingIndex(index !== undefined ? index : null);
     if (fileInputRef.current) {
       fileInputRef.current.accept = type === 'image' ? 'image/*' : 'video/*';
       fileInputRef.current.click();
     }
   };
 
+  const uploadToApi = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !uploadTarget) return;
     
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        if (uploadTarget === 'image') setImages(p => [...p, data.url]);
-        else setVideos(p => [...p, data.url]);
-      } else alert(data.error || 'Upload failed');
-    } catch {
-      alert('Upload failed');
-    } finally {
-      setUploadTarget(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+    const previewUrl = URL.createObjectURL(file);
+    const item = { url: previewUrl, file };
+
+    if (uploadTarget === 'image') {
+      if (editingIndex !== null) {
+        const newImages = [...images];
+        newImages[editingIndex] = item;
+        setImages(newImages);
+      } else {
+        setImages(p => [...p, item]);
+      }
+    } else {
+      if (editingIndex !== null) {
+        const newVideos = [...videos];
+        newVideos[editingIndex] = item;
+        setVideos(newVideos);
+      } else {
+        setVideos(p => [...p, item]);
+      }
     }
+    setUploadTarget(null);
+    setEditingIndex(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -94,21 +122,36 @@ export default function MediaForm({ media }: MediaFormProps) {
     setIsSubmitting(true);
     setError(null);
     
-    const formData = new FormData(e.currentTarget);
-    formData.set('images', JSON.stringify(images));
-    formData.set('videos', JSON.stringify(videos));
+    const form = e.currentTarget;
     
-    const res = media
-      ? await updateMediaAction(media.id, formData)
-      : await createMediaAction(null, formData);
+    try {
+      const finalImages = await Promise.all(
+        images.map(img => img.file ? uploadToApi(img.file) : Promise.resolve(img.url))
+      );
+      const finalVideos = await Promise.all(
+        videos.map(vid => vid.file ? uploadToApi(vid.file) : Promise.resolve(vid.url))
+      );
+
+      const formData = new FormData(form);
+      formData.set('images', JSON.stringify(finalImages));
+      formData.set('videos', JSON.stringify(finalVideos));
       
-    setIsSubmitting(false);
-    
-    if (res.success) { 
-      router.push('/admin/media'); 
-      router.refresh(); 
+      const res = media
+        ? await updateMediaAction(media.id, formData)
+        : await createMediaAction(null, formData);
+        
+      if (res.success) { 
+        router.push('/admin/media'); 
+        router.refresh(); 
+      }
+      else {
+        setError(res.error || 'Something went wrong.');
+        setIsSubmitting(false);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed during submission.');
+      setIsSubmitting(false);
     }
-    else setError(res.error || 'Something went wrong.');
   };
 
   return (
@@ -175,16 +218,25 @@ export default function MediaForm({ media }: MediaFormProps) {
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8b9aaa] mb-3">Images</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {images.map((url, i) => (
+              {images.map((item, i) => (
                 <div key={`img-${i}`} className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] aspect-square">
-                  <img src={url} alt={`Gallery image ${i + 1}`} className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => setImages(p => p.filter((_, j) => j !== i))}
-                    className="absolute top-1.5 right-1.5 p-1 bg-white/90 backdrop-blur rounded-lg text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
-                  >
-                    <X size={13} />
-                  </button>
+                  <img src={item.url} alt={`Gallery image ${i + 1}`} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => triggerUpload('image', i)}
+                      className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow"
+                    >
+                      <Upload size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImages(p => p.filter((_, j) => j !== i))}
+                      className="p-2 bg-white rounded-lg text-red-500 shadow"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
                 </div>
               ))}
               
@@ -203,16 +255,25 @@ export default function MediaForm({ media }: MediaFormProps) {
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8b9aaa] mb-3">Videos</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {videos.map((url, i) => (
+              {videos.map((item, i) => (
                 <div key={`vid-${i}`} className="relative group rounded-xl overflow-hidden border border-[#e8e2d5] bg-black aspect-video">
-                  <video src={url} controls className="w-full h-full object-contain" />
-                  <button
-                    type="button"
-                    onClick={() => setVideos(p => p.filter((_, j) => j !== i))}
-                    className="absolute top-1.5 right-1.5 p-1 bg-white/90 backdrop-blur rounded-lg text-red-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm z-10"
-                  >
-                    <X size={13} />
-                  </button>
+                  <video src={item.url} controls className="w-full h-full object-contain" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-10">
+                    <button
+                      type="button"
+                      onClick={() => triggerUpload('video', i)}
+                      className="p-2 bg-white rounded-lg text-[#1a1a1a] hover:text-[#1084a2] shadow"
+                    >
+                      <Upload size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVideos(p => p.filter((_, j) => j !== i))}
+                      className="p-2 bg-white rounded-lg text-red-500 shadow"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
                 </div>
               ))}
               
