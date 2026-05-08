@@ -27,65 +27,67 @@ function ExperienceCard({
     const mainImage = exp.images?.[0];
 
     return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.92 }}
-            transition={{ duration: 0.4, ease: 'circOut', delay: index * 0.05 }}
-            className={`group relative rounded-[2rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] shadow-sm hover:shadow-xl transition-all duration-500 ${className}`}
-        >
-            {/* Image / Placeholder */}
-            {mainImage ? (
-                <img
-                    src={mainImage}
-                    alt={exp.job_title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-            ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/30 via-[var(--accent)]/10 to-[var(--muted)]" />
-            )}
+        <Link href={`/jobs/${exp.id}`}>
+            <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.92 }}
+                transition={{ duration: 0.4, ease: 'circOut', delay: index * 0.05 }}
+                className={`group relative rounded-[2rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] shadow-sm hover:shadow-xl transition-all duration-500 ${className}`}
+            >
+                {/* Image / Placeholder */}
+                {mainImage ? (
+                    <img
+                        src={mainImage}
+                        alt={exp.job_title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/30 via-[var(--accent)]/10 to-[var(--muted)]" />
+                )}
 
-            {/* Dark gradient overlay — same as WorkCard */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-100 md:opacity-80 md:group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Dark gradient overlay — same as WorkCard */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-100 md:opacity-80 md:group-hover:opacity-100 transition-opacity duration-500" />
 
-            {/* Date badge — top left */}
-            {date && (
-                <div className="absolute top-3 left-3 md:top-4 md:left-4 z-10 flex items-center gap-1.5 px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-[var(--accent)]/80 backdrop-blur-sm">
-                    <Calendar size={10} className="text-white" />
-                    <span className="text-[9px] md:text-[10px] font-bold text-white tracking-wide" style={{ fontFamily: FONT_HEAD }}>{date}</span>
-                </div>
-            )}
+                {/* Date badge — top left */}
+                {date && (
+                    <div className="absolute top-3 left-3 md:top-4 md:left-4 z-10 flex items-center gap-1.5 px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-[var(--accent)]/80 backdrop-blur-sm">
+                        <Calendar size={10} className="text-white" />
+                        <span className="text-[9px] md:text-[10px] font-bold text-white tracking-wide" style={{ fontFamily: FONT_HEAD }}>{date}</span>
+                    </div>
+                )}
 
-            {/* Role badge — top right */}
-            <div className="absolute top-3 right-3 md:top-4 md:right-4 z-10 px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
-                <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-white/80" style={{ fontFamily: FONT_CALI }}>
-                    Role {String(index + 1).padStart(2, '0')}
-                </span>
-            </div>
-
-            {/* Bottom content — same layout as WorkCard */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 flex items-end justify-between translate-y-0 md:translate-y-2 md:group-hover:translate-y-0 transition-transform duration-500 z-10">
-                <div className="text-left flex-1 mr-3">
-                    <h3 className="text-lg md:text-2xl font-black text-white uppercase tracking-tight leading-tight" style={{ fontFamily: FONT_HEAD }}>
-                        {exp.job_title}
-                    </h3>
-                    {exp.location && (
-                        <div className="flex items-center gap-1 mt-1">
-                            <MapPin size={10} className="text-white/60" />
-                            <p className="text-white/60 text-[10px] md:text-xs font-medium uppercase tracking-wider" style={{ fontFamily: FONT_HEAD }}>
-                                {exp.location}
-                            </p>
-                        </div>
-                    )}
+                {/* Role badge — top right */}
+                <div className="absolute top-3 right-3 md:top-4 md:right-4 z-10 px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-white/80" style={{ fontFamily: FONT_CALI }}>
+                        Role {String(index + 1).padStart(2, '0')}
+                    </span>
                 </div>
 
-                {/* Arrow button — mirrors WorkCard */}
-                <div className="w-8 h-8 md:w-11 md:h-11 shrink-0 rounded-full bg-white flex items-center justify-center text-black rotate-0 md:-rotate-45 md:group-hover:rotate-0 transition-transform duration-500 shadow-lg">
-                    <ChevronRight size={16} className="md:w-5 md:h-5" />
+                {/* Bottom content — same layout as WorkCard */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 flex items-end justify-between translate-y-0 md:translate-y-2 md:group-hover:translate-y-0 transition-transform duration-500 z-10">
+                    <div className="text-left flex-1 mr-3">
+                        <h3 className="text-lg md:text-2xl font-black text-white uppercase tracking-tight leading-tight" style={{ fontFamily: FONT_HEAD }}>
+                            {exp.job_title}
+                        </h3>
+                        {exp.location && (
+                            <div className="flex items-center gap-1 mt-1">
+                                <MapPin size={10} className="text-white/60" />
+                                <p className="text-white/60 text-[10px] md:text-xs font-medium uppercase tracking-wider" style={{ fontFamily: FONT_HEAD }}>
+                                    {exp.location}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Arrow button — mirrors WorkCard */}
+                    <div className="w-8 h-8 md:w-11 md:h-11 shrink-0 rounded-full bg-white flex items-center justify-center text-black rotate-0 md:-rotate-45 md:group-hover:rotate-0 transition-transform duration-500 shadow-lg">
+                        <ChevronRight size={16} className="md:w-5 md:h-5" />
+                    </div>
                 </div>
-            </div>
-        </motion.div>
+            </motion.div>
+        </Link>
     );
 }
 
