@@ -1,3 +1,6 @@
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 import Hero from "@/components/home/Hero";
 import PointingHand from "@/components/home/PointingHand";
 import TornPaperEdge from "@/components/home/TornPaperEdge";

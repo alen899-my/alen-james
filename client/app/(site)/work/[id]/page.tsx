@@ -12,6 +12,10 @@ interface PageProps {
     params: { id: string };
 }
 
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
+
 export async function generateStaticParams() {
     const works = await getAllWorks();
     return works.map((work) => ({

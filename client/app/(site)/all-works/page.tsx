@@ -5,6 +5,9 @@ import WorksList from '@/components/work/WorksList';
 import Footer from '@/components/layout/Footer';
 import CallMeBaby from '@/components/home/CallMeBaby';
 
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
     title: 'Full Works | Alen James',
     description: 'Explore the complete collection of design and development Works by Alen James.'

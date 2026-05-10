@@ -54,6 +54,8 @@ export async function createWorkAction(
   try {
     await createWork(input);
     revalidatePath('/admin/works');
+    revalidatePath('/all-works');
+    revalidatePath('/');
     return { success: true, message: `Work "${title}" created successfully.` };
   } catch (err: any) {
     console.error('Create Work Error:', err);
@@ -100,6 +102,9 @@ export async function updateWorkAction(
   try {
     await updateWork(id, input);
     revalidatePath('/admin/works');
+    revalidatePath('/all-works');
+    revalidatePath(`/work/${id}`);
+    revalidatePath('/');
     return { success: true, message: `Work "${title}" updated successfully.` };
   } catch (err: any) {
     console.error('Update Work Error:', err);
@@ -114,6 +119,8 @@ export async function deleteWorkAction(id: number): Promise<ActionResult> {
   try {
     await deleteWork(id);
     revalidatePath('/admin/works');
+    revalidatePath('/all-works');
+    revalidatePath('/');
     return { success: true, message: 'Work deleted successfully.' };
   } catch (err: any) {
     console.error('Delete Work Error:', err);
