@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, LogOut, Globe,
-  ChevronRight, X, Briefcase, BookOpen, Wrench, Notebook, FileText, Share2, Users, MapPin, Archive, Building, Image as ImageIcon, ScrollText, Tag
+  ChevronRight, X, Briefcase, BookOpen, Wrench, Notebook, FileText, Share2, Users, MapPin, Archive, Building, Image as ImageIcon, ScrollText, Tag, Activity
 } from 'lucide-react';
 import { logoutAction } from '@/lib/admin/actions/auth.actions';
 import { useEffect } from 'react';
@@ -24,6 +24,7 @@ const NAV = [
   { href: '/admin/travels', label: 'Travel Log', icon: MapPin, exact: false },
   { href: '/admin/regrets', label: 'Regrets', icon: Archive, exact: false },
   { href: '/admin/media', label: 'Media Gallery', icon: ImageIcon, exact: false },
+  { href: '/admin/logs', label: 'Server Logs', icon: Activity, exact: false },
 ];
 
 interface AdminSidebarProps {

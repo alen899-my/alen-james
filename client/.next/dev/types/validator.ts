@@ -326,6 +326,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/admin/logs/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/admin/logs">> = Specific
+  const handler = {} as typeof import("../../../app/admin/logs/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/admin/media/[id]/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/admin/media/[id]">> = Specific
@@ -582,6 +591,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends AppPageConfig<"/admin/works">> = Specific
   const handler = {} as typeof import("../../../app/admin/works/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/admin/ping-logs/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/ping-logs">> = Specific
+  const handler = {} as typeof import("../../../app/api/admin/ping-logs/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/ping/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/ping">> = Specific
+  const handler = {} as typeof import("../../../app/api/ping/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
