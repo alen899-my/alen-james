@@ -20,7 +20,7 @@ export default function WorkCard({ work, index }: WorkCardProps) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.4, ease: "circOut", delay: index ? index * 0.05 : 0 }}
-            className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] shadow-sm hover:shadow-xl transition-all duration-500"
+            className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden transition-all duration-500"
         >
             {/* Image */}
             {work.main_image ? (
@@ -30,7 +30,7 @@ export default function WorkCard({ work, index }: WorkCardProps) {
                     fill
                     priority={index !== undefined && index < 4}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-contain transition-transform duration-700 bg-white "
+                    className="object-contain transition-transform duration-700"
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[var(--muted)]/50 to-[var(--card)]">

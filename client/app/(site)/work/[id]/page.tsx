@@ -143,23 +143,31 @@ export default async function WorkDetailPage({ params }: PageProps) {
                 <MediaCarousel media={[...(work.screenshots || []), ...(work.additional_videos || [])]} title={work.title} />
             )}
 
-            {/* ── WHAT DID I DO? ── */}
-            <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
-                <div className="space-y-6">
-                    <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
-                        What did I do?
-                    </h2>
-                    <p className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium whitespace-pre-wrap">
-                        {work.what_i_did || work.description || 'Worked on the design and development to ensure a seamless user experience and high-fidelity visuals.'}
-                    </p>
-                </div>
-                <div className="space-y-6">
-                    <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
-                        One feature not to miss..
-                    </h2>
-                    <p className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium whitespace-pre-wrap">
-                        {work.key_features || 'This project features a unique set of tools designed to provide maximum efficiency and a flawless user experience.'}
-                    </p>
+            {/* ── CONTENT SECTIONS ── */}
+            <section className="px-6 md:px-14 py-20 max-w-7xl mx-auto border-t border-[var(--border)]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+                    
+                    {/* Left Section: What did I do? */}
+                    <div className="space-y-8">
+                        <h2 className="text-sm font-black uppercase tracking-[0.4em] text-[#1084a2]">Execution & Role</h2>
+                        <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+                            What did I do?
+                        </h3>
+                        <div className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium text-justify whitespace-pre-wrap">
+                            {work.what_i_did || work.description || 'Worked on the design and development to ensure a seamless user experience and high-fidelity visuals.'}
+                        </div>
+                    </div>
+
+                    {/* Right Section: Key Features */}
+                    <div className="space-y-8">
+                        <h2 className="text-sm font-black uppercase tracking-[0.4em] text-[#1084a2]">Project Highlights</h2>
+                        <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+                            Features & Solutions
+                        </h3>
+                        <div className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium text-justify whitespace-pre-wrap">
+                            {work.key_features || 'Technical brilliance and creative execution across every project milestone.'}
+                        </div>
+                    </div>
                 </div>
             </section>
 
