@@ -85,7 +85,7 @@ interface MediaFile {
   file: File | null;
 }
 
-export default function WorkForm({ work, categories }: WorkFormProps) {
+export default function WorkForm({ work, categories, skills }: WorkFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
