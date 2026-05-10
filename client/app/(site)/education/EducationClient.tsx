@@ -99,7 +99,7 @@ export default function EducationClient({ education }: EducationClientProps) {
     const roadProgress = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
 
     return (
-        <section className="w-full max-w-7xl mx-auto px-6 md:px-14 py-24">
+        <section className="w-full max-w-7xl mx-auto px-6 md:px-14 pt-24 pb-32">
 
             {/* ── HEADER ── */}
             <div className="text-left mb-24">
@@ -107,7 +107,7 @@ export default function EducationClient({ education }: EducationClientProps) {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
-                    className="text-6xl md:text-9xl font-black uppercase tracking-tighter mb-6"
+                    className="text-5xl sm:text-7xl md:text-9xl font-black uppercase tracking-tighter mb-6"
                     style={{ fontFamily: '"Patrick Hand SC", cursive', color: 'var(--foreground)' }}
                 >
                     My <span style={{ color: 'var(--accent)' }}>Journey</span>
@@ -207,13 +207,13 @@ export default function EducationClient({ education }: EducationClientProps) {
                                     </div>
 
                                     {/* ── CARD (alternating sides) ── */}
-                                    <div className={`w-full md:w-[calc(50%-4rem)] pl-16 md:pl-0 absolute ${isRight ? 'md:right-0' : 'md:left-0'} top-0 md:top-auto`}>
+                                    <div className={`w-full md:w-[calc(50%-4rem)] pl-16 md:pl-0 relative md:absolute ${isRight ? 'md:right-0' : 'md:left-0'} md:top-auto`}>
                                         <motion.div
                                             initial={{ opacity: 0, x: isRight ? 60 : -60 }}
                                             whileInView={{ opacity: 1, x: 0 }}
                                             viewport={{ once: true, margin: '-80px' }}
                                             transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
-                                            className="group relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] shadow-lg hover:shadow-[0_25px_60px_rgba(16,132,162,0.2)] transition-all duration-500 hover:-translate-y-2"
+                                            className="group relative aspect-[4/3] sm:aspect-video md:aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] shadow-lg hover:shadow-[0_25px_60px_rgba(16,132,162,0.2)] transition-all duration-500 hover:-translate-y-2"
                                         >
                                             {/* Background Image */}
                                             {item.school_photo ? (
@@ -221,6 +221,8 @@ export default function EducationClient({ education }: EducationClientProps) {
                                                     src={item.school_photo}
                                                     alt={item.name}
                                                     fill
+                                                    priority={index < 2}
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                                                 />
                                             ) : (
