@@ -1,4 +1,4 @@
-import pool from '@/lib/db';
+import pool, { queryWithRetry } from '@/lib/db';
 
 export interface SocialLink {
   id: number;
@@ -30,10 +30,11 @@ export async function createSocialLinksTable(): Promise<void> {
 }
 
 export async function getAllSocialLinks(): Promise<SocialLink[]> {
-  const { rows } = await pool.query(
+  // Uses retry logic to handle Neon auto-suspend cold-starts
+  const { rows } = await queryWithRetry<SocialLink>(
     `SELECT * FROM social_links ORDER BY created_at ASC`
   );
-  return rows as SocialLink[];
+  return rows;
 }
 
 export async function getSocialLinkById(id: number): Promise<SocialLink | null> {
