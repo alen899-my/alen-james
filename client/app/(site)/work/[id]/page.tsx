@@ -2,6 +2,7 @@ import { getWorkById, getRelatedWorks, getAllWorks } from '@/lib/admin/models/wo
 import { getAllSocialLinks } from '@/lib/admin/models/social_links.model';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChevronRight, ExternalLink, ArrowLeft } from 'lucide-react';
 import CallMeBaby from '@/components/home/CallMeBaby';
 import Footer from '@/components/layout/Footer';
@@ -83,11 +84,18 @@ export default async function WorkDetailPage({ params }: PageProps) {
                     </div>
 
                     {/* Main Hero Image */}
-                    <div className="max-w-5xl mx-auto overflow-hidden bg-[var(--card)] border border-[var(--accent)]/20 shadow-xl rounded-2xl">
+                    <div className="max-w-5xl mx-auto overflow-hidden bg-[var(--card)] border border-[var(--accent)]/20 shadow-xl rounded-2xl relative w-full aspect-video">
                         {work.main_image ? (
-                            <img src={work.main_image} alt={work.title} className="w-full h-auto" />
+                            <Image 
+                                src={work.main_image} 
+                                alt={work.title} 
+                                fill
+                                priority
+                                className="object-cover" 
+                                sizes="(max-width: 1024px) 100vw, 1024px"
+                            />
                         ) : (
-                            <div className="aspect-video bg-[var(--muted)] flex items-center justify-center">
+                            <div className="w-full h-full bg-[var(--muted)] flex items-center justify-center">
                                 <span className="text-[var(--muted-foreground)] font-bold uppercase tracking-widest">No Preview Image</span>
                             </div>
                         )}
@@ -180,7 +188,15 @@ export default async function WorkDetailPage({ params }: PageProps) {
                                 key={rw.id}
                                 className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] transition-all hover:shadow-2xl"
                             >
-                                <img src={rw.main_image || ''} alt={rw.title} className="w-full h-full object-cover grayscale-0 md:grayscale md:group-hover:grayscale-0 transition-all duration-700" />
+                                {rw.main_image && (
+                                    <Image 
+                                        src={rw.main_image} 
+                                        alt={rw.title} 
+                                        fill
+                                        className="object-cover grayscale-0 md:grayscale md:group-hover:grayscale-0 transition-all duration-700"
+                                        sizes="(max-width: 768px) 100vw, 50vw"
+                                    />
+                                )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <div className="absolute bottom-8 left-8 right-8 text-white flex items-end justify-between translate-y-0 opacity-100 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 transition-all">
                                     <h3 className="text-2xl font-black uppercase" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>{rw.title}</h3>
