@@ -30,6 +30,8 @@ export async function createWorkAction(
   const screenshotsData = formData.get('screenshots') as string;
   const additionalVideosData = formData.get('additional_videos') as string;
   const techStacksData = formData.get('tech_stacks') as string;
+  const skillIdsData = formData.get('skill_ids') as string;
+
 
   const input: WorkInput = {
     title,
@@ -44,6 +46,7 @@ export async function createWorkAction(
     what_i_did: (formData.get('what_i_did') as string)?.trim() || null,
     key_features: (formData.get('key_features') as string)?.trim() || null,
     tech_stacks: techStacksData ? JSON.parse(techStacksData) : [],
+    skill_ids: skillIdsData ? JSON.parse(skillIdsData) : [],
     year: (formData.get('year') as string)?.trim() || null,
     category_id: formData.get('category_id') ? Number(formData.get('category_id')) : null,
   };
@@ -73,6 +76,8 @@ export async function updateWorkAction(
   const screenshotsData = formData.get('screenshots') as string;
   const additionalVideosData = formData.get('additional_videos') as string;
   const techStacksData = formData.get('tech_stacks') as string;
+  const skillIdsData = formData.get('skill_ids') as string;
+
 
   const input: Partial<WorkInput> = {
     title,
@@ -87,6 +92,7 @@ export async function updateWorkAction(
     what_i_did: (formData.get('what_i_did') as string)?.trim() || null,
     key_features: (formData.get('key_features') as string)?.trim() || null,
     tech_stacks: techStacksData ? JSON.parse(techStacksData) : [],
+    skill_ids: skillIdsData ? JSON.parse(skillIdsData) : [],
     year: (formData.get('year') as string)?.trim() || null,
     category_id: formData.get('category_id') ? Number(formData.get('category_id')) : null,
   };

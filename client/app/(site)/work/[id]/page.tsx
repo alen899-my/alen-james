@@ -54,9 +54,33 @@ export default async function WorkDetailPage({ params }: PageProps) {
                             <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Category</p>
                             <p className="font-bold">{work.category_name || 'Creative'}</p>
                         </div>
-                        <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Platform / Tech</p>
-                            <p className="font-bold">{work.tech_stacks?.join(', ') || 'Various'}</p>
+                        <div className="space-y-3 col-span-1 md:col-span-1">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Technologies</p>
+                            <div className="flex flex-wrap gap-2">
+                                {work.skills?.map((skill) => (
+                                    <div 
+                                        key={skill.id} 
+                                        className="flex items-center gap-1.5 px-2 py-1 bg-[var(--accent)]/5 rounded-lg border border-[var(--accent)]/10"
+                                        title={skill.name}
+                                    >
+                                        {skill.image && (
+                                            <img src={skill.image} alt={skill.name} className="w-4 h-4 object-contain" />
+                                        )}
+                                        <span className="text-[10px] font-bold text-[var(--foreground)] uppercase tracking-wider">{skill.name}</span>
+                                    </div>
+                                ))}
+                                {work.tech_stacks?.map((tech, idx) => (
+                                    <div 
+                                        key={idx} 
+                                        className="flex items-center px-2 py-1 bg-[var(--muted)]/30 rounded-lg border border-[var(--border)]"
+                                    >
+                                        <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">{tech}</span>
+                                    </div>
+                                ))}
+                                {(!work.skills?.length && !work.tech_stacks?.length) && (
+                                    <p className="font-bold">Various</p>
+                                )}
+                            </div>
                         </div>
                         <div className="space-y-1">
                             <p className="text-[10px] font-black uppercase tracking-widest text-[var(--muted-foreground)]">Year</p>

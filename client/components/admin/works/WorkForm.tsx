@@ -5,14 +5,16 @@ import { useRouter } from 'next/navigation';
 import { createWorkAction, updateWorkAction } from '@/lib/admin/actions/works.actions';
 import { Work } from '@/lib/admin/models/works.model';
 import { WorkCategory } from '@/lib/admin/models/work_categories.model';
+import { Skill } from '@/lib/admin/models/skills.model';
 import {
   Upload, X, Plus, Image as ImageIcon, Film,
-  Loader2, Layers, FileText, Paperclip, ChevronRight, Tag
+  Loader2, Layers, FileText, Paperclip, ChevronRight, Tag, BrainCircuit
 } from 'lucide-react';
 
 interface WorkFormProps {
   work?: Work;
   categories: WorkCategory[];
+  skills: Skill[];
 }
 
 
@@ -89,6 +91,7 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   const [techStacks, setTechStacks] = useState<string[]>(work?.tech_stacks || []);
+  const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>(work?.skill_ids || []);
   const [newTech, setNewTech] = useState('');
   const [screenshots, setScreenshots] = useState<MediaFile[]>(
     (work?.screenshots || []).map(url => ({ url, file: null }))
@@ -197,6 +200,7 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
 
       const formData = new FormData(form);
       formData.set('tech_stacks', JSON.stringify(techStacks));
+      formData.set('skill_ids', JSON.stringify(selectedSkillIds));
       formData.set('screenshots', JSON.stringify(finalScreenshots));
       formData.set('additional_videos', JSON.stringify(finalAdditionalVideos));
       formData.set('main_image', finalMainImage);
@@ -297,8 +301,44 @@ export default function WorkForm({ work, categories }: WorkFormProps) {
             />
           </Field>
 
-          <div className="sm:col-span-2">
-            <Field label="Tech Stack">
+          <div className="sm:col-span-2 space-y-4">
+            <Field label="Technologies Used (Skills Library)">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {skills?.map((skill) => {
+                  const isSelected = selectedSkillIds.includes(skill.id);
+                  return (
+                    <button
+                      key={skill.id}
+                      type="button"
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedSkillIds(selectedSkillIds.filter(id => id !== skill.id));
+                        } else {
+                          setSelectedSkillIds([...selectedSkillIds, skill.id]);
+                        }
+                      }}
+                      className={`flex items-center gap-2 p-2 rounded-xl border transition-all text-left ${
+                        isSelected 
+                          ? 'border-[#1084a2] bg-[#1084a2]/5 text-[#1084a2] shadow-sm' 
+                          : 'border-[#e8e2d5] bg-white text-[#8b9aaa] hover:border-[#1084a2]/30 hover:bg-[#faf7f0]'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isSelected ? 'bg-[#1084a2]/10' : 'bg-[#faf7f0]'}`}>
+                        {skill.image ? (
+                          <img src={skill.image} alt={skill.name} className="w-5 h-5 object-contain" />
+                        ) : (
+                          <BrainCircuit size={16} />
+                        )}
+                      </div>
+                      <span className="text-xs font-semibold truncate">{skill.name}</span>
+                      {isSelected && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#1084a2]" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </Field>
+
+            <Field label="Custom Tech Stacks (Tags)">
               <div
                 className={`${inputCls} !py-2 flex flex-wrap gap-1.5 min-h-[46px] cursor-text`}
                 onClick={() =>

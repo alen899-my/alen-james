@@ -1,6 +1,7 @@
 import WorkForm from '@/components/admin/works/WorkForm';
 import { getWorkById } from '@/lib/admin/models/works.model';
 import { getAllWorkCategories } from '@/lib/admin/models/work_categories.model';
+import { getAllSkills } from '@/lib/admin/models/skills.model';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
@@ -19,9 +20,10 @@ export default async function EditWorkPage({ params }: { params: Promise<{ id: s
     notFound();
   }
 
-  const [work, categories] = await Promise.all([
+  const [work, categories, skills] = await Promise.all([
     getWorkById(id),
     getAllWorkCategories(),
+    getAllSkills(),
   ]);
 
   if (!work) {
@@ -44,7 +46,7 @@ export default async function EditWorkPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="p-8">
-        <WorkForm work={work} categories={categories} />
+        <WorkForm work={work} categories={categories} skills={skills} />
       </div>
     </div>
   );

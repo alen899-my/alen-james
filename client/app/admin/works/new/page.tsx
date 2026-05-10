@@ -1,12 +1,16 @@
 import WorkForm from '@/components/admin/works/WorkForm';
 import { getAllWorkCategories } from '@/lib/admin/models/work_categories.model';
+import { getAllSkills } from '@/lib/admin/models/skills.model';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 export const metadata = { title: 'Add Work — Admin' };
 
 export default async function NewWorkPage() {
-  const categories = await getAllWorkCategories();
+  const [categories, skills] = await Promise.all([
+    getAllWorkCategories(),
+    getAllSkills(),
+  ]);
   return (
     <div>
       <div className="px-8 pt-7 pb-5 border-b border-[#e8e2d5]">
@@ -23,7 +27,7 @@ export default async function NewWorkPage() {
       </div>
 
       <div className="p-8">
-        <WorkForm categories={categories} />
+        <WorkForm categories={categories} skills={skills} />
       </div>
     </div>
   );
