@@ -7,7 +7,6 @@ import { ChevronRight, ExternalLink, ArrowLeft } from 'lucide-react';
 import CallMeBaby from '@/components/home/CallMeBaby';
 import Footer from '@/components/layout/Footer';
 import MediaCarousel from '@/components/home/MediaCarousel';
-import { RollingEntrance, FadeIn } from '@/components/work/WorkDetailWrapper';
 
 interface PageProps {
     params: { id: string };
@@ -35,7 +34,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
     return (
         <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-20">
             <section className="px-6 md:px-14 pb-12 max-w-7xl mx-auto">
-                <RollingEntrance>
+                <div>
                     <div className="mb-4">
                         <span className="text-sm font-black uppercase tracking-[0.5em] text-[var(--muted-foreground)]">
                             {work.title}
@@ -84,7 +83,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
                     </div>
 
                     {/* Main Hero Image */}
-                    <div className="max-w-5xl mx-auto overflow-hidden bg-[var(--card)] border border-[var(--accent)]/20 shadow-xl rounded-2xl relative w-full aspect-video">
+                    <div className="max-w-5xl mx-auto relative w-full aspect-video">
                         {work.main_image ? (
                             <Image 
                                 src={work.main_image} 
@@ -100,18 +99,16 @@ export default async function WorkDetailPage({ params }: PageProps) {
                             </div>
                         )}
                     </div>
-                </RollingEntrance>
+                </div>
             </section>
 
             {/* ── INTRODUCTION ── */}
-            <RollingEntrance>
-                <section className="px-6 md:px-14 py-16 max-w-4xl mx-auto text-center">
-                    <h2 className="text-sm font-black uppercase tracking-[0.5em] text-[#1084a2] mb-8">Introduction</h2>
-                    <div className="text-2xl md:text-4xl font-bold leading-tight text-[var(--foreground)]/80 italic">
-                        {work.introduction || work.subtitle || 'Creating a unique digital experience that pushes boundaries.'}
-                    </div>
-                </section>
-            </RollingEntrance>
+            <section className="px-6 md:px-14 py-16 max-w-4xl mx-auto text-center">
+                <h2 className="text-sm font-black uppercase tracking-[0.5em] text-[#1084a2] mb-8">Introduction</h2>
+                <div className="text-2xl md:text-4xl font-bold leading-tight text-[var(--foreground)]/80 italic">
+                    {work.introduction || work.subtitle || 'Creating a unique digital experience that pushes boundaries.'}
+                </div>
+            </section>
 
             {/* ── FOCUSED MEDIA CAROUSEL ── */}
             {((work.screenshots && work.screenshots.length > 0) || (work.additional_videos && work.additional_videos.length > 0)) && (
@@ -119,45 +116,41 @@ export default async function WorkDetailPage({ params }: PageProps) {
             )}
 
             {/* ── WHAT DID I DO? ── */}
-            <RollingEntrance>
-                <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
-                    <div className="space-y-6">
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
-                            What did I do?
-                        </h2>
-                        <p className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium whitespace-pre-wrap">
-                            {work.what_i_did || work.description || 'Worked on the design and development to ensure a seamless user experience and high-fidelity visuals.'}
-                        </p>
-                    </div>
-                    <div className="space-y-6">
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
-                            One feature not to miss..
-                        </h2>
-                        <p className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium whitespace-pre-wrap">
-                            {work.key_features || 'This project features a unique set of tools designed to provide maximum efficiency and a flawless user experience.'}
-                        </p>
-                    </div>
-                </section>
-            </RollingEntrance>
+            <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16">
+                <div className="space-y-6">
+                    <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+                        What did I do?
+                    </h2>
+                    <p className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium whitespace-pre-wrap">
+                        {work.what_i_did || work.description || 'Worked on the design and development to ensure a seamless user experience and high-fidelity visuals.'}
+                    </p>
+                </div>
+                <div className="space-y-6">
+                    <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+                        One feature not to miss..
+                    </h2>
+                    <p className="text-lg leading-relaxed text-[var(--muted-foreground)] font-medium whitespace-pre-wrap">
+                        {work.key_features || 'This project features a unique set of tools designed to provide maximum efficiency and a flawless user experience.'}
+                    </p>
+                </div>
+            </section>
 
             {/* ── MAIN PROJECT VIDEO ── */}
             {work.video_url && (
-                <RollingEntrance>
-                    <section className="px-6 md:px-14 py-12">
-                        <div className="max-w-5xl mx-auto">
-                            <div className="overflow-hidden bg-[var(--card)] border border-[var(--accent)]/20 shadow-xl rounded-2xl aspect-video">
-                                <video 
-                                    src={work.video_url} 
-                                    autoPlay 
-                                    muted 
-                                    loop 
-                                    playsInline 
-                                    className="w-full h-full object-contain" 
-                                />
-                            </div>
+                <section className="px-6 md:px-14 py-12">
+                    <div className="max-w-5xl mx-auto">
+                        <div className="aspect-video">
+                            <video 
+                                src={work.video_url} 
+                                autoPlay 
+                                muted 
+                                loop 
+                                playsInline 
+                                className="w-full h-full object-contain" 
+                            />
                         </div>
-                    </section>
-                </RollingEntrance>
+                    </div>
+                </section>
             )}
 
             {/* ── CTA ── */}
@@ -186,7 +179,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
                             <Link 
                                 href={`/work/${rw.id}`} 
                                 key={rw.id}
-                                className="group relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-[var(--card)] border border-[var(--border)] transition-all hover:shadow-2xl"
+                                className="group relative aspect-[4/3] overflow-hidden transition-all hover:shadow-2xl"
                             >
                                 {rw.main_image && (
                                     <Image 

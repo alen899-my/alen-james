@@ -43,12 +43,19 @@ export default function DashboardAnalytics({
           setActiveUsers(data.activeUsers);
           setTotalViews(data.totalViews);
           setEngagementScore(data.engagementScore);
-          setTrafficData(data.hourlyTraffic?.length === 24 ? data.hourlyTraffic : Array(24).fill(0));
+          // More resilient data setting
+          if (data.hourlyTraffic) {
+            setTrafficData(data.hourlyTraffic);
+          }
           setTopSources(data.topPaths?.length > 0 ? data.topPaths : [
             { name: 'No traffic yet', val: 100, color: '#e8e2d5' }
           ]);
+        } else {
+          console.error('Analytics API error:', res.status, res.statusText);
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error('Failed to fetch analytics:', err);
+      }
     };
 
     const fetchPings = async () => {

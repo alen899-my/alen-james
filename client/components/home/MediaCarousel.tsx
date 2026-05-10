@@ -48,7 +48,7 @@ const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
                         return (
                             <div
                                 key={i}
-                                className="group relative flex-shrink-0 w-[85vw] md:w-[700px] aspect-video snap-center overflow-hidden rounded-2xl bg-[var(--card)] border border-[var(--border)] cursor-pointer shadow-sm hover:shadow-xl transition-all"
+                                className="group relative flex-shrink-0 w-[85vw] md:w-[700px] aspect-video snap-center overflow-hidden cursor-pointer transition-all"
                                 onClick={() => openLightbox(i)}
                             >
                                 {isVideo ? (
