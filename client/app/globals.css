@@ -165,11 +165,29 @@
     body {
         @apply bg-background text-foreground;
         overflow-x: hidden;
+        /* Performance optimizations */
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        /* Optimize for mobile */
+        -webkit-text-size-adjust: 100%;
+        /* Reduce motion for low-end devices */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     }
     html {
         font-family: "Patrick Hand SC", cursive;
         font-weight: 400;
         font-style: normal;
+        /* Optimize rendering */
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
     }
 }
 
@@ -215,5 +233,42 @@
     }
     .backface-hidden {
         backface-visibility: hidden;
+    }
+    
+    /* Performance utilities */
+    .will-animate {
+        will-change: transform, opacity;
+    }
+    
+    .gpu-accelerated {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+    }
+    
+    .contain-paint {
+        contain: paint;
+    }
+    
+    .contain-layout-paint {
+        contain: layout paint;
+    }
+}
+
+/* Optimize scrolling performance */
+@supports (scroll-behavior: smooth) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Disable expensive animations on low-spec devices */
+@media (max-width: 640px) {
+    body {
+        --shadow: none;
+    }
+    
+    * {
+        animation-duration: 0.3s !important;
     }
 }
