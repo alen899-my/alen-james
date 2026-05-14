@@ -2,9 +2,6 @@
 
 import React, { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function AboutMe() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -17,14 +14,8 @@ export default function AboutMe() {
         if (!containerRef.current) return;
 
         const ctx = gsap.context(() => {
-            // Setup the rolling entry animation
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: "top 85%", 
-                    toggleActions: "play none none none",
-                }
-            });
+            // Simple entrance animation - NO SCROLL TRIGGER
+            const tl = gsap.timeline();
 
             tl.from(headingRef.current, {
                 y: 120,
@@ -83,7 +74,7 @@ export default function AboutMe() {
                     My mission is to spice up design, stray away from the same hardcoded AI sites and trends, and inject personality into the work I create for brands and individuals.
                 </p>
                 <p>
-                    Together we can exit the design 'comfort zone' and blast off into a world of daring design. I'm a keen communicator, so expect someone who can lead teams, convey big ideas to co-workers and clients, and guide Works towards success whatever the weather.
+                    Together we can exit the design 'comfort zone' and blast off into a world of daring design. I'm a keen communicator, so expect someone who can lead teams, convey big ideas to clients, and advocate for the vision.
                 </p>
                 <p>
                     I was born in India and studied BTech Computer Science at KTU University. I'm always ready to embrace new challenges, and I can easily travel anywhere for convenience.
@@ -95,4 +86,3 @@ export default function AboutMe() {
         </div>
     );
 }
-

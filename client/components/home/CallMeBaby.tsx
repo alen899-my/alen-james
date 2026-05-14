@@ -2,9 +2,6 @@
 
 import React, { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 import { Phone, MessageCircle, Mail } from 'lucide-react';
 
@@ -15,12 +12,8 @@ const CallMeBaby = () => {
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
-            // Text entrance
+            // Text entrance animation - NO SCROLL TRIGGER
             gsap.from(textRef.current?.children || [], {
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: "top 70%",
-                },
                 y: 50,
                 opacity: 0,
                 duration: 0.8,
@@ -28,14 +21,8 @@ const CallMeBaby = () => {
                 ease: "power3.out"
             });
 
-            // Phone Hand animation
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: "top 60%",
-                    toggleActions: "play none none none", // Triggers on enter
-                }
-            });
+            // Phone Hand animation - entrance only
+            const tl = gsap.timeline();
 
             tl.fromTo(handRef.current, 
                 { x: '-110%', opacity: 0 },
@@ -77,7 +64,7 @@ const CallMeBaby = () => {
                 >
                     <path 
                         fill="#1084a2" 
-                        d="M0,60 L0,30 L15,31 L30,29 L45,32 L60,30 L75,28 L90,31 L105,29 L120,30 L135,32 L150,28 L165,30 L180,31 L195,29 L210,32 L225,30 L240,28 L255,31 L270,29 L285,30 L300,32 L315,28 L330,30 L345,31 L360,29 L375,32 L390,30 L405,28 L420,31 L435,29 L450,30 L465,32 L480,28 L495,30 L510,31 L525,29 L540,32 L555,30 L570,28 L585,31 L600,29 L615,30 L630,32 L645,28 L660,30 L675,31 L690,29 L705,32 L720,30 L735,28 L750,31 L765,29 L780,30 L795,32 L810,28 L825,30 L840,31 L855,29 L870,32 L885,30 L900,28 L915,31 L930,29 L945,30 L960,32 L975,28 L990,30 L1005,31 L1020,29 L1035,32 L1050,30 L1065,28 L1080,31 L1095,29 L1110,30 L1125,32 L1140,28 L1155,30 L1170,31 L1185,29 L1200,32 L1215,30 L1230,28 L1245,31 L1260,29 L1275,30 L1290,32 L1305,28 L1320,30 L1335,31 L1350,29 L1365,32 L1380,30 L1395,28 L1410,31 L1425,29 L1440,30 L1440,60 Z" 
+                        d="M0,60 L0,30 L15,31 L30,29 L45,32 L60,30 L75,28 L90,31 L105,29 L120,30 L135,32 L150,28 L165,30 L180,31 L195,29 L210,32 L225,30 L240,28 L255,31 L270,29 L285,30 L300,32 L315,30 L330,28 L345,31 L360,29 L375,30 L390,32 L405,28 L420,30 L435,31 L450,29 L465,32 L480,30 L495,28 L510,31 L525,29 L540,30 L555,32 L570,28 L585,30 L600,31 L615,29 L630,32 L645,30 L660,28 L675,31 L690,29 L705,30 L720,32 L735,30 L750,28 L765,31 L780,29 L795,30 L810,32 L825,28 L840,30 L855,31 L870,29 L885,32 L900,30 L915,28 L930,31 L945,29 L960,30 L975,32 L990,28 L1005,30 L1020,31 L1035,29 L1050,32 L1065,30 L1080,28 L1095,31 L1110,29 L1125,30 L1140,32 L1155,28 L1170,30 L1185,31 L1200,29 L1215,32 L1230,30 L1245,28 L1260,31 L1275,29 L1290,30 L1305,32 L1320,30 L1335,28 L1350,31 L1365,29 L1380,30 L1395,32 L1410,30 L1425,28 L1440,31 L1440,60 Z"
                     />
                 </svg>
             </div>
@@ -96,13 +83,13 @@ const CallMeBaby = () => {
                 </p>
 
                 <p className="text-lg md:text-xl font-medium opacity-90 max-w-2xl mx-auto leading-relaxed">
-                    If you like the sound of a web designer, developer and graphic designer rolled into one whacky human, then I'm your man. Don't hesitate to contact me - I'm eager to hear from you!
+                    If you like the sound of a web designer, developer and graphic designer rolled into one whacky human, then I'm your man. Don't hesitate to contact me - I'm eager to hear from you.
                 </p>
 
                 <div className="pt-8 flex flex-wrap justify-center gap-4">
                     <a 
                         href="tel:+918921837945"
-                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#1a1a1a] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#1a1a1a] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform duration-200"
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
                         <Phone size={20} /> <span className="hidden md:inline">CALL</span>
@@ -111,7 +98,7 @@ const CallMeBaby = () => {
                     <a 
                         href="https://wa.me/918921837945"
                         target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#25D366] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#25D366] text-white rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform duration-200"
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
                         <MessageCircle size={20} /> <span className="hidden md:inline">WHATSAPP</span>
@@ -119,7 +106,7 @@ const CallMeBaby = () => {
 
                     <a 
                         href="mailto:alenjames899@gmail.com"
-                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#f0ede6] text-[#1a1a1a] rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-xl active:scale-95"
+                        className="flex items-center gap-2 p-5 md:px-8 md:py-4 bg-[#f0ede6] text-[#1a1a1a] rounded-full text-lg font-bold uppercase tracking-widest hover:scale-105 transition-transform duration-200"
                         style={{ fontFamily: '"Patrick Hand SC", cursive' }}
                     >
                         <Mail size={20} /> <span className="hidden md:inline">EMAIL</span>
@@ -136,7 +123,7 @@ const CallMeBaby = () => {
                 >
                     <path 
                         fill="#1084a2" 
-                        d="M0,60 L0,30 L15,31 L30,29 L45,32 L60,30 L75,28 L90,31 L105,29 L120,30 L135,32 L150,28 L165,30 L180,31 L195,29 L210,32 L225,30 L240,28 L255,31 L270,29 L285,30 L300,32 L315,28 L330,30 L345,31 L360,29 L375,32 L390,30 L405,28 L420,31 L435,29 L450,30 L465,32 L480,28 L495,30 L510,31 L525,29 L540,32 L555,30 L570,28 L585,31 L600,29 L615,30 L630,32 L645,28 L660,30 L675,31 L690,29 L705,32 L720,30 L735,28 L750,31 L765,29 L780,30 L795,32 L810,28 L825,30 L840,31 L855,29 L870,32 L885,30 L900,28 L915,31 L930,29 L945,30 L960,32 L975,28 L990,30 L1005,31 L1020,29 L1035,32 L1050,30 L1065,28 L1080,31 L1095,29 L1110,30 L1125,32 L1140,28 L1155,30 L1170,31 L1185,29 L1200,32 L1215,30 L1230,28 L1245,31 L1260,29 L1275,30 L1290,32 L1305,28 L1320,30 L1335,31 L1350,29 L1365,32 L1380,30 L1395,28 L1410,31 L1425,29 L1440,30 L1440,60 Z" 
+                        d="M0,60 L0,30 L15,31 L30,29 L45,32 L60,30 L75,28 L90,31 L105,29 L120,30 L135,32 L150,28 L165,30 L180,31 L195,29 L210,32 L225,30 L240,28 L255,31 L270,29 L285,30 L300,32 L315,30 L330,28 L345,31 L360,29 L375,30 L390,32 L405,28 L420,30 L435,31 L450,29 L465,32 L480,30 L495,28 L510,31 L525,29 L540,30 L555,32 L570,28 L585,30 L600,31 L615,29 L630,32 L645,30 L660,28 L675,31 L690,29 L705,30 L720,32 L735,30 L750,28 L765,31 L780,29 L795,30 L810,32 L825,28 L840,30 L855,31 L870,29 L885,32 L900,30 L915,28 L930,31 L945,29 L960,30 L975,32 L990,28 L1005,30 L1020,31 L1035,29 L1050,32 L1065,30 L1080,28 L1095,31 L1110,29 L1125,30 L1140,32 L1155,28 L1170,30 L1185,31 L1200,29 L1215,32 L1230,30 L1245,28 L1260,31 L1275,29 L1290,30 L1305,32 L1320,30 L1335,28 L1350,31 L1365,29 L1380,30 L1395,32 L1410,30 L1425,28 L1440,31 L1440,60 Z"
                     />
                 </svg>
             </div>
