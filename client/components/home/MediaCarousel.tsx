@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import Image from 'next/image';
@@ -12,15 +12,66 @@ interface MediaCarouselProps {
 
 const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Auto-scroll functionality
+    useEffect(() => {
+        const scrollContainer = scrollContainerRef.current;
+        if (!scrollContainer || media.length === 0) return;
+
+        const startAutoScroll = () => {
+            autoScrollIntervalRef.current = setInterval(() => {
+                if (scrollContainer) {
+                    scrollContainer.scrollBy({
+                        left: 300, // Scroll amount per interval
+                        behavior: 'smooth',
+                    });
+
+                    // Reset to beginning when reaching the end
+                    if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 10) {
+                        setTimeout(() => {
+                            scrollContainer.scrollTo({
+                                left: 0,
+                                behavior: 'smooth',
+                            });
+                        }, 500);
+                    }
+                }
+            }, 3000); // Scroll every 3 seconds
+        };
+
+        const handleMouseEnter = () => {
+            if (autoScrollIntervalRef.current) {
+                clearInterval(autoScrollIntervalRef.current);
+            }
+        };
+
+        const handleMouseLeave = () => {
+            startAutoScroll();
+        };
+
+        startAutoScroll();
+        scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+        scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+
+        return () => {
+            if (autoScrollIntervalRef.current) {
+                clearInterval(autoScrollIntervalRef.current);
+            }
+            scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+            scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+        };
+    }, [media.length]);
 
     const openLightbox = (index: number) => {
         setLightboxIndex(index);
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
     };
 
     const closeLightbox = () => {
         setLightboxIndex(null);
-        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.overflow = '';
     };
 
     const prevMedia = (e: React.MouseEvent) => {
@@ -40,8 +91,11 @@ const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
     return (
         <section className="py-12 overflow-hidden bg-[var(--background)]">
             <div className="relative w-full">
-                {/* Horizontal Scrolling Container */}
-                <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-4 md:px-[5%] no-scrollbar pb-12">
+                {/* Horizontal Scrolling Container - Auto-scrolls slowly */}
+                <div 
+                    ref={scrollContainerRef}
+                    className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-4 md:px-[5%] no-scrollbar pb-12"
+                >
                     {media.map((url, i) => {
                         const isVideo = url.toLowerCase().match(/\.(mp4|webm|ogg)$/) || url.includes('video');
                         
@@ -68,10 +122,10 @@ const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
                                             fill
                                             className="object-contain"
                                             sizes="(max-width: 768px) 85vw, 700px"
-                                            priority={i < 2} // Prioritize first two images to prevent layout shift
+                                            priority={i < 2}
                                         />
                                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                            <div className="bg-white/90 backdrop-blur text-[#1a1a1a] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 shadow-lg">
+                                            <div className="bg-white/90 backdrop-blur text-[#1a1a1a] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
                                                 <ZoomIn size={24} />
                                             </div>
                                         </div>
