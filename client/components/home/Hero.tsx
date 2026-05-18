@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 const WORD_DELAY = 1.2;
 const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
 const IS_LOW_END_DEVICE = typeof navigator !== 'undefined' && 
-  (navigator.deviceMemory < 4 || navigator.hardwareConcurrency < 4);
+  ((navigator as any).deviceMemory < 4 || (navigator as any).hardwareConcurrency < 4);
 
 export default function Hero() {
     const containerRef = useRef<HTMLDivElement>(null);
