@@ -36,6 +36,13 @@ export async function getAllResumes(): Promise<Resume[]> {
   return rows as Resume[];
 }
 
+export async function getActiveResume(): Promise<Resume | null> {
+  const { rows } = await pool.query(
+    `SELECT * FROM resumes WHERE is_active = true LIMIT 1`
+  );
+  return (rows[0] as Resume) ?? null;
+}
+
 export async function getResumeById(id: number): Promise<Resume | null> {
   const { rows } = await pool.query(
     `SELECT * FROM resumes WHERE id = $1 LIMIT 1`,

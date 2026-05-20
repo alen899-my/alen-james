@@ -13,12 +13,15 @@ import Footer from "@/components/layout/Footer";
 import { getAllWorks } from "@/lib/admin/models/works.model";
 import { getAllWorkCategories } from "@/lib/admin/models/work_categories.model";
 import { getAllSocialLinks } from "@/lib/admin/models/social_links.model";
+import { getActiveResume } from "@/lib/admin/models/resumes.model";
+import FloatingResume from "@/components/common/FloatingResume";
 
 export default async function Page() {
-    const [works, categories, socialLinks] = await Promise.all([
+    const [works, categories, socialLinks, activeResume] = await Promise.all([
         getAllWorks(),
         getAllWorkCategories(),
         getAllSocialLinks(),
+        getActiveResume(),
     ]);
 
     return (
@@ -57,6 +60,11 @@ export default async function Page() {
 
             {/* Footer */}
             <Footer socialLinks={socialLinks} />
+
+            {/* Floating Resume Download Button */}
+            {activeResume?.file_url && (
+                <FloatingResume fileUrl={activeResume.file_url} name={activeResume.name} />
+            )}
         </main>
     );
 }
