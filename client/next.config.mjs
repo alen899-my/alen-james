@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    instrumentationHook: true,
-  },
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -16,4 +13,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig
+export default nextConfig;

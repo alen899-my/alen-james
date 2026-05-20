@@ -5,8 +5,7 @@ import WorksList from '@/components/work/WorksList';
 import Footer from '@/components/layout/Footer';
 import CallMeBaby from '@/components/home/CallMeBaby';
 
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // Cache page for 5 minutes (ISR)
 
 export const metadata = {
     title: 'Full Works | Alen James',

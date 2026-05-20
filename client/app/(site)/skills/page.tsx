@@ -4,8 +4,7 @@ import SkillsClient from './SkillsClient';
 
 import Footer from '@/components/layout/Footer';
 
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // Cache page for 5 minutes (ISR)
 
 export const metadata = {
     title: 'My Skills | Alen James',

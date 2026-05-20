@@ -12,6 +12,8 @@ interface PageProps {
     params: { id: string };
 }
 
+export const revalidate = 300; // Cache page for 5 minutes (ISR)
+
 export async function generateStaticParams() {
     const experiences = await getAllExperiences();
     return experiences.map((exp) => ({
