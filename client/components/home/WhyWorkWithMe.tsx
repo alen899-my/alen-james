@@ -1,17 +1,12 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { WHY_WORK_WITH_ME } from '@/constants/why-work-with-me';
 
 export default function WhyWorkWithMe() {
-    const containerRef = useRef<HTMLDivElement>(null);
-
     return (
-        <section
-            ref={containerRef}
-            className="relative z-10 w-full py-24 md:py-32 px-6 md:px-14 overflow-hidden bg-[var(--background)]"
-        >
+        <section className="relative z-10 w-full py-24 md:py-32 px-6 md:px-14 overflow-hidden bg-[var(--background)]">
             <div className="max-w-7xl mx-auto relative">
                 <h2
                     className="text-6xl md:text-9xl font-black uppercase tracking-tighter mb-24 md:mb-32"
@@ -21,20 +16,19 @@ export default function WhyWorkWithMe() {
                 </h2>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 relative">
-                    {/* ── Content Column (Full Width on Mobile) ── */}
                     <div className="lg:col-span-12 space-y-24 md:space-y-32">
                         {WHY_WORK_WITH_ME.map((item, index) => (
                             <motion.div
                                 key={item.id}
-                                initial={{ opacity: 0, x: 50 }}
+                                initial={{ opacity: 0, x: 40 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true, margin: '-100px' }}
-                                transition={{ duration: 0.8, delay: index * 0.1 }}
-                                className="relative group"
+                                viewport={{ once: true, margin: '-80px' }}
+                                transition={{ duration: 0.6, delay: Math.min(index * 0.08, 0.3) }}
+                                className="relative"
                             >
                                 <div className="flex items-start gap-4 md:gap-8">
                                     <span
-                                        className="text-xl md:text-3xl font-bold mt-2"
+                                        className="text-xl md:text-3xl font-bold mt-2 shrink-0"
                                         style={{ fontFamily: '"Patrick Hand SC", cursive', color: 'var(--foreground)' }}
                                     >
                                         {item.id}

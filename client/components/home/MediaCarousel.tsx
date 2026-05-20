@@ -13,51 +13,51 @@ interface MediaCarouselProps {
 const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const animationFrameRef = useRef<number | null>(null);
 
-    // Auto-scroll functionality
+    // Duplicate media to allow seamless infinite marquee scrolling
+    const duplicatedMedia = [...media, ...media];
+
+    // Smooth Infinite Scroll functionality
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current;
         if (!scrollContainer || media.length === 0) return;
 
-        const startAutoScroll = () => {
-            autoScrollIntervalRef.current = setInterval(() => {
-                if (scrollContainer) {
-                    scrollContainer.scrollBy({
-                        left: 300, // Scroll amount per interval
-                        behavior: 'smooth',
-                    });
+        let isHovered = false;
+        // Speed in pixels per frame (adjust for slower/faster scrolling)
+        const speed = 1.0; 
 
-                    // Reset to beginning when reaching the end
-                    if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 10) {
-                        setTimeout(() => {
-                            scrollContainer.scrollTo({
-                                left: 0,
-                                behavior: 'smooth',
-                            });
-                        }, 500);
+        const scroll = () => {
+            if (scrollContainer) {
+                if (!isHovered) {
+                    scrollContainer.scrollLeft += speed;
+
+                    // Midpoint for seamless wrap around
+                    const halfWidth = scrollContainer.scrollWidth / 2;
+                    if (scrollContainer.scrollLeft >= halfWidth) {
+                        scrollContainer.scrollLeft -= halfWidth;
                     }
                 }
-            }, 3000); // Scroll every 3 seconds
+            }
+            animationFrameRef.current = requestAnimationFrame(scroll);
         };
 
         const handleMouseEnter = () => {
-            if (autoScrollIntervalRef.current) {
-                clearInterval(autoScrollIntervalRef.current);
-            }
+            isHovered = true;
         };
 
         const handleMouseLeave = () => {
-            startAutoScroll();
+            isHovered = false;
         };
 
-        startAutoScroll();
+        // Start scrolling
+        animationFrameRef.current = requestAnimationFrame(scroll);
         scrollContainer.addEventListener('mouseenter', handleMouseEnter);
         scrollContainer.addEventListener('mouseleave', handleMouseLeave);
 
         return () => {
-            if (autoScrollIntervalRef.current) {
-                clearInterval(autoScrollIntervalRef.current);
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
             }
             scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
             scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
@@ -65,7 +65,7 @@ const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
     }, [media.length]);
 
     const openLightbox = (index: number) => {
-        setLightboxIndex(index);
+        setLightboxIndex(index % media.length);
         document.body.style.overflow = 'hidden';
     };
 
@@ -91,18 +91,19 @@ const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
     return (
         <section className="py-12 overflow-hidden bg-[var(--background)]">
             <div className="relative w-full">
-                {/* Horizontal Scrolling Container - Auto-scrolls slowly */}
+                {/* Horizontal Scrolling Container - Seamless Infinite Marquee */}
                 <div 
                     ref={scrollContainerRef}
-                    className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-4 md:px-[5%] no-scrollbar pb-12"
+                    className="flex overflow-x-auto gap-4 md:gap-6 px-4 md:px-[5%] no-scrollbar pb-12 select-none"
+                    style={{ scrollBehavior: 'auto' }} // Must be auto, not smooth, for pixel-level requestAnimationFrame scrolling
                 >
-                    {media.map((url, i) => {
+                    {duplicatedMedia.map((url, i) => {
                         const isVideo = url.toLowerCase().match(/\.(mp4|webm|ogg)$/) || url.includes('video');
                         
                         return (
                             <div
                                 key={i}
-                                className="group relative flex-shrink-0 w-[85vw] md:w-[700px] aspect-video snap-center overflow-hidden cursor-pointer transition-all"
+                                className="group relative flex-shrink-0 w-[85vw] md:w-[700px] aspect-video overflow-hidden cursor-pointer transition-all rounded-2xl"
                                 onClick={() => openLightbox(i)}
                             >
                                 {isVideo ? (
@@ -118,7 +119,7 @@ const MediaCarousel = ({ media, title }: MediaCarouselProps) => {
                                     <>
                                         <Image 
                                             src={url} 
-                                            alt={`${title} media ${i}`} 
+                                            alt={`${title} media ${i % media.length}`} 
                                             fill
                                             className="object-contain"
                                             sizes="(max-width: 768px) 85vw, 700px"

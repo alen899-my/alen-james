@@ -1,7 +1,10 @@
 'use client';
 
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function AboutMe() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -10,66 +13,77 @@ export default function AboutMe() {
     const bodyRef = useRef<HTMLDivElement>(null);
     const dividerRef = useRef<HTMLDivElement>(null);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (!containerRef.current) return;
 
         const ctx = gsap.context(() => {
-            // Simple entrance animation - NO SCROLL TRIGGER
-            const tl = gsap.timeline();
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: containerRef.current,
+                    start: 'top 85%',
+                    once: true,
+                }
+            });
 
+            // immediateRender: false — prevents GSAP from setting opacity:0 on mount
+            // Content stays visible even if the ScrollTrigger doesn't fire
             tl.from(headingRef.current, {
-                y: 120,
-                rotateX: -60,
+                y: 80,
                 opacity: 0,
-                duration: 1.5,
-                ease: "expo.out",
-                transformOrigin: "top center",
+                duration: 1,
+                ease: 'power3.out',
+                immediateRender: false,
             })
             .from(introRef.current, {
-                y: 60,
-                opacity: 0,
-                duration: 1.2,
-                ease: "power3.out"
-            }, "-=1.0")
-            .from(bodyRef.current?.children || [], {
                 y: 40,
-                rotateX: -15,
                 opacity: 0,
-                stagger: 0.15,
-                duration: 1,
-                ease: "power2.out",
-                transformOrigin: "top center",
-            }, "-=0.8")
+                duration: 0.8,
+                ease: 'power3.out',
+                immediateRender: false,
+            }, '-=0.6')
+            .from(bodyRef.current?.children || [], {
+                y: 30,
+                opacity: 0,
+                stagger: 0.12,
+                duration: 0.7,
+                ease: 'power2.out',
+                immediateRender: false,
+            }, '-=0.5')
             .from(dividerRef.current, {
                 scaleX: 0,
                 opacity: 0,
-                duration: 1,
-                ease: "expo.inOut"
-            }, "-=0.6");
+                duration: 0.6,
+                ease: 'expo.inOut',
+                immediateRender: false,
+            }, '-=0.3');
         }, containerRef);
 
         return () => ctx.revert();
     }, []);
 
     return (
-        <div ref={containerRef} className="max-w-4xl mx-auto flex flex-col items-center gap-8 text-center perspective-1000 transform-style-3d">
-            {/* Centered Heading */}
-            <h2 
+        <div ref={containerRef} className="max-w-4xl mx-auto flex flex-col items-center gap-8 text-center">
+            <h2
                 ref={headingRef}
-                className="text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter backface-hidden"
+                className="text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter"
                 style={{ fontFamily: '"Patrick Hand SC", cursive', lineHeight: 0.9, color: 'var(--foreground)' }}
             >
                 About Me
             </h2>
 
-
-            {/* Centered Intro Paragraph */}
-            <p ref={introRef} className="text-2xl md:text-3xl lg:text-4xl font-extrabold max-w-3xl leading-tight text-[var(--foreground)]" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+            <p
+                ref={introRef}
+                className="text-2xl md:text-3xl lg:text-4xl font-extrabold max-w-3xl leading-tight text-[var(--foreground)]"
+                style={{ fontFamily: '"Patrick Hand SC", cursive' }}
+            >
                 Hi, I'm Alen – a friendly chap, designer, AI Specialist, Developer and analyst who loves solving real problems.
             </p>
 
-            {/* Centered Body Text */}
-            <div ref={bodyRef} className="space-y-6 max-w-3xl opacity-80 leading-relaxed text-lg md:text-xl font-medium mt-4 text-[var(--muted-foreground)]" style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
+            <div
+                ref={bodyRef}
+                className="space-y-6 max-w-3xl opacity-80 leading-relaxed text-lg md:text-xl font-medium mt-4 text-[var(--muted-foreground)]"
+                style={{ fontFamily: '"Patrick Hand SC", cursive' }}
+            >
                 <p>
                     My mission is to spice up design, stray away from the same hardcoded AI sites and trends, and inject personality into the work I create for brands and individuals.
                 </p>
@@ -81,7 +95,6 @@ export default function AboutMe() {
                 </p>
             </div>
 
-            {/* Simple minimalist divider */}
             <div ref={dividerRef} className="w-16 h-1 bg-[var(--accent)] mt-8 rounded-full" />
         </div>
     );

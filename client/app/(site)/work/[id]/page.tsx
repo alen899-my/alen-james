@@ -12,8 +12,7 @@ interface PageProps {
     params: { id: string };
 }
 
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // Cache page for 5 minutes (ISR)
 
 
 export async function generateStaticParams() {

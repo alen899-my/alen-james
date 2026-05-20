@@ -1,5 +1,5 @@
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+// Revalidate every 5 minutes instead of 0 — avoids DB hit on every single request
+export const revalidate = 300;
 
 import Hero from "@/components/home/Hero";
 import PointingHand from "@/components/home/PointingHand";
@@ -21,29 +21,24 @@ export default async function Page() {
         getAllSocialLinks(),
     ]);
 
-
     return (
         <main className="flex flex-col relative w-full" style={{ background: 'var(--background)' }}>
+            {/* Hero is sticky — stacks behind content as user scrolls */}
             <div className="sticky top-0 w-full h-screen z-0">
                 <Hero />
             </div>
-            {/* 
-                About Section: Slides UP over the Hero.
-            */}
-            <section 
-                id="about" 
+
+            {/* About Section: slides UP over the Hero */}
+            <section
+                id="about"
                 className="relative z-10 w-full min-h-screen pt-32 pb-24 px-6 md:px-14 flex flex-col items-center text-center"
-                style={{ 
-                    background: 'var(--background)', 
+                style={{
+                    background: 'var(--background)',
                     color: 'var(--foreground)',
                 }}
             >
-                {/* ── TORN PAPER EDGE EFFECT ── */}
                 <TornPaperEdge />
-
-                {/* ── POINTING HAND ── */}
                 <PointingHand />
-
                 <AboutMe />
             </section>
 
@@ -52,7 +47,7 @@ export default async function Page() {
 
             {/* Works Section */}
             <section id="work" className="relative z-10 min-h-screen bg-[var(--background)]">
-                 <Works works={works} categories={categories} />
+                <Works works={works} categories={categories} />
             </section>
 
             <WhyWorkWithMe />
@@ -65,6 +60,3 @@ export default async function Page() {
         </main>
     );
 }
-
-
-

@@ -2,8 +2,10 @@ import { getAllExperiences } from '@/lib/admin/models/experiences.model';
 import { getAllSocialLinks } from '@/lib/admin/models/social_links.model';
 import ExperiencesClient from './ExperiencesClient';
 import Footer from '@/components/layout/Footer';
+import CallMeBaby from '@/components/home/CallMeBaby';
 
-export const revalidate = 0;
+// Cache page for 5 minutes (ISR)
+export const revalidate = 300;
 
 export const metadata = {
     title: 'My Experiences | Alen James',
@@ -15,9 +17,15 @@ export default async function ExperiencesPage() {
         getAllExperiences(),
         getAllSocialLinks(),
     ]);
+    
     return (
-        <main className="min-h-screen bg-[var(--background)]">
+        <main className="min-h-screen bg-[var(--background)] pt-24">
             <ExperiencesClient experiences={experiences} />
+            
+            <div className="mt-32">
+                <CallMeBaby />
+            </div>
+            
             <Footer socialLinks={socialLinks} />
         </main>
     );
