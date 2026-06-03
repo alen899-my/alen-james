@@ -2,6 +2,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "lenis/dist/lenis.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -112,27 +113,26 @@
 }
 
 .dark {
-    --page-bg: oklch(0.14 0.025 220);
+    --page-bg: #000000;
     --page-text: oklch(0.95 0.012 200);
     --background: var(--page-bg);
     --foreground: var(--page-text);
 
-    --card: oklch(0.185 0.028 218);
+    --card: #111111;
     --card-foreground: oklch(0.95 0.012 200);
 
-    --popover: oklch(0.185 0.028 218);
+    --popover: #111111;
     --popover-foreground: oklch(0.95 0.012 200);
 
     --primary: oklch(0.90 0.02 198);
-    --primary-foreground: oklch(0.185 0.028 218);
+    --primary-foreground: #000000;
 
-    --secondary: oklch(0.245 0.03 218);
+    --secondary: #1a1a1a;
     --secondary-foreground: oklch(0.95 0.012 200);
 
-    --muted: oklch(0.245 0.03 218);
+    --muted: #1a1a1a;
     --muted-foreground: oklch(0.62 0.025 208);
 
-    /* ✦ FIXED: slightly brighter variant for dark bg, still clearly #1084a2 family */
     --accent: #1a9bbf;
     --accent-foreground: #ffffff;
 
@@ -148,11 +148,11 @@
     --chart-4: oklch(0.38 0.06 218);
     --chart-5: oklch(0.28 0.04 215);
 
-    --sidebar: oklch(0.185 0.028 218);
+    --sidebar: #111111;
     --sidebar-foreground: oklch(0.95 0.012 200);
     --sidebar-primary: #1a9bbf;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: oklch(0.245 0.03 218);
+    --sidebar-accent: #1a1a1a;
     --sidebar-accent-foreground: oklch(0.95 0.012 200);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: #1a9bbf;

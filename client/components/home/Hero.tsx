@@ -28,7 +28,6 @@ export default function Hero() {
     const w4Opacity = useTransform(scrollYProgress, [0, 0.6, 0.9], [1, 1, 0]);
     const w4Y = useTransform(scrollYProgress, [0, 0.9], [0, -80]);
 
-    const bgRef = useRef<HTMLDivElement>(null);
     const bgOverlayRef = useRef<HTMLDivElement>(null);
     const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
     const bikeRef = useRef<HTMLDivElement>(null);
@@ -111,15 +110,6 @@ export default function Hero() {
                 scrub: 1.2,
                 onUpdate(self) {
                     const p = self.progress;
-
-                    // Use transform only — no filter change per frame (compositor-friendly)
-                    if (bgRef.current) {
-                        gsap.set(bgRef.current, {
-                            scale: 1.15 - p * 0.15,
-                            y: p * 100,
-                            opacity: p * 0.5,
-                        });
-                    }
 
                     if (!bikeExited && bikeRef.current) {
                         const endX = cachedVW - cachedBikeW - 16;
@@ -239,17 +229,6 @@ export default function Hero() {
 
             {/* BG layers */}
             <div className="absolute inset-0 overflow-hidden z-0 bg-[var(--background)]">
-                {/* Background image — filter is static, not updated per-frame */}
-                <div
-                    ref={bgRef}
-                    className="absolute inset-0 bg-no-repeat bg-center bg-cover"
-                    style={{
-                        backgroundImage: 'url("/scrollimage3.png")',
-                        willChange: 'transform, opacity',
-                        filter: 'blur(4px) brightness(1.1) contrast(1.1)',
-                    }}
-                />
-
                 {/* Gradient overlay */}
                 <div
                     ref={bgOverlayRef}

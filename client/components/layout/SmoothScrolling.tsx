@@ -22,6 +22,11 @@ export default function SmoothScrolling({ children }: SmoothScrollingProps) {
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
       infinite: false,
+      allowNestedScroll: true,
+      anchors: true,
+      autoRaf: true,
+      autoToggle: true,
+      stopInertiaOnNavigate: true,
     });
 
     // ── CRITICAL: Wire Lenis scroll → GSAP ScrollTrigger ──
