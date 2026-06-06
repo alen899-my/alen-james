@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Work } from '@/lib/admin/models/works.model';
 import { WorkCategory } from '@/lib/admin/models/work_categories.model';
-import WorkCard from '@/components/work/WorkCard';
+import WorkCard3D from '@/components/work/WorkCard3D';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -87,7 +87,7 @@ export default function Works({ works, categories }: WorksProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <AnimatePresence mode="popLayout">
                     {displayedWorks.map((work, index) => (
-                        <WorkCard key={work.id} work={work} index={index} />
+                        <WorkCard3D key={work.id} work={work} index={index} />
                     ))}
                 </AnimatePresence>
             </div>
