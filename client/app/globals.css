@@ -4,9 +4,20 @@
 @import "shadcn/tailwind.css";
 @import "lenis/dist/lenis.css";
 
+@keyframes aurora {
+    from {
+        background-position: 50% 50%, 50% 50%;
+    }
+    to {
+        background-position: 350% 50%, 350% 50%;
+    }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+    --animate-aurora: aurora 60s linear infinite;
+
     --font-heading: "Patrick Hand SC", cursive;
     --font-sans: "Patrick Hand SC", cursive;
 
