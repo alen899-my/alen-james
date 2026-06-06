@@ -95,7 +95,7 @@ export default function GithubCommitMapClient({
                             style={{ fontFamily: "'Patrick Hand SC', cursive", color: 'var(--foreground)' }}
                         >
                             My{" "}
-                            <span className="text-[var(--accent)]">Commits.</span>
+                            <span>Commits.</span>
                         </h2>
                     </div>
 
