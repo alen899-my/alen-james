@@ -5,11 +5,12 @@ import { ChevronDown } from "lucide-react";
 import type {
     ContributionCalendar,
     ContributionWeek,
-} from "@/components/home/GithubCommitMap";
+} from "@/lib/github";
 
 type GithubCommitMapClientProps = {
     calendars: ContributionCalendar[];
     username: string;
+    variant?: "section" | "compact";
 };
 
 function getCellClass(count: number) {
@@ -50,6 +51,7 @@ function getMonthLabels(weeks: ContributionWeek[]) {
 export default function GithubCommitMapClient({
     calendars,
     username,
+    variant = "section",
 }: GithubCommitMapClientProps) {
     const [selectedYear, setSelectedYear] = useState(
         calendars[0]?.year.toString() ?? "",
@@ -73,6 +75,147 @@ export default function GithubCommitMapClient({
     );
     const latestYear = calendars[0]?.year;
 
+    if (variant === "compact") {
+        return (
+            <div>
+                {/* year row */}
+                <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-baseline gap-3">
+                        <span
+                            className="text-lg font-black leading-none text-[var(--foreground)]"
+                            style={{ fontFamily: "'Patrick Hand SC', cursive" }}
+                        >
+                            {selectedCalendar?.year}
+                        </span>
+                        {selectedCalendar && (
+                            <span className="text-[10px] tracking-wide text-[var(--muted-foreground)]">
+                                <span className="font-bold text-[var(--accent)]">
+                                    {selectedCalendar.totalContributions.toLocaleString()}
+                                </span>{" "}
+                                contributions
+                                {latestYear === selectedCalendar.year ? " so far" : ""}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        {/* year select */}
+                        {calendars.length > 0 && (
+                            <label className="relative block">
+                                <span className="sr-only">Filter contribution year</span>
+                                <select
+                                    value={selectedYear}
+                                    onChange={(e) => setSelectedYear(e.target.value)}
+                                    className="
+                                        h-7 min-w-28 appearance-none
+                                        rounded border border-[var(--border)]
+                                        bg-transparent
+                                        px-2.5 pr-7
+                                        font-mono text-[9px] font-bold uppercase
+                                        tracking-[0.14em] text-[var(--foreground)]
+                                        outline-none transition-colors
+                                        hover:border-[var(--accent)]
+                                        focus:border-[var(--accent)]
+                                    "
+                                >
+                                    {calendars.map((c) => (
+                                        <option key={c.year} value={c.year}>
+                                            {c.year}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown
+                                    size={10}
+                                    className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                                />
+                            </label>
+                        )}
+
+                        {/* legend */}
+                        <div className="flex items-center gap-1 text-[8px] font-bold uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
+                            <span>Less</span>
+                            {[0, 1, 3, 6, 10].map((count) => (
+                                <span
+                                    key={count}
+                                    className={`block h-2 w-2 rounded-[1.5px] border ${getCellClass(count)}`}
+                                    aria-hidden="true"
+                                />
+                            ))}
+                            <span>More</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* grid */}
+                {selectedCalendar && (
+                    <div className="overflow-x-auto pb-1">
+                        <div className="grid min-w-[600px] grid-cols-[22px_1fr] gap-1.5">
+
+                            {/* weekday labels */}
+                            <div className="grid grid-rows-7 gap-[5px] pt-5 text-right font-mono text-[7px] uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
+                                {["Sun", "", "Tue", "", "Thu", "", "Sat"].map(
+                                    (day, i) => <span key={i}>{day}</span>,
+                                )}
+                            </div>
+
+                            <div>
+                                {/* month labels */}
+                                <div className="relative mb-0.5 h-4 font-mono text-[7px] uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+                                    {getMonthLabels(selectedCalendar.weeks).map((item) => (
+                                        <span
+                                            key={`${selectedCalendar.year}-${item.label}-${item.index}`}
+                                            className="absolute top-0"
+                                            style={{ left: `${item.index * 22}px` }}
+                                        >
+                                            {item.label}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                {/* cells */}
+                                <div className="flex gap-[5px]">
+                                    {selectedCalendar.weeks.map((week) => (
+                                        <div
+                                            key={week.firstDay}
+                                            className="grid grid-rows-7 gap-[5px]"
+                                        >
+                                            {Array.from({ length: 7 }).map((_, weekday) => {
+                                                const day = week.contributionDays.find(
+                                                    (d) => d.weekday === weekday,
+                                                );
+                                                if (!day)
+                                                    return (
+                                                        <span
+                                                            key={`${week.firstDay}-${weekday}`}
+                                                            className="h-[14px] w-[14px]"
+                                                        />
+                                                    );
+                                                return (
+                                                    <span
+                                                        key={day.date}
+                                                        className={`
+                                                            h-[14px] w-[14px] rounded-[2px] border
+                                                            cursor-default
+                                                            transition-transform duration-100
+                                                            hover:scale-[1.3]
+                                                            ${getCellClass(day.contributionCount)}
+                                                        `}
+                                                        title={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
+                                                        aria-label={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
     return (
         <section
             className="
@@ -80,7 +223,6 @@ export default function GithubCommitMapClient({
                 bg-[var(--background)] px-6 py-24 md:px-14 md:py-32
             "
         >
-           
 
             <div className="relative mx-auto max-w-6xl">
 

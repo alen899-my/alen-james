@@ -1,13 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
 import { SocialLink } from '@/lib/admin/models/social_links.model';
-import { Mail, Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';
+import GithubCommitMapClient from "@/components/home/GithubCommitMapClient";
+import { getContributionCalendars } from "@/lib/github";
 
 interface FooterProps {
     socialLinks?: SocialLink[];
 }
 
-const Footer = ({ socialLinks = [] }: FooterProps) => {
+const GITHUB_USERNAME = process.env.NEXT_PUBLIC_GITHUB_USERNAME ?? "alen899-my";
+
+const Footer = async ({ socialLinks = [] }: FooterProps) => {
+    const calendars = await getContributionCalendars(GITHUB_USERNAME);
+
     return (
         <footer className="relative z-20 w-full bg-[#0d1117] text-[#f0ede6] pt-32 pb-12 px-6 md:px-14">
             
@@ -60,7 +66,7 @@ const Footer = ({ socialLinks = [] }: FooterProps) => {
                 </div>
 
                 {/* ── SOCIALS ── */}
-                <div className="flex flex-wrap justify-center gap-6 mb-32">
+                <div className="flex flex-wrap justify-center gap-6 mb-16">
                     {socialLinks.map((link) => (
                         <a 
                             key={link.id}
@@ -81,6 +87,24 @@ const Footer = ({ socialLinks = [] }: FooterProps) => {
                             )}
                         </a>
                     ))}
+                </div>
+
+                {/* ── HEATMAP ── */}
+                <div
+                    className="w-full mb-16 text-left"
+                    style={{
+                        '--background': '#0d1117',
+                        '--foreground': '#f0ede6',
+                        '--accent': '#1084a2',
+                        '--muted-foreground': '#8b9aaa',
+                        '--border': 'rgba(139, 154, 170, 0.15)',
+                    } as React.CSSProperties}
+                >
+                    <GithubCommitMapClient
+                        calendars={calendars}
+                        username={GITHUB_USERNAME}
+                        variant="compact"
+                    />
                 </div>
 
                 {/* ── BOTTOM BAR ── */}

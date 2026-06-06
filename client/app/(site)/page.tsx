@@ -7,7 +7,6 @@ import TornPaperEdge from "@/components/home/TornPaperEdge";
 import AboutMe from "@/components/home/AboutMe";
 import CallMeBaby from "@/components/home/CallMeBaby";
 import Works from "@/components/home/Works";
-import GithubCommitMap from "@/components/home/GithubCommitMap";
 import WhyWorkWithMe from "@/components/home/WhyWorkWithMe";
 import MoreAboutMeBanner from "@/components/home/MoreAboutMeBanner";
 import Footer from "@/components/layout/Footer";
@@ -53,8 +52,6 @@ export default async function Page() {
             <section id="work" className="relative z-10 min-h-screen bg-[var(--background)]">
                 <Works works={works} categories={categories} />
             </section>
-
-            <GithubCommitMap />
 
             <WhyWorkWithMe />
 
