@@ -80,17 +80,6 @@ export default function GithubCommitMapClient({
                 bg-[var(--background)] px-6 py-24 md:px-14 md:py-32
             "
         >
-            {/* ── subtle grid overlay ── */}
-            <div
-                className="pointer-events-none absolute inset-0 opacity-[0.028]"
-                aria-hidden="true"
-                style={{
-                    backgroundImage:
-                        "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
-                    backgroundSize: "40px 40px",
-                }}
-            />
-
            
 
             <div className="relative mx-auto max-w-6xl">
