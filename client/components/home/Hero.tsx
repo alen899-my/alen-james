@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
+import { SquigglyText } from '@/components/ui/squiggly-text';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -292,9 +293,11 @@ export default function Hero() {
                                     className="inline-block overflow-hidden mr-[0.6em] last:mr-0 pb-2"
                                     style={{ opacity: i === 0 ? w3Opacity : w4Opacity, y: i === 0 ? w3Y : w4Y }}
                                 >
-                                    <span
-                                        ref={(el) => { wordRefs.current[i + 2] = el; }}
-                                        className="inline-block text-[var(--accent)] tracking-tight uppercase"
+                                    <SquigglyText
+                                        ref={(el: HTMLElement | null) => { wordRefs.current[i + 2] = el; }}
+                                        scale={[4, 7]}
+                                        stepDuration={90}
+                                        className="text-[var(--accent)] tracking-tight uppercase"
                                         style={{
                                             fontFamily: '"Patrick Hand SC", cursive',
                                             fontSize: 'clamp(3.5rem, 10vw, 8rem)',
@@ -304,7 +307,7 @@ export default function Hero() {
                                         }}
                                     >
                                         {word}
-                                    </span>
+                                    </SquigglyText>
                                 </motion.span>
                             ))}
                         </div>
@@ -352,12 +355,14 @@ export default function Hero() {
                                 </span>
                             </motion.span>
                             <motion.span
-                                className="inline-block overflow-hidden pb-2"
+                                className="inline-block overflow-hidden mr-[0.5em] pb-2"
                                 style={{ opacity: w3Opacity, y: w3Y }}
                             >
-                                <span
-                                    ref={(el) => { if (el) wordRefs.current[6] = el; }}
-                                    className="inline-block text-[var(--accent)] tracking-tight uppercase"
+                                <SquigglyText
+                                    ref={(el: HTMLElement | null) => { if (el) wordRefs.current[6] = el; }}
+                                    scale={[4, 7]}
+                                    stepDuration={90}
+                                    className="text-[var(--accent)] tracking-tight uppercase"
                                     style={{
                                         fontFamily: '"Patrick Hand SC", cursive',
                                         fontSize: 'clamp(3.2rem, 18vw, 5.5rem)',
@@ -367,7 +372,7 @@ export default function Hero() {
                                     }}
                                 >
                                     all
-                                </span>
+                                </SquigglyText>
                             </motion.span>
                         </div>
                         <div className="overflow-hidden py-1 px-4 -my-1">
@@ -375,9 +380,11 @@ export default function Hero() {
                                 className="inline-block overflow-hidden pb-2"
                                 style={{ opacity: w4Opacity, y: w4Y }}
                             >
-                                <span
-                                    ref={(el) => { if (el) wordRefs.current[7] = el; }}
-                                    className="inline-block text-[var(--accent)] tracking-tight uppercase"
+                                <SquigglyText
+                                    ref={(el: HTMLElement | null) => { if (el) wordRefs.current[7] = el; }}
+                                    scale={[4, 7]}
+                                    stepDuration={90}
+                                    className="text-[var(--accent)] tracking-tight uppercase"
                                     style={{
                                         fontFamily: '"Patrick Hand SC", cursive',
                                         fontSize: 'clamp(3.2rem, 18vw, 5.5rem)',
@@ -387,7 +394,7 @@ export default function Hero() {
                                     }}
                                 >
                                     trade
-                                </span>
+                                </SquigglyText>
                             </motion.span>
                         </div>
                     </div>
