@@ -10,7 +10,7 @@ import type {
 type GithubCommitMapClientProps = {
     calendars: ContributionCalendar[];
     username: string;
-    variant?: "section" | "compact" | "background";
+    variant?: "section" | "compact";
 };
 
 function getCellClass(count: number) {
@@ -75,65 +75,20 @@ export default function GithubCommitMapClient({
     );
     const latestYear = calendars[0]?.year;
 
-    if (variant === "background") {
-        const cal = selectedCalendar;
-        return (
-            <div
-                className="pointer-events-none absolute inset-0 overflow-hidden select-none"
-                aria-hidden="true"
-            >
-                {cal && (
-                    <div className="flex h-full w-max items-center px-6 opacity-[0.045] md:px-14">
-                        <div className="flex gap-[5px]">
-                            {cal.weeks.map((week) => (
-                                <div
-                                    key={week.firstDay}
-                                    className="grid grid-rows-7 gap-[5px]"
-                                >
-                                    {Array.from({ length: 7 }).map((_, weekday) => {
-                                        const day = week.contributionDays.find(
-                                            (d) => d.weekday === weekday,
-                                        );
-                                        if (!day)
-                                            return (
-                                                <span
-                                                    key={`${week.firstDay}-${weekday}`}
-                                                    className="h-[18px] w-[18px]"
-                                                />
-                                            );
-                                        return (
-                                            <span
-                                                key={day.date}
-                                                className={`
-                                                    h-[18px] w-[18px] rounded-[3px]
-                                                    ${getCellClass(day.contributionCount)}
-                                                `}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
-        );
-    }
-
     if (variant === "compact") {
         return (
             <div>
                 {/* year row */}
-                <div className="mb-4 flex items-center justify-between">
-                    <div className="flex items-baseline gap-3">
+                <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-baseline gap-2">
                         <span
-                            className="text-lg font-black leading-none text-[var(--foreground)]"
+                            className="text-base font-black leading-none text-[var(--foreground)]"
                             style={{ fontFamily: "'Patrick Hand SC', cursive" }}
                         >
                             {selectedCalendar?.year}
                         </span>
                         {selectedCalendar && (
-                            <span className="text-[10px] tracking-wide text-[var(--muted-foreground)]">
+                            <span className="text-[9px] tracking-wide text-[var(--muted-foreground)]">
                                 <span className="font-bold text-[var(--accent)]">
                                     {selectedCalendar.totalContributions.toLocaleString()}
                                 </span>{" "}
@@ -143,7 +98,7 @@ export default function GithubCommitMapClient({
                         )}
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         {/* year select */}
                         {calendars.length > 0 && (
                             <label className="relative block">
@@ -152,11 +107,11 @@ export default function GithubCommitMapClient({
                                     value={selectedYear}
                                     onChange={(e) => setSelectedYear(e.target.value)}
                                     className="
-                                        h-7 min-w-28 appearance-none
+                                        h-6 min-w-24 appearance-none
                                         rounded border border-[var(--border)]
                                         bg-transparent
-                                        px-2.5 pr-7
-                                        font-mono text-[9px] font-bold uppercase
+                                        px-2 pr-6
+                                        font-mono text-[8px] font-bold uppercase
                                         tracking-[0.14em] text-[var(--foreground)]
                                         outline-none transition-colors
                                         hover:border-[var(--accent)]
@@ -170,19 +125,19 @@ export default function GithubCommitMapClient({
                                     ))}
                                 </select>
                                 <ChevronDown
-                                    size={10}
-                                    className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                                    size={9}
+                                    className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
                                 />
                             </label>
                         )}
 
                         {/* legend */}
-                        <div className="flex items-center gap-1 text-[8px] font-bold uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
+                        <div className="flex items-center gap-1 text-[7px] font-bold uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
                             <span>Less</span>
                             {[0, 1, 3, 6, 10].map((count) => (
                                 <span
                                     key={count}
-                                    className={`block h-2 w-2 rounded-[1.5px] border ${getCellClass(count)}`}
+                                    className={`block h-[10px] w-[10px] rounded-[1.5px] border ${getCellClass(count)}`}
                                     aria-hidden="true"
                                 />
                             ))}
@@ -194,23 +149,23 @@ export default function GithubCommitMapClient({
                 {/* grid */}
                 {selectedCalendar && (
                     <div className="overflow-x-auto pb-1">
-                        <div className="grid min-w-[600px] grid-cols-[22px_1fr] gap-1.5">
+                        <div className="grid min-w-[600px] grid-cols-[20px_1fr] gap-1">
 
                             {/* weekday labels */}
-                            <div className="grid grid-rows-7 gap-[5px] pt-5 text-right font-mono text-[7px] uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
-                                {["Sun", "", "Tue", "", "Thu", "", "Sat"].map(
+                            <div className="grid grid-rows-7 gap-[5px] pt-5 text-right font-mono text-[6px] uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
+                                {["S", "", "T", "", "T", "", "S"].map(
                                     (day, i) => <span key={i}>{day}</span>,
                                 )}
                             </div>
 
                             <div>
                                 {/* month labels */}
-                                <div className="relative mb-0.5 h-4 font-mono text-[7px] uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+                                <div className="relative mb-0.5 h-3 font-mono text-[6px] uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
                                     {getMonthLabels(selectedCalendar.weeks).map((item) => (
                                         <span
                                             key={`${selectedCalendar.year}-${item.label}-${item.index}`}
                                             className="absolute top-0"
-                                            style={{ left: `${item.index * 22}px` }}
+                                            style={{ left: `${item.index * 23}px` }}
                                         >
                                             {item.label}
                                         </span>
@@ -232,14 +187,14 @@ export default function GithubCommitMapClient({
                                                     return (
                                                         <span
                                                             key={`${week.firstDay}-${weekday}`}
-                                                            className="h-[14px] w-[14px]"
+                                                            className="h-[18px] w-[18px]"
                                                         />
                                                     );
                                                 return (
                                                     <span
                                                         key={day.date}
                                                         className={`
-                                                            h-[14px] w-[14px] rounded-[2px] border
+                                                            h-[18px] w-[18px] rounded-[2.5px] border
                                                             cursor-default
                                                             transition-transform duration-100
                                                             hover:scale-[1.3]

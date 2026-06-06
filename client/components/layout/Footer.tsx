@@ -23,15 +23,13 @@ const Footer = async ({ socialLinks = [] }: FooterProps) => {
                 '--accent': '#1084a2',
                 '--muted-foreground': '#8b9aaa',
                 '--border': 'rgba(139, 154, 170, 0.15)',
+                backgroundImage: `
+                    linear-gradient(rgba(16,132,162,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(16,132,162,0.04) 1px, transparent 1px)
+                `,
+                backgroundSize: '18px 18px',
             } as React.CSSProperties}
         >
-            {/* ── HEATMAP BACKGROUND ── */}
-            <GithubCommitMapClient
-                calendars={calendars}
-                username={GITHUB_USERNAME}
-                variant="background"
-            />
-
             {/* ── TOP TORN EDGE ── */}
             <div className="absolute top-0 left-0 w-full h-12 md:h-16 -translate-y-[98%] pointer-events-none select-none overflow-hidden" style={{ zIndex: 20 }}>
                 <svg 
@@ -102,6 +100,15 @@ const Footer = async ({ socialLinks = [] }: FooterProps) => {
                             )}
                         </a>
                     ))}
+                </div>
+
+                {/* ── HEATMAP ── */}
+                <div className="w-full mb-16">
+                    <GithubCommitMapClient
+                        calendars={calendars}
+                        username={GITHUB_USERNAME}
+                        variant="compact"
+                    />
                 </div>
 
                 {/* ── BOTTOM BAR ── */}
