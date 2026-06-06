@@ -15,10 +15,25 @@ const Footer = async ({ socialLinks = [] }: FooterProps) => {
     const calendars = await getContributionCalendars(GITHUB_USERNAME);
 
     return (
-        <footer className="relative z-20 w-full bg-[#0d1117] text-[#f0ede6] pt-32 pb-12 px-6 md:px-14">
-            
+        <footer
+            className="relative z-20 w-full bg-[#0d1117] text-[#f0ede6] pt-32 pb-12 px-6 md:px-14 overflow-hidden"
+            style={{
+                '--background': '#0d1117',
+                '--foreground': '#f0ede6',
+                '--accent': '#1084a2',
+                '--muted-foreground': '#8b9aaa',
+                '--border': 'rgba(139, 154, 170, 0.15)',
+            } as React.CSSProperties}
+        >
+            {/* ── HEATMAP BACKGROUND ── */}
+            <GithubCommitMapClient
+                calendars={calendars}
+                username={GITHUB_USERNAME}
+                variant="background"
+            />
+
             {/* ── TOP TORN EDGE ── */}
-            <div className="absolute top-0 left-0 w-full h-12 md:h-16 -translate-y-[98%] pointer-events-none select-none overflow-hidden" style={{ zIndex: 11 }}>
+            <div className="absolute top-0 left-0 w-full h-12 md:h-16 -translate-y-[98%] pointer-events-none select-none overflow-hidden" style={{ zIndex: 20 }}>
                 <svg 
                     viewBox="0 0 1440 60" 
                     className="w-full h-full block" 
@@ -31,7 +46,7 @@ const Footer = async ({ socialLinks = [] }: FooterProps) => {
                 </svg>
             </div>
 
-            <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+            <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center text-center">
                 {/* ── LET'S WORK TOGETHER ── */}
                 <h2 
                     className="text-6xl md:text-9xl font-black uppercase tracking-tighter mb-8"
@@ -87,24 +102,6 @@ const Footer = async ({ socialLinks = [] }: FooterProps) => {
                             )}
                         </a>
                     ))}
-                </div>
-
-                {/* ── HEATMAP ── */}
-                <div
-                    className="w-full mb-16 text-left"
-                    style={{
-                        '--background': '#0d1117',
-                        '--foreground': '#f0ede6',
-                        '--accent': '#1084a2',
-                        '--muted-foreground': '#8b9aaa',
-                        '--border': 'rgba(139, 154, 170, 0.15)',
-                    } as React.CSSProperties}
-                >
-                    <GithubCommitMapClient
-                        calendars={calendars}
-                        username={GITHUB_USERNAME}
-                        variant="compact"
-                    />
                 </div>
 
                 {/* ── BOTTOM BAR ── */}

@@ -10,7 +10,7 @@ import type {
 type GithubCommitMapClientProps = {
     calendars: ContributionCalendar[];
     username: string;
-    variant?: "section" | "compact";
+    variant?: "section" | "compact" | "background";
 };
 
 function getCellClass(count: number) {
@@ -74,6 +74,51 @@ export default function GithubCommitMapClient({
         null,
     );
     const latestYear = calendars[0]?.year;
+
+    if (variant === "background") {
+        const cal = selectedCalendar;
+        return (
+            <div
+                className="pointer-events-none absolute inset-0 overflow-hidden select-none"
+                aria-hidden="true"
+            >
+                {cal && (
+                    <div className="flex h-full w-max items-center px-6 opacity-[0.045] md:px-14">
+                        <div className="flex gap-[5px]">
+                            {cal.weeks.map((week) => (
+                                <div
+                                    key={week.firstDay}
+                                    className="grid grid-rows-7 gap-[5px]"
+                                >
+                                    {Array.from({ length: 7 }).map((_, weekday) => {
+                                        const day = week.contributionDays.find(
+                                            (d) => d.weekday === weekday,
+                                        );
+                                        if (!day)
+                                            return (
+                                                <span
+                                                    key={`${week.firstDay}-${weekday}`}
+                                                    className="h-[18px] w-[18px]"
+                                                />
+                                            );
+                                        return (
+                                            <span
+                                                key={day.date}
+                                                className={`
+                                                    h-[18px] w-[18px] rounded-[3px]
+                                                    ${getCellClass(day.contributionCount)}
+                                                `}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
 
     if (variant === "compact") {
         return (
