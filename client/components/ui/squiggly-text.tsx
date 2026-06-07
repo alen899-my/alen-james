@@ -16,7 +16,7 @@ export interface SquigglyTextProps {
   as?: "span" | "div";
 }
 
-export const SquigglyText = React.forwardRef<HTMLElement, SquigglyTextProps>(function SquigglyText({
+export const SquigglyText = React.forwardRef<HTMLDivElement | HTMLSpanElement, SquigglyTextProps>(function SquigglyText({
   children,
   steps = 5,
   stepDuration = 80,
@@ -49,7 +49,7 @@ export const SquigglyText = React.forwardRef<HTMLElement, SquigglyTextProps>(fun
 
   return (
     <Wrapper
-      ref={ref}
+      ref={ref as React.Ref<HTMLDivElement | HTMLSpanElement>}
       style={{ filter, ...style }}
       className={cn("inline-block", className)}
     >
