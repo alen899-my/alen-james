@@ -49,7 +49,7 @@ export const SquigglyText = React.forwardRef<HTMLDivElement | HTMLSpanElement, S
 
   return (
     <Wrapper
-      ref={ref as React.Ref<HTMLElement>}
+      ref={ref as never}
       style={{ filter, ...style }}
       className={cn("inline-block", className)}
     >
