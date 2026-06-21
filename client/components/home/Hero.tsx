@@ -9,7 +9,7 @@ import { SquigglyText } from '@/components/ui/squiggly-text';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const WORD_DELAY = 1.2;
+const WORD_DELAY = 0.8;
 
 export default function Hero() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -68,7 +68,7 @@ export default function Hero() {
 
             tl.to(bgOverlayRef.current, {
                 opacity: 1,
-                duration: 2.5,
+                duration: 1.2,
                 ease: "power2.out"
             }, 0);
 

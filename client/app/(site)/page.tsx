@@ -14,14 +14,17 @@ import { getAllWorks } from "@/lib/admin/models/works.model";
 import { getAllWorkCategories } from "@/lib/admin/models/work_categories.model";
 import { getAllSocialLinks } from "@/lib/admin/models/social_links.model";
 import { getActiveResume } from "@/lib/admin/models/resumes.model";
+import { getActiveWhatsNew } from "@/lib/admin/models/whats_new.model";
 import FloatingResume from "@/components/common/FloatingResume";
+import WhatsNewPopup from "@/components/common/WhatsNewPopup";
 
 export default async function Page() {
-    const [works, categories, socialLinks, activeResume] = await Promise.all([
+    const [works, categories, socialLinks, activeResume, activeWhatsNew] = await Promise.all([
         getAllWorks(),
         getAllWorkCategories(),
         getAllSocialLinks(),
         getActiveResume(),
+        getActiveWhatsNew(),
     ]);
 
     return (
@@ -65,6 +68,10 @@ export default async function Page() {
             {activeResume?.file_url && (
                 <FloatingResume fileUrl={activeResume.file_url} name={activeResume.name} />
             )}
+
+            {/* Opening Information What's New Pop Card */}
+            <WhatsNewPopup activeItem={activeWhatsNew} />
         </main>
     );
 }
+

@@ -49,18 +49,7 @@ export async function createAdminTable(): Promise<void> {
 
 // ── Seed ─────────────────────────────────────────────────────────────────────
 
-export async function seedDefaultAdmin(): Promise<void> {
-  const { rows } = await pool.query('SELECT id FROM admins LIMIT 1');
-  if (rows.length > 0) return;
 
-  const hash = await bcrypt.hash('alen@123', 12);
-  await pool.query(
-    `INSERT INTO admins (name, email, password, role)
-     VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`,
-    ['Alen James', 'alenjames899@gmail.com', hash, 'superadmin']
-  );
-  console.log('✅ Default superadmin seeded');
-}
 
 // ── Queries ───────────────────────────────────────────────────────────────────
 

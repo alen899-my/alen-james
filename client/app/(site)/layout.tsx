@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import Navbar from '@/components/layout/Navbar';
 import Preloader from '@/components/ui/Preloader';
+
 import SmoothScrolling from '@/components/layout/SmoothScrolling';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
