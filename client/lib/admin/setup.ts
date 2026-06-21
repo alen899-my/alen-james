@@ -1,4 +1,4 @@
-import { createAdminTable, seedDefaultAdmin } from '@/lib/admin/models/admin.model';
+import { createAdminTable } from '@/lib/admin/models/admin.model';
 import { createSiteSettingsTable, seedDefaultSettings } from '@/lib/admin/models/settings.model';
 import { createWorksTable } from '@/lib/admin/models/works.model';
 import { createEducationTable } from '@/lib/admin/models/education.model';
@@ -13,6 +13,7 @@ import { createExperiencesTable } from '@/lib/admin/models/experiences.model';
 import { createMediaGalleryTable } from '@/lib/admin/models/media.model';
 import { createResumesTable } from '@/lib/admin/models/resumes.model';
 import { createWhatsNewTable } from '@/lib/admin/models/whats_new.model';
+import { createConstructionsTable } from '@/lib/admin/models/constructions.model';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -38,7 +39,8 @@ export async function setupAdminDatabase(): Promise<void> {
     await createMediaGalleryTable();
     await createResumesTable();
     await createWhatsNewTable();
-    await seedDefaultAdmin();
+    await createConstructionsTable();
+    
     await seedDefaultSettings();
     console.log('✅ Admin database initialized');
   } catch (err) {

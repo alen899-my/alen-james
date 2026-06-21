@@ -17,6 +17,7 @@ import { getActiveResume } from "@/lib/admin/models/resumes.model";
 import { getActiveWhatsNew } from "@/lib/admin/models/whats_new.model";
 import FloatingResume from "@/components/common/FloatingResume";
 import WhatsNewPopup from "@/components/common/WhatsNewPopup";
+import ConstructionBanner from "@/components/common/ConstructionBanner";
 
 export default async function Page() {
     const [works, categories, socialLinks, activeResume, activeWhatsNew] = await Promise.all([
@@ -29,6 +30,9 @@ export default async function Page() {
 
     return (
         <main className="flex flex-col relative w-full" style={{ background: 'var(--background)' }}>
+            {/* Construction banner — slides down from top */}
+            <ConstructionBanner />
+
             {/* Hero is sticky — stacks behind content as user scrolls */}
             <div className="sticky top-0 w-full h-screen z-0">
                 <Hero />
