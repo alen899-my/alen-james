@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Megaphone } from 'lucide-react';
+import { X, Zap } from 'lucide-react';
 import { WhatsNew } from '@/lib/admin/models/whats_new.model';
 
 interface WhatsNewPopupProps {
@@ -14,31 +14,20 @@ export default function WhatsNewPopup({ activeItem }: WhatsNewPopupProps) {
 
   useEffect(() => {
     if (!activeItem) return;
-
-    // Check if user has already dismissed this specific announcement
     const storageKey = `whats_new_seen_${activeItem.id}`;
-    const hasSeen = localStorage.getItem(storageKey);
-
-    if (hasSeen === 'true') return;
-
-    // Wait 2.2 seconds to allow the site preloader to fully complete and slide out
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 2200);
-
+    if (localStorage.getItem(storageKey) === 'true') return;
+    const timer = setTimeout(() => setIsOpen(true), 2200);
     return () => clearTimeout(timer);
   }, [activeItem]);
 
   if (!activeItem) return null;
 
   const handleClose = () => {
-    // Save to localStorage so it doesn't pop up again for this announcement ID
     localStorage.setItem(`whats_new_seen_${activeItem.id}`, 'true');
     setIsOpen(false);
   };
 
   const handleCtaClick = () => {
-    // Mark as seen when clicking CTA as well, so we don't annoy them next time
     localStorage.setItem(`whats_new_seen_${activeItem.id}`, 'true');
     setIsOpen(false);
   };
@@ -46,105 +35,141 @@ export default function WhatsNewPopup({ activeItem }: WhatsNewPopupProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop Overlay */}
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center sm:p-4">
+          {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/45 backdrop-blur-[3px]"
+            className="fixed inset-0 bg-black/50 dark:bg-black/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
           />
 
-          {/* Popup Card */}
+          {/* Card — 50/50 */}
           <motion.div
-            className="relative w-full max-w-[420px] rounded-3xl overflow-hidden shadow-2xl border border-[#e8e2d5] flex flex-col z-10"
-            style={{
-              background: '#fdf8e1', // Matches var(--page-bg)
-              color: '#2d2a21', // Matches var(--page-text)
-            }}
-            initial={{ scale: 0.9, opacity: 0, y: 30 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.92, opacity: 0, y: 20 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+            className="relative z-10 w-full sm:max-w-[660px] overflow-hidden flex flex-col sm:flex-row
+                       bg-white dark:bg-[#111111]
+                       shadow-2xl dark:shadow-[0_8px_40px_rgba(0,0,0,0.7)]"
+            style={{ borderRadius: 0, minHeight: '320px' }}
+            initial={{ y: -40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -30, opacity: 0 }}
+            transition={{ type: 'spring', damping: 28, stiffness: 320 }}
           >
-            {/* Close Button X */}
-            <button
-              onClick={handleClose}
-              className="absolute top-3 right-3 z-20 p-2 rounded-full bg-black/5 hover:bg-black/10 transition-colors cursor-pointer text-[#2d2a21]"
-              aria-label="Close announcement"
+            {/* ── LEFT — Image 50% ── */}
+            <div className="relative w-full sm:w-1/2 shrink-0 overflow-hidden bg-[#f5f5f5] dark:bg-[#1a1a1a]"
+              style={{ minHeight: '200px' }}
             >
-              <X size={16} />
-            </button>
-
-            {/* Banner/Cover Image */}
-            {activeItem.image_url ? (
-              <div className="relative w-full h-[190px] overflow-hidden bg-black/5 shrink-0 border-b border-[#e8e2d5]/60 select-none">
-                <img
-                  src={activeItem.image_url}
-                  alt={activeItem.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-3 left-3 bg-[#1084a2] text-white text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full shadow-md flex items-center gap-1">
-                  <Sparkles size={10} /> What's New
+              {activeItem.image_url ? (
+                <>
+                  <img
+                    src={activeItem.image_url}
+                    alt={activeItem.title}
+                    className="absolute inset-0 w-full h-full object-cover select-none"
+                    draggable={false}
+                  />
+                  {/* Subtle gradient overlay at bottom */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
+                    style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)' }}
+                  />
+                </>
+              ) : (
+                <div
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{ background: 'linear-gradient(160deg, #1084a2, #0b5c73)' }}
+                >
+                  <Zap size={52} className="text-white/60" fill="rgba(255,255,255,0.25)" />
                 </div>
-              </div>
-            ) : (
-              <div className="px-6 pt-8 pb-1 shrink-0 select-none">
-                <span className="inline-flex items-center gap-1 bg-[#1084a2]/15 text-[#1084a2] text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full border border-[#1084a2]/20">
-                  <Megaphone size={10} /> Announcement
-                </span>
-              </div>
-            )}
-
-            {/* Text & Content details */}
-            <div className="px-6 pt-5 pb-6 flex-1 flex flex-col gap-4 overflow-y-auto max-h-[300px]">
-              <h2
-                className="text-2xl font-bold leading-tight tracking-tight select-none"
-                style={{ fontFamily: '"Calistoga", serif' }}
-              >
-                {activeItem.title}
-              </h2>
-
-              <p
-                className="text-[15px] leading-relaxed text-[#2d2a21]/85 whitespace-pre-line font-medium"
-                style={{ fontFamily: '"Patrick Hand SC", cursive' }}
-              >
-                {activeItem.content}
-              </p>
+              )}
             </div>
 
-            {/* Actions Footer */}
-            <div className="px-6 pb-6 pt-2 flex flex-col gap-3 shrink-0">
-              {activeItem.btn_url ? (
-                <a
-                  href={activeItem.btn_url}
-                  onClick={handleCtaClick}
-                  className="w-full text-center py-3 text-sm font-bold text-white rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] select-none hover:brightness-110"
-                  style={{
-                    background: 'linear-gradient(135deg, #1084a2, #1a9bbf)',
-                  }}
-                >
-                  {activeItem.btn_text || 'Check It Out'}
-                </a>
-              ) : (
-                <button
-                  onClick={handleClose}
-                  className="w-full py-3 text-sm font-bold text-white rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] select-none hover:brightness-110"
-                  style={{
-                    background: 'linear-gradient(135deg, #1084a2, #1a9bbf)',
-                  }}
-                >
-                  Awesome, got it!
-                </button>
-              )}
+            {/* ── RIGHT — Content 50% ── */}
+            <div className="flex flex-col flex-1 min-w-0 w-full sm:w-1/2 border-t sm:border-t-0 sm:border-l border-[#f0f0f0] dark:border-white/10">
 
+
+              {/* Close button — top right of content */}
               <button
                 onClick={handleClose}
-                className="text-xs text-[#8b9aaa] hover:text-[#2d2a21] transition-colors underline cursor-pointer select-none"
+                className="absolute top-3 right-3 flex items-center justify-center w-7 h-7
+                           text-[#666] dark:text-[#8b9aaa]
+                           hover:text-[#111] dark:hover:text-white
+                           hover:bg-black/8 dark:hover:bg-white/10
+                           transition-colors cursor-pointer z-10"
+                style={{ borderRadius: 0 }}
+                aria-label="Close"
               >
-                Dismiss & don't show again
+                <X size={14} />
               </button>
+
+              {/* Scrollable body */}
+              <div className="flex-1 px-5 pt-5 pb-3 overflow-y-auto flex flex-col gap-3" style={{ maxHeight: '300px' }}>
+
+                {/* Badge */}
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-0.5 text-white text-[9px] font-black tracking-widest uppercase"
+                    style={{ background: '#1084a2', borderRadius: 0 }}
+                  >
+                    <Zap size={8} fill="currentColor" /> What's New
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h2
+                  className="text-[18px] font-black leading-snug text-[#111] dark:text-white pr-6"
+                  style={{ fontFamily: '"Calistoga", serif', letterSpacing: '-0.01em' }}
+                >
+                  {activeItem.title}
+                </h2>
+
+                {/* Accent divider */}
+                <div className="w-8 h-[2px]" style={{ background: '#1084a2' }} />
+
+                {/* Content text */}
+                <p
+                  className="text-[13px] leading-relaxed text-[#444] dark:text-[#aaa] whitespace-pre-line"
+                  style={{ fontFamily: '"Patrick Hand SC", cursive' }}
+                >
+                  {activeItem.content}
+                </p>
+
+
+              </div>
+
+              {/* Divider */}
+              <div className="mx-5 border-t border-[#f0f0f0] dark:border-white/10" />
+
+              {/* Footer actions */}
+              <div className="px-5 py-4 flex flex-col gap-2 shrink-0">
+                {activeItem.btn_url ? (
+                  <a
+                    href={activeItem.btn_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleCtaClick}
+                    className="w-full text-center py-2.5 text-[13px] font-black text-white uppercase tracking-wide transition-all active:scale-[0.98] select-none hover:brightness-110"
+                    style={{ borderRadius: '6px', background: '#1084a2' }}
+                  >
+                    {activeItem.btn_text || 'Check It Out →'}
+                  </a>
+                ) : (
+                  <button
+                    onClick={handleClose}
+                    className="w-full py-2.5 text-[13px] font-black text-white uppercase tracking-wide transition-all active:scale-[0.98] select-none hover:brightness-110"
+                    style={{ borderRadius: '6px', background: '#1084a2' }}
+                  >
+                    Got It →
+                  </button>
+                )}
+
+                <button
+                  onClick={handleClose}
+                  className="text-[11px] text-[#999] dark:text-[#666] hover:text-[#333] dark:hover:text-[#aaa] transition-colors underline cursor-pointer select-none text-center"
+                >
+                  Dismiss, don't show again
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>
