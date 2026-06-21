@@ -288,3 +288,27 @@
         animation-duration: 0.3s !important;
     }
 }
+
+/* Custom Marquee for Under Construction Banner */
+@keyframes marqueeRight {
+    0% { transform: translate3d(-50%, 0, 0); }
+    100% { transform: translate3d(0%, 0, 0); }
+}
+
+.animate-marquee-right-fast {
+    display: flex !important;
+    flex-direction: row !important;
+    width: max-content !important;
+    animation: marqueeRight 30s linear infinite !important;
+    animation-duration: 30s !important;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-none {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}

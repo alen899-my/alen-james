@@ -1,96 +1,88 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { HardHat, X, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
-const STORAGE_KEY = 'construction_banner_dismissed_v1';
+interface ConstructionBannerProps {
+  isUpcoming?: boolean;
+  hideCard?: boolean;
+  themeColor?: 'yellow' | 'amber' | 'red';
+}
 
-export default function ConstructionBanner() {
-  const [visible, setVisible] = useState(false);
+export default function ConstructionBanner({ 
+  isUpcoming = false, 
+  hideCard = false,
+  themeColor
+}: ConstructionBannerProps) {
+  const pathname = usePathname();
+  const isUnderConstruction = pathname === '/under-construction';
 
-  useEffect(() => {
-    const dismissed = sessionStorage.getItem(STORAGE_KEY);
-    if (!dismissed) setVisible(true);
-  }, []);
+  let tapeBg = '#facc15'; // Default yellow
+  let tapeText = "🚧 PROJECTS UNDER CONSTRUCTION // CURRENT & PLANNED PROJECTS // BUILDING THE FUTURE 🚧 ";
+  let textColor = "text-black";
 
-  const dismiss = () => {
-    sessionStorage.setItem(STORAGE_KEY, 'true');
-    setVisible(false);
-  };
+  if (themeColor === 'red') {
+    tapeBg = '#dc2626'; // Red-600
+    tapeText = "🚧 ACTIVE BUILD SITE // PROJECTS IN PROGRESS // UNDER CONSTRUCTION // BUILDING NOW 🚧 ";
+    textColor = "text-white";
+  } else if (themeColor === 'amber' || isUpcoming) {
+    tapeBg = '#f59e0b'; // Amber
+    tapeText = "⏳ COMING SOON // FUTURE IDEAS & EXPERIMENTAL CONCEPTS // ROADMAP // COOKING THE FUTURE ⏳ ";
+    textColor = "text-black";
+  }
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ y: -80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -80, opacity: 0 }}
-          transition={{ type: 'spring', damping: 24, stiffness: 300 }}
-          className="relative w-full overflow-hidden"
-          style={{ zIndex: 9990 }}
-        >
-          {/* Hazard stripe background */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: `repeating-linear-gradient(
-                -45deg,
-                #f59e0b 0px,
-                #f59e0b 12px,
-                #1a1a1a 12px,
-                #1a1a1a 24px
-              )`,
-              opacity: 0.12,
+    <section className={`relative w-full bg-[var(--background)] flex flex-col items-center justify-center ${hideCard ? 'pt-6 pb-6 min-h-0' : 'pt-10 pb-20 min-h-[180px]'}`}>
+      {/* Straight Tape */}
+      <div 
+        className="relative w-full py-4 md:py-5 border-y-4 border-black z-10 shadow-md"
+        style={{ background: tapeBg }}
+      >
+        <div className="flex whitespace-nowrap overflow-hidden">
+          <motion.div 
+            className={`flex whitespace-nowrap text-lg md:text-2xl font-black uppercase tracking-widest ${textColor}`}
+            animate={{ x: ["-50%", "0%"] }}
+            transition={{
+              ease: "linear",
+              duration: 60,
+              repeat: Infinity,
             }}
-          />
-
-          {/* Solid yellow bar */}
-          <div
-            className="relative flex items-center justify-between px-4 md:px-8 py-2.5 gap-3"
-            style={{ background: '#f59e0b' }}
           >
-            {/* Left — icon + text */}
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="shrink-0 w-7 h-7 rounded-full bg-black/15 flex items-center justify-center">
-                <HardHat size={15} className="text-black" />
-              </div>
-              <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                <span className="text-black font-black text-[11px] md:text-xs uppercase tracking-widest whitespace-nowrap">
-                  🚧 Under Construction
-                </span>
-                <span className="hidden sm:inline text-black/70 text-[11px] md:text-xs font-medium">
-                  — Some exciting projects are being built. Check them out!
-                </span>
-              </div>
-            </div>
+            {/* Repeated items for seamless infinite scroll */}
+            <span className="mx-4 shrink-0">{tapeText}</span>
+            <span className="mx-4 shrink-0">{tapeText}</span>
+            <span className="mx-4 shrink-0">{tapeText}</span>
+            <span className="mx-4 shrink-0">{tapeText}</span>
+          </motion.div>
+        </div>
+      </div>
 
-            {/* Right — CTA + dismiss */}
-            <div className="flex items-center gap-2 shrink-0">
-              <Link
-                href="/under-construction"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black text-white text-[11px] font-black uppercase tracking-wider hover:bg-black/80 transition-colors"
-                onClick={dismiss}
-              >
-                Check It Out <ChevronRight size={12} />
-              </Link>
-              <button
-                onClick={dismiss}
-                className="p-1.5 rounded-lg bg-black/10 hover:bg-black/20 transition-colors text-black"
-                aria-label="Dismiss banner"
-              >
-                <X size={13} />
-              </button>
-            </div>
+      {/* Hanging Notice Board Card */}
+      {!hideCard && (
+        <div className="relative z-20 -mt-1 pointer-events-auto flex flex-col items-center">
+          {/* Hanging Strings/Wires */}
+          <div className="flex justify-between w-48 relative h-6 pointer-events-none">
+            <div className="w-[3px] h-6 bg-black" />
+            <div className="w-[3px] h-6 bg-black" />
           </div>
 
-          {/* Bottom edge shadow line */}
-          <div className="h-[2px]" style={{
-            background: 'repeating-linear-gradient(-45deg, #f59e0b 0px, #f59e0b 8px, #d97706 8px, #d97706 16px)'
-          }} />
-        </motion.div>
+          {/* Card */}
+          <Link href={isUnderConstruction ? "/" : "/under-construction"} className="group block">
+            <div 
+              className="bg-black text-[#facc15] border-4 border-black px-8 py-3.5 rounded-lg shadow-xl transition-all duration-300 transform group-hover:scale-105 active:scale-95 text-center flex flex-col items-center justify-center"
+              style={{ fontFamily: '"Patrick Hand SC", cursive' }}
+            >
+              <span className="text-xl md:text-2xl font-black uppercase tracking-wider text-white group-hover:text-[#facc15] transition-colors">
+                {isUnderConstruction ? "Welcome to the Site" : "Inspect the Site"}
+              </span>
+              <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-sans mt-0.5">
+                {isUnderConstruction ? "Go back to Home" : "Click to Enter Zone"}
+              </span>
+            </div>
+          </Link>
+        </div>
       )}
-    </AnimatePresence>
+    </section>
   );
 }

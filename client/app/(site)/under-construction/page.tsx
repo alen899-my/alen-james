@@ -2,23 +2,83 @@ import { getActiveConstructions } from '@/lib/admin/models/constructions.model';
 import { getAllSocialLinks } from '@/lib/admin/models/social_links.model';
 import Link from 'next/link';
 import Footer from '@/components/layout/Footer';
-import { HardHat, Clock, ChevronRight, Hammer } from 'lucide-react';
+import { HardHat, Clock, Hammer } from 'lucide-react';
+import ConstructionCard3D from '@/components/under-construction/ConstructionCard3D';
+import ConstructionBanner from '@/components/common/ConstructionBanner';
 
 export const metadata = {
-  title: 'Under Construction — Alen James',
+  title: 'Dev Workshop — Alen James',
   description: 'Projects currently being built and upcoming ideas from Alen James.',
 };
 
 export const revalidate = 300;
 
-const PHASE_COLORS: Record<string, { bg: string; text: string }> = {
-  Planning:     { bg: '#f3f4f6', text: '#6b7280' },
-  Design:       { bg: '#f5f3ff', text: '#7c3aed' },
-  Development:  { bg: '#eff6ff', text: '#1d4ed8' },
-  Testing:      { bg: '#fffbeb', text: '#d97706' },
-  Beta:         { bg: '#ecfdf5', text: '#059669' },
-  'Almost Done':{ bg: '#f0fdf4', text: '#16a34a' },
+// Animated Indicator Light
+const WarningLight = ({ color = 'amber' }: { color?: 'amber' | 'blue' }) => {
+  const glowBg = color === 'blue' ? 'bg-blue-400' : 'bg-amber-400';
+  const bulbBg = color === 'blue' ? 'bg-blue-500 border-blue-600' : 'bg-amber-500 border-amber-600';
+  return (
+    <span className="relative flex h-3 w-3 shrink-0">
+      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${glowBg}`}></span>
+      <span className={`relative inline-flex rounded-full h-3 w-3 border shadow-sm ${bulbBg}`}></span>
+    </span>
+  );
 };
+
+// SVG Leaning Ladder Graphic
+const LadderSVG = ({ side = 'left' }: { side?: 'left' | 'right' }) => {
+  const isLeft = side === 'left';
+  const positionClass = isLeft 
+    ? "left-6 md:left-[15%] top-24 md:top-[-10%] rotate-0 md:rotate-[22deg] origin-top-left" 
+    : "right-6 md:right-[15%] top-48 md:top-[10%] rotate-0 md:rotate-[-22deg] origin-top-right";
+  
+  return (
+    <svg 
+      viewBox="0 0 120 1200" 
+      className={`absolute w-[50px] md:w-[120px] h-[120vh] md:h-[180vh] opacity-[0.06] pointer-events-none z-0 transform text-[var(--foreground)] ${positionClass}`} 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="6"
+    >
+      {/* Side rails */}
+      <line x1="30" y1="0" x2="30" y2="1200" />
+      <line x1="90" y1="0" x2="90" y2="1200" />
+      {/* Rungs */}
+      {Array.from({ length: 30 }).map((_, idx) => (
+        <line key={idx} x1="30" y1={40 * idx + 20} x2="90" y2={40 * idx + 20} />
+      ))}
+    </svg>
+  );
+};
+
+// SVG Construction Crane Graphic
+const CraneSVG = () => (
+  <svg 
+    width="200" 
+    height="180" 
+    viewBox="0 0 200 180" 
+    className="absolute right-6 top-20 opacity-20 pointer-events-none hidden lg:block text-[var(--foreground)]" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2"
+  >
+    {/* Mast */}
+    <path d="M45,180 L60,35 M60,35 L75,180 M45,180 L75,180 M52.5,110 L67.5,110 M56.25,72.5 L63.75,72.5" />
+    <path d="M45,180 L60,145 M75,180 L60,145 M60,145 L52.5,110 M60,145 L67.5,110 M52.5,110 L60,72.5 M67.5,110 L60,72.5 M60,72.5 L60,35" />
+    {/* Jib */}
+    <line x1="10" y1="35" x2="190" y2="35" />
+    <line x1="60" y1="15" x2="60" y2="35" />
+    {/* Support lines */}
+    <line x1="60" y1="15" x2="10" y2="35" strokeDasharray="3,3" />
+    <line x1="60" y1="15" x2="125" y2="35" strokeDasharray="3,3" />
+    {/* Counterweight */}
+    <rect x="18" y="35" width="15" height="12" fill="currentColor" opacity="0.4" />
+    {/* Trolley hook line */}
+    <line x1="140" y1="35" x2="140" y2="90" strokeWidth="1" />
+    <circle cx="140" cy="90" r="2" fill="currentColor" />
+    <path d="M135,92 L145,92 L140,100 Z" fill="currentColor" />
+  </svg>
+);
 
 export default async function UnderConstructionPage() {
   const [items, socialLinks] = await Promise.all([
@@ -30,192 +90,69 @@ export default async function UnderConstructionPage() {
   const upcoming = items.filter(i => i.is_upcoming);
 
   return (
-    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-24">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-24 relative overflow-hidden">
+      {/* Decorative Cranes & Ladders graphics */}
+      <CraneSVG />
+      <LadderSVG side="left" />
 
-      {/* ── HERO HEADER ── */}
-      <section className="px-6 md:px-14 pb-16 max-w-7xl mx-auto">
-        <div className="mb-4">
-          <span className="text-sm font-black uppercase tracking-[0.5em] text-[var(--muted-foreground)]">
-            The Workshop
-          </span>
-        </div>
+      {/* Floating caution board badge */}
+      <div className="absolute right-12 top-52 hidden xl:flex flex-col items-center border-4 border-black bg-amber-400 text-black px-4 py-3 rounded-lg font-black tracking-widest text-[10px] rotate-[8deg] z-10 shadow-xl">
+        <HardHat size={24} className="mb-1 text-black" />
+        <span>HARD HAT AREA</span>
+      </div>
 
+
+      {/* ── HERO TEXT HEADER ── */}
+      <section className="px-6 md:px-14 pb-16 max-w-7xl mx-auto relative z-10">
         <h1
-          className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-6 max-w-5xl"
+          className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8] mb-6 max-w-5xl text-[var(--foreground)]"
           style={{ fontFamily: '"Patrick Hand SC", cursive' }}
         >
-          Under<br />Construction
+          Construction Site
         </h1>
 
         <p className="text-lg text-[var(--muted-foreground)] max-w-xl font-medium leading-relaxed">
-          A live look at what's being built — current projects in progress and
-          ideas coming soon to the workshop.
+          Welcome to my site, here is my current projects undertaking and future projects.
         </p>
-
-        {/* Stats bar */}
-        <div className="flex items-center gap-8 mt-10 pt-10 border-t border-[var(--border)]">
-          <div>
-            <p className="text-3xl font-black text-[var(--foreground)]">{current.length}</p>
-            <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mt-0.5">Building Now</p>
-          </div>
-          <div className="w-px h-10 bg-[var(--border)]" />
-          <div>
-            <p className="text-3xl font-black text-[var(--foreground)]">{upcoming.length}</p>
-            <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mt-0.5">Coming Soon</p>
-          </div>
-        </div>
       </section>
+
+      {/* ── ACTIVE BUILD SITE BANNER DIVIDER ── */}
+      {current.length > 0 && (
+        <div className="w-full my-8">
+          <ConstructionBanner themeColor="red" hideCard={true} />
+        </div>
+      )}
 
       {/* ── CURRENTLY BUILDING ── */}
       {current.length > 0 && (
-        <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto border-t border-[var(--border)]">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#1084a2] animate-pulse" />
-              <span className="text-sm font-black uppercase tracking-[0.4em] text-[#1084a2]">
-                Currently Building
-              </span>
-            </div>
-          </div>
+        <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto relative z-10">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {current.map(item => {
-              const phase = PHASE_COLORS[item.construction_phase || ''] || PHASE_COLORS.Planning;
-              return (
-                <Link
-                  key={item.id}
-                  href={`/under-construction/${item.id}`}
-                  className="group relative flex flex-col overflow-hidden border border-[var(--border)] bg-[var(--card)] hover:border-[#1084a2]/40 hover:shadow-xl transition-all duration-300"
-                  style={{ borderRadius: 0 }}
-                >
-                  {/* Image */}
-                  <div className="relative aspect-[16/9] overflow-hidden bg-[var(--muted)]">
-                    {item.main_image ? (
-                      <img src={item.main_image} alt={item.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center"
-                        style={{ background: 'linear-gradient(135deg, #1084a2 0%, #0b5c73 100%)' }}>
-                        <Hammer size={40} className="text-white/50" />
-                      </div>
-                    )}
-
-                    {/* Phase badge */}
-                    <div className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest"
-                      style={{ background: phase.bg, color: phase.text, borderRadius: 0 }}>
-                      {item.construction_phase || 'Planning'}
-                    </div>
-
-                    {/* Hover overlay arrow */}
-                    <div className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
-                      <ChevronRight size={16} className="text-black" />
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex flex-col gap-2 p-5 flex-1">
-                    <h2 className="text-lg font-black text-[var(--foreground)] uppercase tracking-tight"
-                      style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
-                      {item.name}
-                    </h2>
-                    {item.tagline && (
-                      <p className="text-sm text-[var(--muted-foreground)] font-medium line-clamp-2">
-                        {item.tagline}
-                      </p>
-                    )}
-
-                    {/* Stacks */}
-                    {item.stacks?.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-auto pt-3">
-                        {item.stacks.slice(0, 4).map(s => (
-                          <span key={s}
-                            className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border"
-                            style={{ color: '#1084a2', borderColor: '#1084a2', background: 'rgba(16,132,162,0.06)', borderRadius: 0 }}>
-                            {s}
-                          </span>
-                        ))}
-                        {item.stacks.length > 4 && (
-                          <span className="px-2 py-0.5 text-[10px] font-bold text-[var(--muted-foreground)]">
-                            +{item.stacks.length - 4} more
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Bottom accent line on hover */}
-                  <div className="h-[2px] w-0 group-hover:w-full bg-[#1084a2] transition-all duration-500" />
-                </Link>
-              );
-            })}
+          <div className="flex flex-row md:grid md:grid-cols-2 gap-6 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-6 md:pb-0 scrollbar-none">
+            {current.map((item, index) => (
+              <div key={item.id} className="w-[85vw] sm:w-[50vw] md:w-auto shrink-0 snap-center md:shrink md:snap-align-none">
+                <ConstructionCard3D item={item} index={index} />
+              </div>
+            ))}
           </div>
         </section>
       )}
 
+      {/* ── UPCOMING BANNER DIVIDER ── */}
+      {upcoming.length > 0 && (
+        <div className="w-full my-8">
+          <ConstructionBanner isUpcoming={true} hideCard={true} />
+        </div>
+      )}
+
       {/* ── UPCOMING ── */}
       {upcoming.length > 0 && (
-        <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto border-t border-[var(--border)]">
-          <div className="flex items-center gap-3 mb-12">
-            <Clock size={16} className="text-amber-500" />
-            <span className="text-sm font-black uppercase tracking-[0.4em] text-amber-500">
-              Coming Soon
-            </span>
-          </div>
+        <section className="px-6 md:px-14 py-16 max-w-7xl mx-auto relative z-10">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcoming.map(item => (
-              <Link
-                key={item.id}
-                href={`/under-construction/${item.id}`}
-                className="group relative flex flex-col overflow-hidden border border-[var(--border)] bg-[var(--card)] hover:border-amber-400/40 hover:shadow-xl transition-all duration-300 opacity-80 hover:opacity-100"
-                style={{ borderRadius: 0 }}
-              >
-                {/* Image — desaturated */}
-                <div className="relative aspect-[16/9] overflow-hidden bg-[var(--muted)]">
-                  {item.main_image ? (
-                    <img src={item.main_image} alt={item.name}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg, #374151 0%, #1f2937 100%)' }}>
-                      <Clock size={40} className="text-white/30" />
-                    </div>
-                  )}
-
-                  {/* Upcoming badge */}
-                  <div className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest"
-                    style={{ background: '#fffbeb', color: '#d97706', borderRadius: 0 }}>
-                    ⏳ Upcoming
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-col gap-2 p-5 flex-1">
-                  <h2 className="text-lg font-black text-[var(--foreground)] uppercase tracking-tight"
-                    style={{ fontFamily: '"Patrick Hand SC", cursive' }}>
-                    {item.name}
-                  </h2>
-                  {item.tagline && (
-                    <p className="text-sm text-[var(--muted-foreground)] font-medium line-clamp-2">
-                      {item.tagline}
-                    </p>
-                  )}
-
-                  {item.stacks?.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-auto pt-3">
-                      {item.stacks.slice(0, 4).map(s => (
-                        <span key={s}
-                          className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border border-amber-300 text-amber-600"
-                          style={{ background: 'rgba(245,158,11,0.06)', borderRadius: 0 }}>
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="h-[2px] w-0 group-hover:w-full bg-amber-400 transition-all duration-500" />
-              </Link>
+          <div className="flex flex-row md:grid md:grid-cols-2 gap-6 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-6 md:pb-0 scrollbar-none">
+            {upcoming.map((item, index) => (
+              <div key={item.id} className="w-[85vw] sm:w-[50vw] md:w-auto shrink-0 snap-center md:shrink md:snap-align-none">
+                <ConstructionCard3D item={item} index={index} />
+              </div>
             ))}
           </div>
         </section>
@@ -223,13 +160,13 @@ export default async function UnderConstructionPage() {
 
       {/* Empty state */}
       {items.length === 0 && (
-        <section className="px-6 md:px-14 py-32 max-w-7xl mx-auto flex flex-col items-center text-center gap-4">
-          <HardHat size={48} className="text-[var(--muted-foreground)] opacity-30" />
+        <section className="px-6 md:px-14 py-32 max-w-7xl mx-auto flex flex-col items-center text-center gap-4 relative z-10">
+          <Hammer size={48} className="text-[var(--muted-foreground)] opacity-30 animate-pulse" />
           <p className="text-xl font-black text-[var(--muted-foreground)] uppercase tracking-widest">
-            Nothing here yet
+            Site Cleared / Empty Zone
           </p>
           <p className="text-sm text-[var(--muted-foreground)] opacity-60">
-            Check back soon — projects are being added.
+            Check back soon — new development layouts are queued for loading.
           </p>
         </section>
       )}

@@ -30,9 +30,6 @@ export default async function Page() {
 
     return (
         <main className="flex flex-col relative w-full" style={{ background: 'var(--background)' }}>
-            {/* Construction banner — slides down from top */}
-            <ConstructionBanner />
-
             {/* Hero is sticky — stacks behind content as user scrolls */}
             <div className="sticky top-0 w-full h-screen z-0">
                 <Hero />
@@ -59,6 +56,9 @@ export default async function Page() {
             <section id="work" className="relative z-10 min-h-screen bg-[var(--background)]">
                 <Works works={works} categories={categories} />
             </section>
+
+            {/* Under Construction Banner Divider */}
+            <ConstructionBanner />
 
             <WhyWorkWithMe />
 
