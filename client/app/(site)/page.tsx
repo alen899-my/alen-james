@@ -1,12 +1,13 @@
 // Revalidate every 5 minutes instead of 0 — avoids DB hit on every single request
 export const revalidate = 300;
 
-import Hero from "@/components/home/Hero";
+import dynamic from 'next/dynamic';
 import PointingHand from "@/components/home/PointingHand";
 import TornPaperEdge from "@/components/home/TornPaperEdge";
 import AboutMe from "@/components/home/AboutMe";
 import CallMeBaby from "@/components/home/CallMeBaby";
-import Works from "@/components/home/Works";
+// Works can be large — load on client to avoid shipping heavy UI on first paint
+const Works = dynamic(() => import('@/components/home/Works'), { ssr: false, loading: () => <div className="min-h-screen" /> });
 import WhyWorkWithMe from "@/components/home/WhyWorkWithMe";
 import MoreAboutMeBanner from "@/components/home/MoreAboutMeBanner";
 import Footer from "@/components/layout/Footer";
@@ -15,8 +16,10 @@ import { getAllWorkCategories } from "@/lib/admin/models/work_categories.model";
 import { getAllSocialLinks } from "@/lib/admin/models/social_links.model";
 import { getActiveResume } from "@/lib/admin/models/resumes.model";
 import { getActiveWhatsNew } from "@/lib/admin/models/whats_new.model";
-import FloatingResume from "@/components/common/FloatingResume";
-import WhatsNewPopup from "@/components/common/WhatsNewPopup";
+// Heavy visual components — load only on client after initial paint
+const Hero = dynamic(() => import('@/components/home/Hero'), { ssr: false, loading: () => <div className="min-h-screen" /> });
+const FloatingResume = dynamic(() => import('@/components/common/FloatingResume'), { ssr: false, loading: () => null });
+const WhatsNewPopup = dynamic(() => import('@/components/common/WhatsNewPopup'), { ssr: false, loading: () => null });
 import ConstructionBanner from "@/components/common/ConstructionBanner";
 
 export default async function Page() {
@@ -78,4 +81,3 @@ export default async function Page() {
         </main>
     );
 }
-
