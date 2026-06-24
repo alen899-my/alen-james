@@ -17,14 +17,12 @@ export interface Work {
   skill_ids: number[]; // JSONB array of skill ids
   skills?: any[]; // Populated skills with icons and names
 
-
   year: string | null;
   category_id: number | null;
   category_name?: string;
   created_at: string;
   updated_at: string;
 }
-
 
 export type WorkInput = Omit<Work, 'id' | 'created_at' | 'updated_at'>;
 
@@ -57,6 +55,18 @@ export async function createWorksTable(): Promise<void> {
       BEFORE UPDATE ON works
       FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
   `);
+}
+
+export async function getAllWorksMinimal(): Promise<Partial<Work>[]> {
+  // Return minimal fields for homepage listing to reduce payload size
+  const { rows: works } = await pool.query(
+    `SELECT w.id, w.title, w.subtitle, w.main_image, w.year, w.category_id, c.name as category_name
+     FROM works w
+     LEFT JOIN work_categories c ON w.category_id = c.id
+     ORDER BY w.created_at DESC`
+  );
+
+  return works;
 }
 
 export async function getAllWorks(): Promise<Work[]> {
@@ -124,7 +134,6 @@ export async function createWork(data: WorkInput): Promise<Work> {
 
   return rows[0] as Work;
 }
-
 
 export async function updateWork(id: number, data: Partial<WorkInput>): Promise<Work | null> {
   const setClauses: string[] = [];
